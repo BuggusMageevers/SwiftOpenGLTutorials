@@ -5,6 +5,7 @@
 //  Created by Myles Schultz on 1/30/16.
 //  Copyright © 2016 MyKo. All rights reserved.
 //
+//  Ver. 1:  No changes to project default
 
 import Cocoa
 

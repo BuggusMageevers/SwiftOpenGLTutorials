@@ -1,31 +1,28 @@
 //
 //  ViewController.swift
-//  OnTheMove
+//  RefinedRenderEnginePt1
 //
-//  Created by Myles La Verne Schultz on 10/27/15.
-//  Copyright © 2015 MyKo. All rights reserved.
+//  Created by Myles Schultz on 1/30/16.
+//  Copyright © 2016 MyKo. All rights reserved.
 //
-//  Ver. 2:  Initial implementation of user interaction to move through
-//           the 3D world.  AWSD keys move the camera position along the
-//           x, r, and z planes while mouse movement re-oritents the
-//           camera direction.
+//  Ver. 3:  Camera controlls have been redirected to a SwiftCamera
+//           instance held by the view.
 //
-
 
 import Cocoa
 
-
 class ViewController: NSViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
+        
     }
-
+    
     override var representedObject: AnyObject? {
         didSet {
-        // Update the view, if already loaded.
+            // Update the view, if already loaded.
         }
     }
     
@@ -33,12 +30,12 @@ class ViewController: NSViewController {
         
         if let view = self.view.subviews[0] as? SwiftOpenGLView {
             
-            if let keyName = SwiftOpenGLView.KeyCodeName(rawValue: theEvent.keyCode) {
+            if let keyName = SwiftCamera.KeyCodeName(rawValue: theEvent.keyCode) {
                 
-                if view.directionKeys[keyName] != true {
+                if view.camera.directionKeys[keyName] != true {
                     
-                    view.directionKeys[keyName] = true
-                
+                    view.camera.directionKeys[keyName] = true
+                    
                 }
                 
             }
@@ -46,29 +43,29 @@ class ViewController: NSViewController {
         } else { super.keyDown(theEvent) }
         
     }
+
     override func keyUp(theEvent: NSEvent) {
         
         if let view = self.view.subviews[0] as? SwiftOpenGLView {
             
-            if let keyName = SwiftOpenGLView.KeyCodeName(rawValue: theEvent.keyCode) {
+            if let keyName = SwiftCamera.KeyCodeName(rawValue: theEvent.keyCode) {
                 
-                view.directionKeys[keyName] = false
+                view.camera.directionKeys[keyName] = false
                 
             }
             
         } else { super.keyUp(theEvent) }
         
     }
-    
+
     override func mouseDragged(theEvent: NSEvent) {
         
         if let view = self.view.subviews[0] as? SwiftOpenGLView {
             
-            view.rotateCamera(pitch: Float(theEvent.deltaY), yaw: Float(theEvent.deltaX))
+            view.camera.rotateCamera(pitch: Float(theEvent.deltaY), yaw: Float(theEvent.deltaX))
             
         }
         
     }
-
+    
 }
-
