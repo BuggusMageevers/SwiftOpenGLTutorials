@@ -81,6 +81,8 @@ func displayLinkOutputCallback(displayLink: CVDisplayLink, _ inNow: UnsafePointe
     //
     //      framesPerSecondConstant = videoTimeScale / videoRefreshPeriod
     
+    
+    //  Time in DD:HH:mm:ss using hostTime
     let rootTotalSeconds = inNow.memory.hostTime
     let rootDays = inNow.memory.hostTime / (1_000_000_000 * 60 * 60 * 24) % 365
     let rootHours = inNow.memory.hostTime / (1_000_000_000 * 60 * 60) % 24
@@ -88,6 +90,7 @@ func displayLinkOutputCallback(displayLink: CVDisplayLink, _ inNow: UnsafePointe
     let rootSeconds = inNow.memory.hostTime / 1_000_000_000 % 60
     Swift.print("rootTotalSeconds: \(rootTotalSeconds) rootDays: \(rootDays) rootHours: \(rootHours) rootMinutes: \(rootMinutes) rootSeconds: \(rootSeconds)")
     
+    //  Time in DD:HH:mm:ss using videoTime
     let totalSeconds = inNow.memory.videoTime / Int64(inNow.memory.videoTimeScale)
     let days = (totalSeconds / (60 * 60 * 24)) % 365
     let hours = (totalSeconds / (60 * 60)) % 24
