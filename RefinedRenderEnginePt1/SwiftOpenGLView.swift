@@ -47,7 +47,7 @@ final class SwiftOpenGLView: NSOpenGLView {
             return
         }
         self.pixelFormat = pixelFormat
-        guard let context = NSOpenGLContext(format: pixelFormat, shareContext: NSOpenGLContext()) else {
+        guard let context = NSOpenGLContext(format: pixelFormat, shareContext: nil) else {
             Swift.print("context could not be constructed")
             return
         }
@@ -69,6 +69,8 @@ final class SwiftOpenGLView: NSOpenGLView {
                  0.0,  1.0,  0.0, 1.0, 0.0,  1.0, 0.0,   0.0,  1.0, 0.0001,
                  1.0, -1.0,  0.0, 0.0, 1.0,  2.0, 2.0,   1.0, -1.0, 0.0001]
         
+        //  Replace the previous monolith of code with our new types.
+        
         tbo = SwiftTBO(fileName: "Texture")
                 
         vbo = SwiftVBO(data: data)
@@ -87,8 +89,6 @@ final class SwiftOpenGLView: NSOpenGLView {
         
         renderLoop = RenderLoop(forView: self)
         renderLoop.start()
-        
-        drawView()
         
     }
     
@@ -111,6 +111,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         context.makeCurrentContext()
         CGLLockContext(context.CGLContextObj)
         
+        //  Use RenderLoop instead of CACurrentMediaTime()
         let value = Float(sin(renderLoop.currentTime))
         
         camera.updateViewMatrixFor(renderLoop.deltaTime)
@@ -146,4 +147,3 @@ final class SwiftOpenGLView: NSOpenGLView {
     }
     
 }
-

@@ -28,7 +28,8 @@ struct SwiftCamera: OpenGLUniformObject {
     var view = Matrix4()
     var projection = Matrix4()
     
-    private var previousTime = CFTimeInterval()
+    //  Not needed once RenderLoop is implemented
+//    private var previousTime = CFTimeInterval()
     
     
     init() {  }
@@ -42,6 +43,9 @@ struct SwiftCamera: OpenGLUniformObject {
     
     
     mutating func updateViewMatrixFor(time: CFTimeInterval) {
+        
+        //  Not needed after RenderLoop is implemented.
+//        let amplitude = 10 * Float(time - previousTime)
         
         let amplitude = 10 * Float(time)
         
@@ -83,7 +87,8 @@ struct SwiftCamera: OpenGLUniformObject {
         view = Matrix4().rotateAlongXAxis(cameraOrientation.v0).rotateAlongYAxis(cameraOrientation.v1).translate(x: cameraPosition.v0, y: cameraPosition.v1, z: cameraPosition.v2)
         
         //  Update previousTime regardless so delta time is appropriately calculated between frames.
-        previousTime = time
+        //  Not needed once RenderLoop is implmented.
+//        previousTime = time
         
     }
     
