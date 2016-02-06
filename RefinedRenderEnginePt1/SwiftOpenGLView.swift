@@ -21,11 +21,11 @@ final class SwiftOpenGLView: NSOpenGLView {
     private var vbo: SwiftVBO!
     private var tbo: SwiftTBO!
     
+    private var data = [GLfloat]()
+    
     private var light = SwiftLight()
     
     var camera = SwiftCamera()
-    
-    private var data = [GLfloat]()
     
     var renderLoop: RenderLoop!
     

@@ -8,7 +8,7 @@
 
 
 import Foundation
-import Quartz
+import QuartzCore.CVDisplayLink
 
 
 func displayLinkOutputCallback(displayLink: CVDisplayLink, _ inNow: UnsafePointer<CVTimeStamp>, _ inOutputTime: UnsafePointer<CVTimeStamp>, _ flagsIn: CVOptionFlags, _ flagsOut: UnsafeMutablePointer<CVOptionFlags>, _ displayLinkContext: UnsafeMutablePointer<Void>) -> CVReturn {
@@ -81,7 +81,6 @@ func displayLinkOutputCallback(displayLink: CVDisplayLink, _ inNow: UnsafePointe
     //
     //      framesPerSecondConstant = videoTimeScale / videoRefreshPeriod
     
-    
     //  Time in DD:HH:mm:ss using hostTime
     let rootTotalSeconds = inNow.memory.hostTime
     let rootDays = inNow.memory.hostTime / (1_000_000_000 * 60 * 60 * 24) % 365
@@ -111,7 +110,7 @@ func displayLinkOutputCallback(displayLink: CVDisplayLink, _ inNow: UnsafePointe
 
 struct RenderLoop {
     
-    var link: CVDisplayLink?
+    private var link: CVDisplayLink?
     
     var currentTime = Double() {
         willSet {
