@@ -1,8 +1,8 @@
 //
 //  AppDelegate.swift
-//  OnTheMove
+//  OpenGLMVCPt1
 //
-//  Created by Myles Schultz on 1/30/16.
+//  Created by Myles Schultz on 9/30/16.
 //  Copyright © 2016 MyKo. All rights reserved.
 //
 

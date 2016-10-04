@@ -14,15 +14,15 @@ import OpenGL.GL3
 
 final class SwiftOpenGLView: NSOpenGLView {
     
-    private var programID: GLuint = 0
-    private var vaoID: GLuint = 0
-    private var vboID: GLuint = 0
-    private var tboID: GLuint = 0
+    fileprivate var programID: GLuint = 0
+    fileprivate var vaoID: GLuint = 0
+    fileprivate var vboID: GLuint = 0
+    fileprivate var tboID: GLuint = 0
     
-    private var data = [GLfloat]()
+    fileprivate var data = [GLfloat]()
     
     //  The CVDisplayLink for animating.  Optional value initialized to nil.
-    private var displayLink: CVDisplayLink?
+    fileprivate var displayLink: CVDisplayLink?
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
@@ -41,14 +41,14 @@ final class SwiftOpenGLView: NSOpenGLView {
             return
         }
         self.pixelFormat = pixelFormat
-        guard let context = NSOpenGLContext(format: pixelFormat, shareContext: nil) else {
+        guard let context = NSOpenGLContext(format: pixelFormat, share: nil) else {
             Swift.print("context could not be constructed")
             return
         }
         self.openGLContext = context
         
         //  Set the context's swap interval parameter to 60Hz (i.e. 1 frame per swamp)
-        self.openGLContext?.setValues([1], forParameter: .GLCPSwapInterval)
+        self.openGLContext?.setValues([1], for: .swapInterval)
         
     }
     
@@ -65,16 +65,16 @@ final class SwiftOpenGLView: NSOpenGLView {
                  0.0,  1.0,  0.0, 1.0, 0.0,  1.0, 0.0,   0.0,  1.0, 0.0001,
                  1.0, -1.0,  0.0, 0.0, 1.0,  2.0, 2.0,   1.0, -1.0, 0.0001]
         
-        let fileURL = NSBundle.mainBundle().URLForResource("Texture", withExtension: "png")
+        let fileURL = Bundle.main.url(forResource: "Texture", withExtension: "png")
         
-        let dataProvider = CGDataProviderCreateWithURL(fileURL)
-        let image = CGImageCreateWithPNGDataProvider(dataProvider, nil, false, CGColorRenderingIntent.RenderingIntentDefault)
+        let dataProvider = CGDataProvider(url: fileURL as! CFURL)
+        let image = CGImage(pngDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: false, intent: CGColorRenderingIntent.defaultIntent)
         
-        let textureData = UnsafeMutablePointer<Void>(malloc(256 * 4 * 256))
+        let textureData = UnsafeMutableRawPointer.allocate(bytes: 256 * 4 * 256, alignedTo: MemoryLayout<GLint>.alignment)
         
-        let context = CGBitmapContextCreate(textureData, 256, 256, 8, 4 * 256, CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB),  CGImageAlphaInfo.PremultipliedLast.rawValue)
+        let context = CGContext(data: textureData, width: 256, height: 256, bitsPerComponent: 8, bytesPerRow: 4 * 256, space: CGColorSpace(name: CGColorSpace.genericRGBLinear)!,  bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
         
-        CGContextDrawImage(context, CGRectMake(0.0, 0.0, 256.0, 256.0), image)
+        context?.draw(image!, in: CGRect(x: 0.0, y: 0.0, width: 256.0, height: 256.0))
         
         glGenTextures(1, &tboID)
         glBindTexture(GLenum(GL_TEXTURE_2D), tboID)
@@ -90,7 +90,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         
         glGenBuffers(1, &vboID)
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), vboID)
-        glBufferData(GLenum(GL_ARRAY_BUFFER), data.count * sizeof(GLfloat), data, GLenum(GL_STATIC_DRAW))
+        glBufferData(GLenum(GL_ARRAY_BUFFER), data.count * MemoryLayout<GLfloat>.size, data, GLenum(GL_STATIC_DRAW))
         
         glGenVertexArrays(1, &vaoID)
         glBindVertexArray(vaoID)
@@ -127,28 +127,24 @@ final class SwiftOpenGLView: NSOpenGLView {
             "     passTexturePosition = texturePosition;    \n" +
             "     passNormal = normal;                      \n" +
         "}                                              \n"
-        if let vss = source.cStringUsingEncoding(NSASCIIStringEncoding) {
-            var vssptr = UnsafePointer<GLchar>(vss)
-            glShaderSource(vs, 1, &vssptr, nil)
-            glCompileShader(vs)
-            var compiled: GLint = 0
-            glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled)
-            if compiled <= 0 {
-                Swift.print("Could not compile vertex, getting log")
-                var logLength: GLint = 0
-                glGetShaderiv(vs, GLenum(GL_INFO_LOG_LENGTH), &logLength)
-                Swift.print(" logLength = \(logLength)")
-                if logLength > 0 {
-                    let cLog = UnsafeMutablePointer<CChar>(malloc(Int(logLength)))
-                    glGetShaderInfoLog(vs, GLsizei(logLength), &logLength, cLog)
-                    if let log = String(CString: cLog, encoding: NSASCIIStringEncoding) {
-                        Swift.print("log = \(log)")
-                        free(cLog)
-                    }
-                }
+        let vss = source.cString(using: String.Encoding.ascii)
+        var vssptr = UnsafePointer<GLchar>(vss)
+        glShaderSource(vs, 1, &vssptr, nil)
+        glCompileShader(vs)
+        var compiled: GLint = 0
+        glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled)
+        if compiled <= 0 {
+            Swift.print("Could not compile vertex, getting log")
+            var logLength: GLint = 0
+            glGetShaderiv(vs, GLenum(GL_INFO_LOG_LENGTH), &logLength)
+            Swift.print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<GLchar>.allocate(capacity: Int(logLength))
+                glGetShaderInfoLog(vs, GLsizei(logLength), &logLength, cLog)
+                Swift.print(" log = \n\t\(String.init(cString: cLog))")
+                free(cLog)
             }
         }
-        
         
         let fs = glCreateShader(GLenum(GL_FRAGMENT_SHADER))
         source = "#version 330 core                                                                                     \n" +
@@ -178,26 +174,23 @@ final class SwiftOpenGLView: NSOpenGLView {
             "     vec3 surface = texture(sample, passTexturePosition).rgb * passColor;                                  \n" +
             "     vec3 rgb = surface * light;                                                                           \n" +
             "     outColor = vec4(rgb, 1.0);                                                                            \n" +
-        "}                                                                                                          \n"
-        if let fss = source.cStringUsingEncoding(NSASCIIStringEncoding) {
-            var fssptr = UnsafePointer<GLchar>(fss)
-            glShaderSource(fs, 1, &fssptr, nil)
-            glCompileShader(fs)
-            var compiled: GLint = 0
-            glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled)
-            if compiled <= 0 {
-                Swift.print("Could not compile fragement, getting log")
-                var logLength: GLint = 0
-                glGetShaderiv(fs, GLbitfield(GL_INFO_LOG_LENGTH), &logLength)
-                Swift.print(" logLength = \(logLength)")
-                if logLength > 0 {
-                    let cLog = UnsafeMutablePointer<CChar>(malloc(Int(logLength)))
-                    glGetShaderInfoLog(fs, GLsizei(logLength), &logLength, cLog)
-                    if let log = String(CString: cLog, encoding: NSASCIIStringEncoding) {
-                        Swift.print("log = \(log)")
-                        free(cLog)
-                    }
-                }
+            "}                                                                                                          \n"
+        let fss = source.cString(using: String.Encoding.ascii)
+        var fssptr = UnsafePointer<GLchar>(fss)
+        glShaderSource(fs, 1, &fssptr, nil)
+        glCompileShader(fs)
+        compiled = 0
+        glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled)
+        if compiled <= 0 {
+            Swift.print("Could not compile fragement, getting log")
+            var logLength: GLint = 0
+            glGetShaderiv(fs, GLbitfield(GL_INFO_LOG_LENGTH), &logLength)
+            Swift.print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<GLchar>.allocate(capacity: Int(logLength))
+                glGetShaderInfoLog(fs, GLsizei(logLength), &logLength, cLog)
+                Swift.print(" log = \n\t\(String.init(cString: cLog))")
+                free(cLog)
             }
         }
         
@@ -212,11 +205,9 @@ final class SwiftOpenGLView: NSOpenGLView {
             glGetProgramiv(programID, UInt32(GL_INFO_LOG_LENGTH), &logLength)
             Swift.print(" logLength = \(logLength)")
             if logLength > 0 {
-                let cLog = UnsafeMutablePointer<CChar>(malloc(Int(logLength)))
+                let cLog = UnsafeMutablePointer<GLchar>.allocate(capacity: Int(logLength))
                 glGetProgramInfoLog(programID, GLsizei(logLength), &logLength, cLog)
-                if let log = String(CString: cLog, encoding: NSASCIIStringEncoding) {
-                    Swift.print("log: \(log)")
-                }
+                Swift.print(" log: \n\t\(String.init(cString: cLog))")
                 free(cLog)
             }
         }
@@ -236,35 +227,34 @@ final class SwiftOpenGLView: NSOpenGLView {
         glUniform1f(glGetUniformLocation(programID, "light.specStrength"), 1.0)
         glUniform1f(glGetUniformLocation(programID, "light.specHardness"), 32)
         
-        //  Set up the CVDisplayLink not that the pipeline is defined.
-        //
-        //  The following code was developed in response to personal endeavor as well as an answer to 
-        //  a stackoverflow question that I initially answered before the CFunctionPointer worked.
-        //  We'll cover the Swift/Obj-C/C implementation I developed for the same answer next time.
-        //  I feel it is still worthwhile should you require briding between Obj-C and Swift.
-        //
-        //  The callback function is called everytime CVDisplayLink says its time to get a new frame.
-        func displayLinkOutputCallback(displayLink: CVDisplayLink, _ inNow: UnsafePointer<CVTimeStamp>, _ inOutputTime: UnsafePointer<CVTimeStamp>, _ flagsIn: CVOptionFlags, _ flagsOut: UnsafeMutablePointer<CVOptionFlags>, _ displayLinkContext: UnsafeMutablePointer<Void>) -> CVReturn {
+        /*  Now that the OpenGL pipeline is defined, declare a callback for our CVDisplayLink.
+            There are three ways to do this:  declare a function, declare a computed property,
+            or pass in a closure to CVDisplayLinkSetOutputCallback().  Using each requires
+            subtle changes in the CVDisplayLinkSetOutputCallback()'s argument list.
+         */
+        let displayLinkOutputCallback: CVDisplayLinkOutputCallback = {(displayLink: CVDisplayLink, inNow: UnsafePointer<CVTimeStamp>, inOutputTime: UnsafePointer<CVTimeStamp>, flagsIn: CVOptionFlags, flagsOut: UnsafeMutablePointer<CVOptionFlags>, displayLinkContext: UnsafeMutableRawPointer?) -> CVReturn in
             
-            /*  The displayLinkContext is CVDisplayLink's parameter definition of the view in which we are working.
-            In order to access the methods of a given view we need to specify what kind of view it is as right
-            now the UnsafeMutablePointer<Void> just means we have a pointer to "something".  To cast the pointer
-            such that the compiler at runtime can access the methods associated with our SwiftOpenGLView, we use
-            an unsafeBitCast.  The definition of which states, "Returns the the bits of x, interpreted as having
-            type U."  We may then call any of that view's methods.  Here we call drawView() which we draw a
-            frame for rendering.  */
-            unsafeBitCast(displayLinkContext, SwiftOpenGLView.self).drawView()
+            /*  The displayLinkContext in CVDisplayLinkOutputCallback's parameter list is the
+                view being driven by the CVDisplayLink.  In order to use the context as an
+                instance of SwiftOpenGLView (which has our drawView() method).  We need to use
+                unsafeBitCast() to cast this context as a SwiftOpenGLView.
+             */
+            unsafeBitCast(displayLinkContext, to: SwiftOpenGLView.self).drawView()
             
-            //  We are going to assume that everything went well for this mock up, and pass success as the CVReturn
+            //  We are going to assume that everything went well, and success as the CVReturn
             return kCVReturnSuccess
         }
         
-        //  Grab the a link to the active displays, set the callback defined above, and start the link.
-        /*  An alternative to a nested function is a global function or a closure passed as the argument--a local function
-        (i.e. a function defined within the class) is NOT allowed. */
-        //  The UnsafeMutablePointer<Void>(unsafeAddressOf(self)) passes a pointer to the instance of our class.
+        /*  Grab the a link to the active displays, set the callback defined above, and start
+            the link.  An alternative to a nested function is a global function or a closure
+            passed as the argument--a local function (i.e. a function defined within the
+            class) is NOT allowed.  The
+            UnsafeMutableRawPointer(unmanaged.passUnretained(self).toOpaque()) passes a
+            pointer to an instance of SwiftOpenGLView.  UnsafeMutableRawPointer is a new type
+            Swift 3.0 that
+        */
         CVDisplayLinkCreateWithActiveCGDisplays(&displayLink)
-        CVDisplayLinkSetOutputCallback(displayLink!, displayLinkOutputCallback, UnsafeMutablePointer<Void>(unsafeAddressOf(self)))
+        CVDisplayLinkSetOutputCallback(displayLink!, displayLinkOutputCallback, UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()))
         CVDisplayLinkStart(displayLink!)
         
         //  Test render
@@ -272,8 +262,8 @@ final class SwiftOpenGLView: NSOpenGLView {
         
     }
     
-    override func drawRect(dirtyRect: NSRect) {
-        super.drawRect(dirtyRect)
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
         
         // Drawing code here.
         
@@ -281,7 +271,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         
     }
     
-    private func drawView() {
+    fileprivate func drawView() {
         
         //  Grab a context, make it the active context for drawing, and then lock the focus
         //  before making OpenGL calls that change state or data within objects.
@@ -292,7 +282,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         }
         
         context.makeCurrentContext()
-        CGLLockContext(context.CGLContextObj)
+        CGLLockContext(context.cglContextObj!)
         
         //  To make the animation visible, we'll change the background color over time.
         //  CACurrentMediaTime() returns the amount of time since the app started.
@@ -312,8 +302,8 @@ final class SwiftOpenGLView: NSOpenGLView {
         glBindVertexArray(0)
         
         //  glFlush() is replaced with CGLFlushDrawable() and swaps the buffer being displayed
-        CGLFlushDrawable(context.CGLContextObj)
-        CGLUnlockContext(context.CGLContextObj)
+        CGLFlushDrawable(context.cglContextObj!)
+        CGLUnlockContext(context.cglContextObj!)
     }
     
     deinit {

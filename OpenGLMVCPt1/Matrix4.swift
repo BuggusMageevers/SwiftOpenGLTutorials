@@ -53,7 +53,7 @@ struct Matrix4: CustomStringConvertible, Hashable {
         return "| \(m00) | \(m01) | \(m02) | \(m03) |\n|" +
             "\(m10) | \(m11) | \(m12) | \(m13) |\n|" +
             "\(m20) | \(m21) | \(m22) | \(m23) |\n|" +
-        "\(m30) | \(m31) | \(m32) | \(m33) |"
+            "\(m30) | \(m31) | \(m32) | \(m33) |"
     }
     var hashValue: Int {
         return description.hashValue
@@ -192,7 +192,7 @@ struct Matrix4: CustomStringConvertible, Hashable {
         
     }
     
-    func translate(x x: Float, y: Float, z: Float) -> Matrix4 {
+    func translate(x: Float, y: Float, z: Float) -> Matrix4 {
         
         var m = Matrix4()
         

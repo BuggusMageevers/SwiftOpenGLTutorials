@@ -10,4 +10,4 @@ Sequential OpenGL targets to be used as tutorials in learning OpenGL with Swift.
 07. PhongTriangle
 08. StartAnimating
 09. OnTheMove
-10. RefinedRenderEnginePt1
+10. OpenGLMVCPt1

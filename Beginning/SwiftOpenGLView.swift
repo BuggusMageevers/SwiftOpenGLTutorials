@@ -47,7 +47,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         self.pixelFormat = pixelFormat
         
         //  Create a context with our pixel format (we have no other context, so nil)
-        guard let context = NSOpenGLContext(format: pixelFormat, shareContext: nil) else {
+        guard let context = NSOpenGLContext(format: pixelFormat, share: nil) else {
             Swift.print("context could not be constructed")
             return
         }
@@ -69,8 +69,8 @@ final class SwiftOpenGLView: NSOpenGLView {
         drawView()
     }
     
-    override func drawRect(dirtyRect: NSRect) {
-        super.drawRect(dirtyRect)
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
         
         // Drawing code here.
         

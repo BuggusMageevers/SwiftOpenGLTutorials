@@ -13,9 +13,9 @@ import OpenGL.GL3
 
 final class SwiftOpenGLView: NSOpenGLView {
     
-    private var programID: GLuint = 0
-    private var vaoID: GLuint = 0
-    private var vboID: GLuint = 0
+    fileprivate var programID: GLuint = 0
+    fileprivate var vaoID: GLuint = 0
+    fileprivate var vboID: GLuint = 0
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
@@ -31,7 +31,7 @@ final class SwiftOpenGLView: NSOpenGLView {
             return
         }
         self.pixelFormat = pixelFormat
-        guard let context = NSOpenGLContext(format: pixelFormat, shareContext: nil) else {
+        guard let context = NSOpenGLContext(format: pixelFormat, share: nil) else {
             Swift.print("context could not be constructed")
             return
         }
@@ -56,7 +56,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         
         glGenBuffers(1, &vboID)
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), vboID)
-        glBufferData(GLenum(GL_ARRAY_BUFFER), data.count * sizeof(GLfloat), data, GLenum(GL_STATIC_DRAW))
+        glBufferData(GLenum(GL_ARRAY_BUFFER), data.count * MemoryLayout<GLfloat>.size, data, GLenum(GL_STATIC_DRAW))
         
         glGenVertexArrays(1, &vaoID)
         glBindVertexArray(vaoID)
@@ -112,25 +112,22 @@ final class SwiftOpenGLView: NSOpenGLView {
             "    gl_Position = vec4(position, 0.0, 1.0);   \n" +
             "    passColor = color;                        \n" +
             "}                                             \n"
-        if let vss = source.cStringUsingEncoding(NSASCIIStringEncoding) {
-            var vssptr = UnsafePointer<GLchar>(vss)
-            glShaderSource(vs, 1, &vssptr, nil)
-            glCompileShader(vs)
-            var compiled: GLint = 0
-            glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled)
-            if compiled <= 0 {
-                Swift.print("Could not compile vertex, getting log")
-                var logLength: GLint = 0
-                glGetShaderiv(vs, GLenum(GL_INFO_LOG_LENGTH), &logLength)
-                Swift.print(" logLength = \(logLength)")
-                if logLength > 0 {
-                    let cLog = UnsafeMutablePointer<CChar>(malloc(Int(logLength)))
-                    glGetShaderInfoLog(vs, GLsizei(logLength), &logLength, cLog)
-                    if let log = String(CString: cLog, encoding: NSASCIIStringEncoding) {
-                        Swift.print("log = \(log)")
-                        free(cLog)
-                    }
-                }
+        let vss = source.cString(using: String.Encoding.ascii)
+        var vssptr = UnsafePointer<GLchar>(vss)
+        glShaderSource(vs, 1, &vssptr, nil)
+        glCompileShader(vs)
+        var compiled: GLint = 0
+        glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled)
+        if compiled <= 0 {
+            Swift.print("Could not compile vertex, getting log")
+            var logLength: GLint = 0
+            glGetShaderiv(vs, GLenum(GL_INFO_LOG_LENGTH), &logLength)
+            Swift.print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
+                glGetShaderInfoLog(vs, GLsizei(logLength), &logLength, cLog)
+                Swift.print("log = \(String.init(cString: cLog))")
+                free(cLog)
             }
         }
         
@@ -149,25 +146,22 @@ final class SwiftOpenGLView: NSOpenGLView {
             "{                                      \n" +
             "    outColor = vec4(passColor, 1.0);   \n" +
             "}                                      \n"
-        if let fss = source.cStringUsingEncoding(NSASCIIStringEncoding) {
-            var fssptr = UnsafePointer<GLchar>(fss)
-            glShaderSource(fs, 1, &fssptr, nil)
-            glCompileShader(fs)
-            var compiled: GLint = 0
-            glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled)
-            if compiled <= 0 {
-                Swift.print("Could not compile fragement, getting log")
-                var logLength: GLint = 0
-                glGetShaderiv(fs, GLbitfield(GL_INFO_LOG_LENGTH), &logLength)
-                Swift.print(" logLength = \(logLength)")
-                if logLength > 0 {
-                    let cLog = UnsafeMutablePointer<CChar>(malloc(Int(logLength)))
-                    glGetShaderInfoLog(fs, GLsizei(logLength), &logLength, cLog)
-                    if let log = String(CString: cLog, encoding: NSASCIIStringEncoding) {
-                        Swift.print("log = \(log)")
-                        free(cLog)
-                    }
-                }
+        let fss = source.cString(using: String.Encoding.ascii)
+        var fssptr = UnsafePointer<GLchar>(fss)
+        glShaderSource(fs, 1, &fssptr, nil)
+        glCompileShader(fs)
+        compiled = 0
+        glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled)
+        if compiled <= 0 {
+            Swift.print("Could not compile fragement, getting log")
+            var logLength: GLint = 0
+            glGetShaderiv(fs, GLbitfield(GL_INFO_LOG_LENGTH), &logLength)
+            Swift.print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
+                glGetShaderInfoLog(fs, GLsizei(logLength), &logLength, cLog)
+                Swift.print("log = \(String.init(cString: cLog))")
+                free(cLog)
             }
         }
         
@@ -182,11 +176,9 @@ final class SwiftOpenGLView: NSOpenGLView {
             glGetProgramiv(programID, UInt32(GL_INFO_LOG_LENGTH), &logLength)
             Swift.print(" logLength = \(logLength)")
             if logLength > 0 {
-                let cLog = UnsafeMutablePointer<CChar>(malloc(Int(logLength)))
+                let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
                 glGetProgramInfoLog(programID, GLsizei(logLength), &logLength, cLog)
-                if let log = String(CString: cLog, encoding: NSASCIIStringEncoding) {
-                    Swift.print("log: \(log)")
-                }
+                Swift.print("log: \(String.init(cString: cLog))")
                 free(cLog)
             }
         }
@@ -198,8 +190,8 @@ final class SwiftOpenGLView: NSOpenGLView {
         
     }
     
-    override func drawRect(dirtyRect: NSRect) {
-        super.drawRect(dirtyRect)
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
         
         // Drawing code here.
         
@@ -207,7 +199,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         
     }
     
-    private func drawView() {
+    fileprivate func drawView() {
         
         glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
         

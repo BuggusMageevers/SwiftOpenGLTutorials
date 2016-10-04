@@ -13,10 +13,10 @@ import OpenGL.GL3
 
 final class SwiftOpenGLView: NSOpenGLView {
     
-    private var programID: GLuint = 0
-    private var vaoID: GLuint = 0
-    private var vboID: GLuint = 0
-    private var tboID: GLuint = 0
+    fileprivate var programID: GLuint = 0
+    fileprivate var vaoID: GLuint = 0
+    fileprivate var vboID: GLuint = 0
+    fileprivate var tboID: GLuint = 0
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
@@ -32,7 +32,7 @@ final class SwiftOpenGLView: NSOpenGLView {
             return
         }
         self.pixelFormat = pixelFormat
-        guard let context = NSOpenGLContext(format: pixelFormat, shareContext: nil) else {
+        guard let context = NSOpenGLContext(format: pixelFormat, share: nil) else {
             Swift.print("context could not be constructed")
             return
         }
@@ -67,28 +67,28 @@ final class SwiftOpenGLView: NSOpenGLView {
         //  Get the URL for the texture we added to the TextureTriangle file.
         //  The NSBundle is used to access files packaged with the app, URL's are preferred
         //  over paths
-        let fileURL = NSBundle.mainBundle().URLForResource("Texture", withExtension: "png")
+        let fileURL = Bundle.main.url(forResource: "Texture", withExtension: "png")
         
         //  To get the file's contents into the CGImage, we need a data provider
         //  The dataProvider is what actually writes the data into the the CGImage from the file
         //  The second parameter of our CGImageCreate function is for a decode
-        let dataProvider = CGDataProviderCreateWithURL(fileURL)
-        let image = CGImageCreateWithPNGDataProvider(dataProvider, nil, false, .RenderingIntentDefault)
+        let dataProvider = CGDataProvider(url: fileURL as! CFURL)
+        let image = CGImage(pngDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
         
         //  Declare a pointer to a collection of memory that will hold the texture data.
         //  If you don't use this step, you cannot access the data when you need it
         //  The space in memory must be allocated before we send it into our context
         //  we use malloc to reserve a space of memory 256 * 4 bytes wide (4 bytes, 8 bits
         //  each for r, g, b, and a for 256 pixels), and a height of 256
-        let textureData = UnsafeMutablePointer<Void>(malloc(256 * 4 * 256))
+        let textureData = UnsafeMutableRawPointer.allocate(bytes: 256 * 4 * 256, alignedTo: MemoryLayout<GLint>.alignment)
         
         //  create a context and pass in the textureData UnsafeMutablePointer as the storage location
         //  for the image data
-        let context = CGBitmapContextCreate(textureData, 256, 256, 8, 4 * 256, CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB), CGImageAlphaInfo.PremultipliedLast.rawValue)
+        let context = CGContext(data: textureData, width: 256, height: 256, bitsPerComponent: 8, bytesPerRow: 4 * 256, space: CGColorSpace(name: CGColorSpace.genericRGBLinear)!, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
         
         //  Draw the image into the context, this transfers the CGImage data into the
         //  CGContext
-        CGContextDrawImage(context, CGRectMake(0.0, 0.0, 256.0, 256.0), image)
+        context?.draw(image!, in: CGRect(x: 0.0, y: 0.0, width: 256.0, height: 256.0))
         
         //  Generate and bind a texture buffer object
         glGenTextures(1, &tboID)
@@ -124,7 +124,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         
         glGenBuffers(1, &vboID)
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), vboID)
-        glBufferData(GLenum(GL_ARRAY_BUFFER), data.count * sizeof(GLfloat), data, GLenum(GL_STATIC_DRAW))
+        glBufferData(GLenum(GL_ARRAY_BUFFER), data.count * MemoryLayout<GLfloat>.size, data, GLenum(GL_STATIC_DRAW))
         
         glGenVertexArrays(1, &vaoID)
         glBindVertexArray(vaoID)
@@ -168,25 +168,22 @@ final class SwiftOpenGLView: NSOpenGLView {
             "    passColor = color;                         \n" +
             "    passTexturePosition = texturePosition;     \n" +
             "}                                              \n"
-        if let vss = source.cStringUsingEncoding(NSASCIIStringEncoding) {
-            var vssptr = UnsafePointer<GLchar>(vss)
-            glShaderSource(vs, 1, &vssptr, nil)
-            glCompileShader(vs)
-            var compiled: GLint = 0
-            glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled)
-            if compiled <= 0 {
-                Swift.print("Could not compile vertex, getting log")
-                var logLength: GLint = 0
-                glGetShaderiv(vs, GLenum(GL_INFO_LOG_LENGTH), &logLength)
-                Swift.print(" logLength = \(logLength)")
-                if logLength > 0 {
-                    let cLog = UnsafeMutablePointer<CChar>(malloc(Int(logLength)))
-                    glGetShaderInfoLog(vs, GLsizei(logLength), &logLength, cLog)
-                    if let log = String(CString: cLog, encoding: NSASCIIStringEncoding) {
-                        Swift.print("log = \(log)")
-                        free(cLog)
-                    }
-                }
+        let vss = source.cString(using: String.Encoding.ascii)
+        var vssptr = UnsafePointer<GLchar>(vss)
+        glShaderSource(vs, 1, &vssptr, nil)
+        glCompileShader(vs)
+        var compiled: GLint = 0
+        glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled)
+        if compiled <= 0 {
+            Swift.print("Could not compile vertex, getting log")
+            var logLength: GLint = 0
+            glGetShaderiv(vs, GLenum(GL_INFO_LOG_LENGTH), &logLength)
+            Swift.print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<GLchar>.allocate(capacity: Int(logLength))
+                glGetShaderInfoLog(vs, GLsizei(logLength), &logLength, cLog)
+                Swift.print(" log = \n\t\(String.init(cString: cLog))")
+                free(cLog)
             }
         }
         
@@ -213,25 +210,22 @@ final class SwiftOpenGLView: NSOpenGLView {
             "{                                                                              \n" +
             "    outColor = texture(sample, passTexturePosition) * vec4(passColor, 1.0);    \n" +
             "}                                                                              \n"
-        if let fss = source.cStringUsingEncoding(NSASCIIStringEncoding) {
-            var fssptr = UnsafePointer<GLchar>(fss)
-            glShaderSource(fs, 1, &fssptr, nil)
-            glCompileShader(fs)
-            var compiled: GLint = 0
-            glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled)
-            if compiled <= 0 {
-                Swift.print("Could not compile fragement, getting log")
-                var logLength: GLint = 0
-                glGetShaderiv(fs, GLbitfield(GL_INFO_LOG_LENGTH), &logLength)
-                Swift.print(" logLength = \(logLength)")
-                if logLength > 0 {
-                    let cLog = UnsafeMutablePointer<CChar>(malloc(Int(logLength)))
-                    glGetShaderInfoLog(fs, GLsizei(logLength), &logLength, cLog)
-                    if let log = String(CString: cLog, encoding: NSASCIIStringEncoding) {
-                        Swift.print("log = \(log)")
-                        free(cLog)
-                    }
-                }
+        let fss = source.cString(using: String.Encoding.ascii)
+        var fssptr = UnsafePointer<GLchar>(fss)
+        glShaderSource(fs, 1, &fssptr, nil)
+        glCompileShader(fs)
+        compiled = 0
+        glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled)
+        if compiled <= 0 {
+            Swift.print("Could not compile fragement, getting log")
+            var logLength: GLint = 0
+            glGetShaderiv(fs, GLbitfield(GL_INFO_LOG_LENGTH), &logLength)
+            Swift.print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
+                glGetShaderInfoLog(fs, GLsizei(logLength), &logLength, cLog)
+                Swift.print(" log = \n\t\(String.init(cString: cLog))")
+                free(cLog)
             }
         }
         
@@ -246,11 +240,9 @@ final class SwiftOpenGLView: NSOpenGLView {
             glGetProgramiv(programID, UInt32(GL_INFO_LOG_LENGTH), &logLength)
             Swift.print(" logLength = \(logLength)")
             if logLength > 0 {
-                let cLog = UnsafeMutablePointer<CChar>(malloc(Int(logLength)))
+                let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
                 glGetProgramInfoLog(programID, GLsizei(logLength), &logLength, cLog)
-                if let log = String(CString: cLog, encoding: NSASCIIStringEncoding) {
-                    Swift.print("log: \(log)")
-                }
+                Swift.print("log: \(String.init(cString: cLog))")
                 free(cLog)
             }
         }
@@ -269,8 +261,8 @@ final class SwiftOpenGLView: NSOpenGLView {
         
     }
     
-    override func drawRect(dirtyRect: NSRect) {
-        super.drawRect(dirtyRect)
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
         
         // Drawing code here.
         
@@ -278,7 +270,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         
     }
     
-    private func drawView() {
+    fileprivate func drawView() {
         
         glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
         
