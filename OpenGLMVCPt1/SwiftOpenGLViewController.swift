@@ -5,6 +5,10 @@
 //  Created by Myles Schultz on 9/30/16.
 //  Copyright © 2016 MyKo. All rights reserved.
 //
+//  Ver 3:  First step in developing our app to be MVC compliant.  Uses
+//      an IBOutlet to reference the instance of SwiftOpenGLView we
+//      created in interface builder.
+//
 
 import Cocoa
 

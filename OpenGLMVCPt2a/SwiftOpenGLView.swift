@@ -2,12 +2,8 @@
 //  SwiftOpenGLView.swift
 //  SwiftOpenGL
 //
-//  Created by Myles Schultz on 9/30/16.
+//  Created by Myles Schultz on 10/5/16.
 //  Copyright © 2016 MyKo. All rights reserved.
-//
-//  Ver. 11:    Part 1 of MVC design.  Vector and Matrix related
-//      code removed to separate files.  This marks the first
-//      step in creating the model of the framework.
 //
 
 import Cocoa
@@ -38,8 +34,8 @@ final class SwiftOpenGLView: NSOpenGLView {
     fileprivate var view = Matrix4()
     fileprivate var projection = Matrix4()
     
-    //  The CVDisplayLink for animating.  Optional value initialized to nil.
-    fileprivate var displayLink: CVDisplayLink?
+    //  Delegate to drive the drawing loop
+    var renderLoop: RenderLoopDelegate?
     
     //  In order to recieve keyboard input, we need to enable the view to accept first responder status
     override var acceptsFirstResponder: Bool { return true }
@@ -160,8 +156,9 @@ final class SwiftOpenGLView: NSOpenGLView {
             if logLength > 0 {
                 let cLog = UnsafeMutablePointer<GLchar>.allocate(capacity: Int(logLength))
                 glGetShaderInfoLog(vs, GLsizei(logLength), &logLength, cLog)
-                Swift.print(" log = \n\t\(String.init(cString: cLog))")
-                free(cLog)
+                Swift.print(" log = \n\t\(String(cString: cLog))")
+                cLog.deinitialize()
+                cLog.deallocate(capacity: Int(logLength))
             }
         }
         
@@ -208,8 +205,9 @@ final class SwiftOpenGLView: NSOpenGLView {
             if logLength > 0 {
                 let cLog = UnsafeMutablePointer<GLchar>.allocate(capacity: Int(logLength))
                 glGetShaderInfoLog(fs, GLsizei(logLength), &logLength, cLog)
-                Swift.print(" log = \n\t\(String.init(cString: cLog))")
-                free(cLog)
+                Swift.print(" log = \n\t\(String(cString: cLog))")
+                cLog.deinitialize()
+                cLog.deallocate(capacity: Int(logLength))
             }
         }
         
@@ -227,7 +225,8 @@ final class SwiftOpenGLView: NSOpenGLView {
                 let cLog = UnsafeMutablePointer<GLchar>.allocate(capacity: Int(logLength))
                 glGetProgramInfoLog(programID, GLsizei(logLength), &logLength, cLog)
                 Swift.print(" log: \n\t\(String.init(cString:cLog))")
-                free(cLog)
+                cLog.deinitialize()
+                cLog.deallocate(capacity: Int(logLength))
             }
         }
         
@@ -251,15 +250,8 @@ final class SwiftOpenGLView: NSOpenGLView {
         
         drawView()
         
-        let displayLinkOutputCallback: CVDisplayLinkOutputCallback = {(displayLink: CVDisplayLink, inNow: UnsafePointer<CVTimeStamp>, inOutputTime: UnsafePointer<CVTimeStamp>, flagsIn: CVOptionFlags, flagsOut: UnsafeMutablePointer<CVOptionFlags>, displayLinkContext: UnsafeMutableRawPointer?) -> CVReturn in
-            unsafeBitCast(displayLinkContext, to: SwiftOpenGLView.self).drawView()
-            
-            return kCVReturnSuccess
-        }
-        
-        CVDisplayLinkCreateWithActiveCGDisplays(&displayLink)
-        CVDisplayLinkSetOutputCallback(displayLink!, displayLinkOutputCallback, UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()))
-        CVDisplayLinkStart(displayLink!)
+        renderLoop?.setup()
+        renderLoop?.start()
         
     }
     
@@ -339,7 +331,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         
     }
     
-    fileprivate func drawView() {
+    func drawView() {
         
         guard let context = self.openGLContext else {
             Swift.print("oops")
@@ -349,29 +341,35 @@ final class SwiftOpenGLView: NSOpenGLView {
         context.makeCurrentContext()
         CGLLockContext(context.cglContextObj!)
         
-        let time = CACurrentMediaTime()
+//        let mediaTime = CACurrentMediaTime()
         
-        let value = Float(sin(time))
-        
-        updateViewMatrix(atTime: time)
-        //  Update previousTime regardless so delta time is appropriately calculated between frames.
-        previousTime = time
-        
-        glClearColor(GLfloat(value), GLfloat(value), GLfloat(value), 1.0)
-        
-        glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
-        
-        glUseProgram(programID)
-        glBindVertexArray(vaoID)
-        
-        glUniform3fv(glGetUniformLocation(programID, "light.position"), 1, [value, 1.0, 0.5])
-        
-        glUniformMatrix4fv(glGetUniformLocation(programID, "view"), 1, GLboolean(GL_FALSE), view.asArray())
-        glUniformMatrix4fv(glGetUniformLocation(programID, "projection"), 1, GLboolean(GL_FALSE), projection.asArray())
-        
-        glDrawArrays(GLenum(GL_TRIANGLES), 0, 3)
-        
-        glBindVertexArray(0)
+        //  No longer required CACurrentMediaTime() once
+        //  RenderLoopDelegate has time calculations.
+        if let time = renderLoop?.currentTime {
+            
+            let value = Float(sin(time))
+            
+            updateViewMatrix(atTime: time)
+            //  Update previousTime regardless so delta time is appropriately calculated between frames.
+            previousTime = time
+            
+            glClearColor(GLfloat(value), GLfloat(value), GLfloat(value), 1.0)
+            
+            glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
+            
+            glUseProgram(programID)
+            glBindVertexArray(vaoID)
+            
+            glUniform3fv(glGetUniformLocation(programID, "light.position"), 1, [value, 1.0, 0.5])
+            
+            glUniformMatrix4fv(glGetUniformLocation(programID, "view"), 1, GLboolean(GL_FALSE), view.asArray())
+            glUniformMatrix4fv(glGetUniformLocation(programID, "projection"), 1, GLboolean(GL_FALSE), projection.asArray())
+            
+            glDrawArrays(GLenum(GL_TRIANGLES), 0, 3)
+            
+            glBindVertexArray(0)
+            
+        }
         
         CGLFlushDrawable(context.cglContextObj!)
         CGLUnlockContext(context.cglContextObj!)
@@ -379,7 +377,6 @@ final class SwiftOpenGLView: NSOpenGLView {
     }
     
     deinit {
-        CVDisplayLinkStop(displayLink!)
         glDeleteVertexArrays(1, &vaoID)
         glDeleteBuffers(1, &vboID)
         glDeleteProgram(programID)
