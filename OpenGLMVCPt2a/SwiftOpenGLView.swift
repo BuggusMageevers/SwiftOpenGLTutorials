@@ -257,44 +257,48 @@ final class SwiftOpenGLView: NSOpenGLView {
     
     func updateViewMatrix(atTime time: CFTimeInterval) {
         
-        let amplitude = 10 * Float(time - previousTime)
-        
-        //  Find new position
-        let directionX = (sin(cameraOrientation.v1) * cos(cameraOrientation.v2))
-        //  Moving off of the Y = 0 plane is as easy as adding the y values (instead of multiplying) them together,
-        //    otherwise looking up while moving forward does not affect the elevation of the viewer.  Give it a try.
-        //  In order to get the camera to pitch up when you look up, negate the y value
-        let directionY = -(sin(cameraOrientation.v0) + sin(cameraOrientation.v2))
-        let directionZ = (cos(cameraOrientation.v0) * cos(cameraOrientation.v1))
-        
-        //  Create a vector, normalize it, and apply the amplitude value
-        let displacement = Vector3(v0: directionX, v1: directionY, v2: directionZ).normalize() * amplitude
-        
-        //  For strafing, calculate the vector perpendicular to the current forward and up vectors by rotating
-        //    the normalized X vector (1.0, 0.0, 0.0) according to current orientation, then re-normalize
-        //    before applying the amplitude value
-        let rightVector = Matrix4().rotateAlongXAxis(radians: cameraOrientation.v0).rotateAlongYAxis(radians: cameraOrientation.v1).inverse() * Vector3(v0: 1.0, v1: 0.0, v2: 0.0)
-        
-        let strafe = rightVector.normalize() * amplitude
-        
-        for direction in directionKeys {
-            switch direction {
-            case (KeyCodeName.forward, true):
-                cameraPosition = Vector3(v0: cameraPosition.v0 + displacement.v0, v1: cameraPosition.v1 + displacement.v1, v2: cameraPosition.v2 + displacement.v2)
-            case (KeyCodeName.backward, true):
-                cameraPosition = Vector3(v0: cameraPosition.v0 + (-displacement.v0), v1: cameraPosition.v1 + (-displacement.v1), v2: cameraPosition.v2 + (-displacement.v2))
-            case (KeyCodeName.left, true):
-                cameraPosition = Vector3(v0: cameraPosition.v0 + strafe.v0, v1: cameraPosition.v1 + strafe.v1, v2: cameraPosition.v2 + strafe.v2)
-            case (KeyCodeName.right, true):
-                //  Strafing to the right is done with a negative strafe vector
-                cameraPosition = Vector3(v0: cameraPosition.v0 + -strafe.v0, v1: cameraPosition.v1 + -strafe.v1, v2: cameraPosition.v2 + -strafe.v2)
-            case (_, false):
-                //  Covers the over possible cases so we don't have to define a default case
-                break
+        if let deltaTime = renderLoop?.deltaTime {
+            
+            let amplitude = 10 * Float(deltaTime)
+            
+            //  Find new position
+            let directionX = (sin(cameraOrientation.v1) * cos(cameraOrientation.v2))
+            //  Moving off of the Y = 0 plane is as easy as adding the y values (instead of multiplying) them together,
+            //    otherwise looking up while moving forward does not affect the elevation of the viewer.  Give it a try.
+            //  In order to get the camera to pitch up when you look up, negate the y value
+            let directionY = -(sin(cameraOrientation.v0) + sin(cameraOrientation.v2))
+            let directionZ = (cos(cameraOrientation.v0) * cos(cameraOrientation.v1))
+            
+            //  Create a vector, normalize it, and apply the amplitude value
+            let displacement = Vector3(v0: directionX, v1: directionY, v2: directionZ).normalize() * amplitude
+            
+            //  For strafing, calculate the vector perpendicular to the current forward and up vectors by rotating
+            //    the normalized X vector (1.0, 0.0, 0.0) according to current orientation, then re-normalize
+            //    before applying the amplitude value
+            let rightVector = Matrix4().rotateAlongXAxis(radians: cameraOrientation.v0).rotateAlongYAxis(radians: cameraOrientation.v1).inverse() * Vector3(v0: 1.0, v1: 0.0, v2: 0.0)
+            
+            let strafe = rightVector.normalize() * amplitude
+            
+            for direction in directionKeys {
+                switch direction {
+                case (KeyCodeName.forward, true):
+                    cameraPosition = Vector3(v0: cameraPosition.v0 + displacement.v0, v1: cameraPosition.v1 + displacement.v1, v2: cameraPosition.v2 + displacement.v2)
+                case (KeyCodeName.backward, true):
+                    cameraPosition = Vector3(v0: cameraPosition.v0 + (-displacement.v0), v1: cameraPosition.v1 + (-displacement.v1), v2: cameraPosition.v2 + (-displacement.v2))
+                case (KeyCodeName.left, true):
+                    cameraPosition = Vector3(v0: cameraPosition.v0 + strafe.v0, v1: cameraPosition.v1 + strafe.v1, v2: cameraPosition.v2 + strafe.v2)
+                case (KeyCodeName.right, true):
+                    //  Strafing to the right is done with a negative strafe vector
+                    cameraPosition = Vector3(v0: cameraPosition.v0 + -strafe.v0, v1: cameraPosition.v1 + -strafe.v1, v2: cameraPosition.v2 + -strafe.v2)
+                case (_, false):
+                    //  Covers the over possible cases so we don't have to define a default case
+                    break
+                }
             }
-        }
+            
+            view = Matrix4().rotateAlongXAxis(radians: cameraOrientation.v0).rotateAlongYAxis(radians: cameraOrientation.v1).translate(x: cameraPosition.v0, y: cameraPosition.v1, z: cameraPosition.v2)
         
-        view = Matrix4().rotateAlongXAxis(radians: cameraOrientation.v0).rotateAlongYAxis(radians: cameraOrientation.v1).translate(x: cameraPosition.v0, y: cameraPosition.v1, z: cameraPosition.v2)
+        }
         
     }
     
@@ -351,7 +355,7 @@ final class SwiftOpenGLView: NSOpenGLView {
             
             updateViewMatrix(atTime: time)
             //  Update previousTime regardless so delta time is appropriately calculated between frames.
-            previousTime = time
+//            previousTime = time
             
             glClearColor(GLfloat(value), GLfloat(value), GLfloat(value), 1.0)
             
