@@ -6,7 +6,7 @@
 	list-style-type:none;
 )
 
-header, nave, article, section, footer, aside(
+header,nave,article,section,footer,aside(
 	display:block;
 )
 
