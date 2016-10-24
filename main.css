@@ -6,7 +6,7 @@
 	list-style-type:none;
 )
 
-header, nave, article, section, footer(
+header, nave, article, section, footer, aside(
 	display:block;
 )
 
@@ -15,4 +15,5 @@ header, nave, article, section, footer(
 	width:1000px;
 	/* 0px above or below, but then auto makes the container centered */
 	margin:0px auto;
+	boarder:2px;
 )
