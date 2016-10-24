@@ -1,19 +1,41 @@
+<!-- Declare the document type, we are using html -->
 <!DOCTYPE html>
+<!-- The <html> tag holds all the html data inside it.  There are two main tage that follow: <head> and <body> -->
 <html>
+	<!-- The head holds data specific to how the page is going to be styled.  This is where we pull in CSS code -->
 	<head>
-		<!--	Must include UTF-8 keyset -->
+		<!-- Use a <meta> tag to declare the keyset to be used in the site: we'll use UTF-8 -->
 		<meta charset="utf-8"/>
+		<!-- The <title> tage is used for the window title or tab title -->
 		<title> Under Construction </title>
+		<!-- Internal style sheets for holding CSS code.  If using more than one page, an external style sheet should be used -->
+		<style>
+			
+		</style>
 	</head>
-
+	<!-- The layout and content of the webpage is held within the <body> tag -->
 	<body>
-		<div>
+		<header>
+			<img src="proj_logo.png" alt="SwiftOpenGLTutorials Logo">
+			<!-- Navigation through the site -->
+			<nav>
+				<ul>
+					<li><a href="">Home</a></li>
+					<li><a href="">Tutorials</a></li>
+					<li><a href="">About</a></li>
+					<li><a href="">Contact</a></li>
+				</ul>
+			</nav>
+		</header>
+		<!-- The main page content lives in the section -->
+		<section>
 			<h1> Header 1 </h1>
 			<h2> Header 2 </h2>
 			<h3> Header 3 </h3>
 			<h4> Header 4 </h4>
 			<h5> Header 5 </h5>
 			<h6> Header 6 </h6>
+			<!-- The <div> and <span> tags are only useful when used with style sheets (CSS code) -->
 			<div>
 				<div>
 					<a href="https://github.com/00buggy00/SwiftOpenGLTutorials/blob/master/README.md"> the site </a>
@@ -23,6 +45,11 @@
 					</h1>
 				</div>
 			</div>
-		</div>
+		</section>
+		<aside>
+		</aside>
+		<footer>
+			&copy; 00buggy00 2016
+		</footer>
 	</body>
 </html>
