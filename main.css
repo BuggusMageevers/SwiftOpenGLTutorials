@@ -15,5 +15,5 @@ header,nave,article,section,footer,aside{
 	width:1000px;
 	/* 0px above or below, but then auto makes the container centered */
 	margin:0px auto;
-	border:2px dotted black;
+	border:2px solid black;
 }
