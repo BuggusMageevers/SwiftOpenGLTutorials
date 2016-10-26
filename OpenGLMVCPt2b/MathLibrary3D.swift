@@ -8,7 +8,7 @@
 
 import Foundation
 import OpenGL.GL3
-
+//
 
 //  MARK: - Vector3
 func ==(lhs: Vector3, rhs: Vector3) -> Bool {
