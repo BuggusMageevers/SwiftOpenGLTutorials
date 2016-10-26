@@ -1,72 +1,49 @@
 /*  main.css */
 
-* {
+html {
     font-family:'Oxygen', sans-serif;
+}
+body {
     margin:0px;
+    padding:0px;
 }
 
-.flex_container {
-    height:250px;
+/* Classes with a space in HTML are multiple classes and listed using '.' in CSS */
+.flex.container {
+    height:80px;
     background:blue;
 }
 
-.top_nav {
-    width:35%;
-    height:60px;
-    background:#333333;
-}
-
-section {
-    width:80%;
-    background:orange;
-}
-article {
-    background:green;
+.top.navigation {
+    height:40px;
+    /*blue color */
+    background:#004bff;
 }
 header {
     width:100%;
     background:yellow;
 }
 footer {
-    background:purple;
-}
-
-nav ul {
-    padding:0px;
-    list-style-type:none;
-    /*box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
-}
-nav a{
-    display:block;
-    font-size:30px;
-    text-decoration:none;
-    text-align:center;
-    color:darkgrey;
-}
-
-
-h1 {
-    font-size:36px;
-    font-style:bold;
-}
-
-h2 {
-    font-size:24px;
-    font
+    /* grey color text */
+    color:#ececec;
+    /* dark grey */
+    background:#4f4f4f;
 }
 
 /*  For devices using flexbox   */
 @media screen and (min-width:768px) {
-    header.flex_container {
+    header.flex.container {
         display:flex;
+        flex-wrap:wrap;
     }
-    nav.top_nav {
-        flex:1 0 0;
+    /* Invisible buffer box */
+    .buffer.box {
+        flex:1 0;
+        height:40px;
+        /* REMOVE ONCE LAYOUT FINISHED */
+        background-color:red;
     }
-    nav ul {
-        display:flex;
-    }
-    nav li {
-        flex:1 0 0;
+    nav.top.navigation {
+        flex:7 0;
     }
 }
