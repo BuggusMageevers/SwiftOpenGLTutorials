@@ -9,7 +9,7 @@
 import Cocoa
 import OpenGL.GL3
 
-//
+
 final class SwiftOpenGLView: NSOpenGLView {
     
     fileprivate var programID: GLuint = 0
