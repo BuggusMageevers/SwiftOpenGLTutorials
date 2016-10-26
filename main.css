@@ -1,0 +1,72 @@
+/*  main.css */
+
+* {
+    font-family:'Oxygen', sans-serif;
+    margin:0px;
+}
+
+.flex_container {
+    height:250px;
+    background:blue;
+}
+
+.top_nav {
+    width:35%;
+    height:60px;
+    background:#333333;
+}
+
+section {
+    width:80%;
+    background:orange;
+}
+article {
+    background:green;
+}
+header {
+    width:100%;
+    background:yellow;
+}
+footer {
+    background:purple;
+}
+
+nav ul {
+    padding:0px;
+    list-style-type:none;
+    /*box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
+}
+nav a{
+    display:block;
+    font-size:30px;
+    text-decoration:none;
+    text-align:center;
+    color:darkgrey;
+}
+
+
+h1 {
+    font-size:36px;
+    font-style:bold;
+}
+
+h2 {
+    font-size:24px;
+    font
+}
+
+/*  For devices using flexbox   */
+@media screen and (min-width:768px) {
+    header.flex_container {
+        display:flex;
+    }
+    nav.top_nav {
+        flex:1 0 0;
+    }
+    nav ul {
+        display:flex;
+    }
+    nav li {
+        flex:1 0 0;
+    }
+}
