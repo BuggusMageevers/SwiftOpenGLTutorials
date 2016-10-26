@@ -26,17 +26,25 @@
     <!-- The layout and content of the webpage is held within the <body> tag -->
     <body>
         <header>
+            <!-- Pushes page content below header so that no content is hidden with overflow-y enabled -->
             <div class="buffer top-bottom box"></div>
             <div class="flex ui container">
                 <div class="buffer box side"></div>
                 <!-- Navigation through the site -->
                 <nav class="top navigation">
-                    <img src="SwiftOpenGL Logo.png" alt="SwiftOpenGLTutorials Logo" class="logo"/>
+                    <div class="icon menu box">
+                        <i id="icon">
+                            <img src="SwiftOpenGL Logo.png" alt="SwiftOpenGLTutorials Logo"/>
+                        </i>
+                        <div class="menu button">
+                        </div>
+                    </div>
                 </nav>
                 <div class="buffer box side"></div>
             </div>
             <div class="buffer top-bottom box"></div>
         </header>
+        <!-- The main content of the site -->
         <section>
             <div class="section y-offset"></div>
             <div class="flex section container">

@@ -7,10 +7,17 @@ body {
     margin:0px;
     padding:0px;
     border:0px;
+    background:#ececec;
 }
 
 /* -- Header Styles -- */
 /* Classes with a space in HTML are multiple classes and listed using '.' in CSS */
+header {
+    /* Keep Header visible at all times. */
+    position:fixed;
+    width:100%;
+    background-color:#004bff;
+}
 .flex.ui.container {
     height:40px;
 }
@@ -31,18 +38,6 @@ body {
     width:100%;
     height:20px;
 }
-header {
-    /* Keep Header visible at all times. */
-    position:fixed;
-    width:100%;
-    background-color:#004bff;
-}
-.main.footer {
-    position:relative;
-    height:200px;
-    /* dark grey */
-    background:#4f4f4f;
-}
 
 /* -- Section styles -- */
 /* Place main content below instead of beneath header */
@@ -57,14 +52,7 @@ header {
 section {
     /* Allows content to scroll under the header */
     overflow-y:scroll;
-}
-section p {
-    margin:0px;
-    padding:0px;
-    word-wrap:break-word;
-}
-.section.side.buffer {
-    height:100px;
+    background:#ececec;
 }
 div.main.content.container {
     //box-shadow: -6px 10px 20px 0 rgba(0, 0, 0, 0.2), 6px 10px 20px 0 rgba(0, 0, 0, 0.2);
@@ -77,10 +65,20 @@ article {
     box-shadow: -6px 10px 20px 0 rgba(0, 0, 0, 0.2), 6px 10px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
+/* -- Footer Styles -- */
+.main.footer {
+    /* the partent of the copyright must have the position set to relative */
+    position:relative;
+    height:200px;
+    /* dark grey */
+    background:#4f4f4f;
+}
 .copyright {
+    /* Absolut positioning allows us position the copywrite at the bottom */
     position:absolute;
     left:0%;
     bottom:3%;
+    /* Must set the sidth to 100% so it spans the window width, then we set the text alignment to center */
     width:100%;
     
     /* grey color text */
