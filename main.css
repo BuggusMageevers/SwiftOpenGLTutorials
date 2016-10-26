@@ -1,0 +1,62 @@
+/*  main.css */
+
+* {
+    font-family:'Oxygen', sans-serif;
+    /*margin:0px;
+    padding:0px;*/
+}
+body {
+    margin:0px;
+}
+.main_container {
+    display:-webkit-flex;
+    display:flex;
+    width:100%;
+    height:250px;
+    background-color:blue;
+}
+
+.top_nav {
+    width:35%;
+    background-color:red;
+}
+
+section {
+    width:80%;
+    background-color:orange;
+}
+article {
+    background-color:green;
+}
+header {
+    width:100%;
+    background-color:yellow;
+}
+footer {
+    background-color:purple;
+}
+
+ul {
+    padding:0px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+li {
+    margin:0px;
+    padding:auto;
+    width:100%;
+    height:45px;
+    list-style-type:none;
+    text-align: center;
+    background-color:lightgrey;
+}
+
+
+h1 {
+    font-size:36px;
+    font-style:bold;
+}
+
+h2 {
+    font-size:24px;
+    font
+}
