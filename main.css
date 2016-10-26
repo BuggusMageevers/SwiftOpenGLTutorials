@@ -6,44 +6,109 @@ html {
 body {
     margin:0px;
     padding:0px;
+    border:0px;
 }
 
+/* -- Header Styles -- */
 /* Classes with a space in HTML are multiple classes and listed using '.' in CSS */
-.flex.container {
-    height:80px;
-    background:blue;
+.flex.ui.container {
+    height:40px;
 }
 
 .top.navigation {
     height:40px;
     /*blue color */
-    background:#004bff;
+    //background:#004bff;
+}
+
+/* Invisible buffer box */
+.buffer.box {
+    height:40px;
+    /* REMOVE ONCE LAYOUT FINISHED */
+    //background-color:#004bff;
+}
+.buffer.top-bottom.box {
+    width:100%;
+    height:20px;
 }
 header {
+    /* Keep Header visible at all times. */
+    position:fixed;
     width:100%;
-    background:yellow;
+    background-color:#004bff;
 }
-footer {
-    /* grey color text */
-    color:#ececec;
+.main.footer {
+    position:relative;
+    height:200px;
     /* dark grey */
     background:#4f4f4f;
 }
 
+/* -- Section styles -- */
+/* Place main content below instead of beneath header */
+.section.y-offset {
+    width:100%;
+    height:80px;
+}
+.section.side.buffer {
+    width:10%;
+    height:100%;
+}
+section {
+    /* Allows content to scroll under the header */
+    overflow-y:scroll;
+}
+section p {
+    margin:0px;
+    padding:0px;
+    word-wrap:break-word;
+}
+.section.side.buffer {
+    height:100px;
+}
+div.main.content.container {
+    //box-shadow: -6px 10px 20px 0 rgba(0, 0, 0, 0.2), 6px 10px 20px 0 rgba(0, 0, 0, 0.2);
+}
+.section.top-bottom.buffer {
+    height:15px;
+}
+article {
+    min-height: 50px;
+    box-shadow: -6px 10px 20px 0 rgba(0, 0, 0, 0.2), 6px 10px 20px 0 rgba(0, 0, 0, 0.2);
+}
+
+.copyright {
+    position:absolute;
+    left:0%;
+    bottom:3%;
+    width:100%;
+    
+    /* grey color text */
+    color:#ececec;
+    font-size:12px;
+    text-align:center;
+}
+
+
 /*  For devices using flexbox   */
 @media screen and (min-width:768px) {
-    header.flex.container {
+    .flex.ui.container {
+        /* No wrapping, this bar should be one live on all devices */
         display:flex;
-        flex-wrap:wrap;
     }
-    /* Invisible buffer box */
-    .buffer.box {
-        flex:1 0;
-        height:40px;
-        /* REMOVE ONCE LAYOUT FINISHED */
-        background-color:red;
+    .buffer.box.side {
+        flex:1 1 0;
     }
     nav.top.navigation {
-        flex:7 0;
+        flex:7 7 0;
+    }
+    .flex.section.container {
+        display:flex;
+    }
+    .section.side.buffer {
+        flex:1 1 0;
+    }
+    div.main.content.container {
+        flex:7 7 0;
     }
 }
