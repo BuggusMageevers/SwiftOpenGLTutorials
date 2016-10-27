@@ -9,24 +9,25 @@ body {
     border:0px;
     background:#ececec;
 }
+
+/* Foundation Flexbox Container */
 .flexbox.container {
+    width:100%;
+    /* 100% does not have the intended effect of stretching the container to the bottom of the screen and growing the flex items with it.  However, vh (vertical height) has the expected effect. */
     height:100vh;
-    background:purple;
 }
 .flexbox.header_container {
-    width:100%;
-    //height:80px;
-    background:red;
+    /* No size specific data required here to use flexbox */
+    /* If we explicitly state the header_container height here, the section_container will automatically be pushed to the bottom of the header_container
+    min-height:80px; */
 }
 .flexbox.section_container {
-    width:100%;
-    //height:100vh;
+    /* No size specific data required here to use flexbox */
+    /* However, the content in the section does not stretch to fit this container. */
     background:green;
 }
 .flexbox.footer_container {
-    width:100%;
-    //height:200px;
-    background:blue;
+    /* No size specific data required here to use flexbox */
 }
 
 /* -- Header Styles -- */
@@ -35,27 +36,18 @@ header {
     /* Keep Header visible at all times. */
     position:fixed;
     width:100%;
+    /* Blue Color */
     background-color:#004bff;
 }
 .flex.ui.container {
     height:40px;
 }
-
-.top.navigation {
-    height:40px;
-    /*blue color */
-    //background:#004bff;
-}
-
-/* Invisible buffer box */
-.buffer.box {
-    height:40px;
-    /* REMOVE ONCE LAYOUT FINISHED */
-    //background-color:#004bff;
-}
-.buffer.top-bottom.box {
+.header.top-bottom.buffer {
     width:100%;
     height:20px;
+}
+.top.navigation {
+    height:40px;
 }
 
 /* -- Section styles -- */
@@ -64,21 +56,26 @@ header {
     width:100%;
     height:80px;
 }
-.section.side.buffer {
-    width:10%;
-    height:100%;
-}
 section {
     /* Allows content to scroll under the header */
     overflow-y:scroll;
     background:#ececec;
 }
+.section.side.buffer {
+    width:10%;
+    height:100%;
+}
+.section.top.buffer {
+    height:15px;
+}
+.section.bottom.buffer {
+    min-height:15px;
+}
+
 div.main.content.container {
     //box-shadow: -6px 10px 20px 0 rgba(0, 0, 0, 0.2), 6px 10px 20px 0 rgba(0, 0, 0, 0.2);
 }
-.section.top-bottom.buffer {
-    height:15px;
-}
+
 article {
     min-height: 50px;
     box-shadow: -6px 10px 20px 0 rgba(0, 0, 0, 0.2), 6px 10px 20px 0 rgba(0, 0, 0, 0.2);
@@ -109,29 +106,40 @@ article {
 
 /*  For devices using flexbox   */
 @media screen and (min-width:768px) {
-    .flexbox container {
+    /* Base Flexbox */
+    .flexbox.container {
         display:flex;
+        /* Send the containers down instead of across the screen */
         flex-direction:column;
     }
     .flexbox.header_container {
+        /* Grow 0 Shrink 0 Basis 80 */
         flex:0 0 80px;
     }
     .flexbox.section_container {
-        flex:1 1;
+        /* Grow 1 Shrink 1 Basis 0 */
+        /* This container grows depending upon its content, but always fills the screen such that the footer_container's bottom edge is at the bottom edge of the screen */
+        flex:1 1 0;
     }
     .flexbox.footer_container {
+        /* Grow 0 shrink 0 basis 200 */
+        /* The basis be 0 and still work because there is nothing beneath the footer_container, but we declare it for completeness */
         flex:0 0 200px;
     }
+    
+    /* Header flexbox */
     .flex.ui.container {
         /* No wrapping, this bar should be one live on all devices */
         display:flex;
     }
-    .buffer.box.side {
+    .header.side.buffer {
         flex:1 1 0;
     }
     nav.top.navigation {
         flex:7 7 0;
     }
+    
+    /* Section flexbox */
     .flex.section.container {
         display:flex;
     }
