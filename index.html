@@ -15,53 +15,63 @@
             
         <!-- Site Specific information -->
         <!-- Describe the website and declare keywords to be used by search engines -->
-        <meta name="description" content="Sequential app targets for learning OpenGL with Swift" />
-        <meta name="keywords" content="Swift, OpenGL, tutorial, macOS, OS X, Apple, Xcode, app development" />
+        <meta name="description" content="Sequential app targets for learning OpenGL with Swift"/>
+        <meta name="keywords" content="Swift, OpenGL, tutorial, macOS, OS X, Apple, Xcode, app development"/>
         
         <!-- Internal style sheet for holding CSS code.  If using more than one page, an external style sheet should be used -->
         <link rel="stylesheet" href="main.css"/>
-        <link href="https://fonts.googleapis.com/css?family=Oxygen" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Oxygen:700" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Oxygen:400,700" rel="stylesheet">
     </head>
     <!-- The layout and content of the webpage is held within the <body> tag -->
     <body>
-        <header>
-            <!-- Pushes page content below header so that no content is hidden with overflow-y enabled -->
-            <div class="buffer top-bottom box"></div>
-            <div class="flex ui container">
-                <div class="buffer box side"></div>
-                <!-- Navigation through the site -->
-                <nav class="top navigation">
-                    <div class="icon menu box">
-                        <i id="icon">
-                            <img src="SwiftOpenGL Logo.png" alt="SwiftOpenGLTutorials Logo"/>
-                        </i>
-                        <div class="menu button">
-                        </div>
+        <!-- Flexbox to make sure site stretches top to bottom and
+         avoid having the base of the footer higher than the bottom
+         of the screen -->
+        <div class="flexbox container">
+            <div class="flexbox header_container">
+                <!-- <header>
+                    <!-- Pushes page content below header so that no content is hidden with overflow-y enabled
+                    <div class="buffer top-bottom box"></div>
+                    <div class="flex ui container">
+                        <div class="buffer box side"></div>
+                        <!-- Navigation through the site
+                        <nav class="top navigation">
+                            <div class="icon menu box">
+                                <i id="icon">
+                                    <img src="SwiftOpenGL Logo.png" alt="SwiftOpenGLTutorials Logo"/>
+                                </i>
+                                <div class="menu button">
+                                </div>
+                            </div>
+                       </nav>
+                        <div class="buffer box side"></div>
                     </div>
-                </nav>
-                <div class="buffer box side"></div>
+                    <div class="buffer top-bottom box"></div>
+                </header> -->
             </div>
-            <div class="buffer top-bottom box"></div>
-        </header>
-        <!-- The main content of the site -->
-        <section>
-            <div class="section y-offset"></div>
-            <div class="flex section container">
-                <div class="section side buffer"></div>
-                <div class="main content container">
-                    <div class="section top-bottom buffer"></div>
-                    <article class="main content">
+            <div class="flexbox section_container">
+                <!-- The main content of the site -->
+                <!-- <section>
+                    <div class="flex section container">
+                        <div class="section side buffer"></div>
+                        <div class="main content container">
+                            <div class="section top-bottom buffer"></div>
+                            <article class="main content">
+                                
+                            </article>
+                            <div class="section top-bottom buffer"></div>
+                        </div>
+                        <div class="section side buffer"></div>
                         
-                    </article>
-                    <div class="section top-bottom buffer"></div>
-                </div>
-                <div class="section side buffer"></div>
-                
+                    </div>
+                </section> -->
             </div>
-        </section>
-        <footer class="main footer">
-            <div class="copyright">&copy; 2016 00buggy00</div>
-        </footer>
+            <div class="flexbox footer_container">
+                <!-- <footer class="main footer">
+                    <div class="copyright">&copy; 2016 00buggy00</div>
+                </footer> -->
+            </div>
+        </div>
     </body>
+    <div style="width:100%; height:100%; background:red;"/>
 </html>
