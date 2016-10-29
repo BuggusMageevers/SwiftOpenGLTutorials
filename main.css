@@ -1,152 +1,139 @@
-/*  main.css */
-
 html {
-    font-family:'Oxygen', sans-serif;
+    font-family: 'Oxygen', sans-serif;
+    font-size: 12px;
 }
+h1 {
+    font-size: 36px;
+    margin: 0px;
+}
+h2 {
+    font-size: 24px;
+    margin: 0px;
+}
+/* The main flexbox.  Uses vertical distribution.
+ The min-height should be at least the height of
+ the screen, but must also stretch to accommodate
+ content used for display.  100vh MUST be used to
+ accomplish this as 100% only accounts the content
+ and not the screen. */
 body {
-    margin:0px;
-    padding:0px;
-    border:0px;
-    background:#ececec;
-}
-
-/* Foundation Flexbox Container */
-.flexbox.container {
-    width:100%;
-    /* 100% does not have the intended effect of stretching the container to the bottom of the screen and growing the flex items with it.  However, vh (vertical height) has the expected effect. */
-    height:100vh;
-}
-.flexbox.header_container {
-    /* No size specific data required here to use flexbox */
-    /* If we explicitly state the header_container height here, the section_container will automatically be pushed to the bottom of the header_container
-    min-height:80px; */
-}
-.flexbox.section_container {
-    /* No size specific data required here to use flexbox */
-    /* However, the content in the section does not stretch to fit this container. */
-    background:green;
-}
-.flexbox.footer_container {
-    /* No size specific data required here to use flexbox */
-}
-
-/* -- Header Styles -- */
-/* Classes with a space in HTML are multiple classes and listed using '.' in CSS */
-header {
-    /* Keep Header visible at all times. */
-    position:fixed;
-    width:100%;
-    /* Blue Color */
-    background-color:#004bff;
-}
-.flex.ui.container {
-    height:40px;
-}
-.header.top-bottom.buffer {
-    width:100%;
-    height:20px;
-}
-.top.navigation {
-    height:40px;
-}
-
-/* -- Section styles -- */
-/* Place main content below instead of beneath header */
-.section.y-offset {
-    width:100%;
-    height:80px;
-}
-section {
-    /* Allows content to scroll under the header */
-    overflow-y:scroll;
-    background:#ececec;
-}
-.section.side.buffer {
-    width:10%;
-    height:100%;
-}
-.section.top.buffer {
-    height:15px;
-}
-.section.bottom.buffer {
-    min-height:15px;
-}
-
-div.main.content.container {
-    //box-shadow: -6px 10px 20px 0 rgba(0, 0, 0, 0.2), 6px 10px 20px 0 rgba(0, 0, 0, 0.2);
-}
-
-article {
-    min-height: 50px;
-    box-shadow: -6px 10px 20px 0 rgba(0, 0, 0, 0.2), 6px 10px 20px 0 rgba(0, 0, 0, 0.2);
-}
-
-/* -- Footer Styles -- */
-.main.footer {
-    /* the partent of the copyright must have the position set to relative */
-    position:relative;
-    height:200px;
-    /* dark grey */
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     background:#4f4f4f;
 }
-.copyright {
-    /* Absolut positioning allows us position the copywrite at the bottom */
-    position:absolute;
-    left:0%;
-    bottom:3%;
-    /* Must set the sidth to 100% so it spans the window width, then we set the text alignment to center */
-    width:100%;
-    
-    /* grey color text */
-    color:#ececec;
-    font-size:12px;
-    text-align:center;
+/* The header is to remain at the top at all times,
+ but it is also a flex item.  The width and height
+ must be specified as using flex with position
+ eliminates the effects of flex.  position must be
+ used to keep the header at the top. */
+#header_container {
+    width: 100%;
+    height: 80px;
+    background: #004bff;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    /* shadow: x-position | y-position | blur-distance | spread | color */
+    box-shadow: 2px 0 8px 10px rgba(0, 0, 0, 0.2);
 }
-
-
-/*  For devices using flexbox   */
-@media screen and (min-width:768px) {
-    /* Base Flexbox */
-    .flexbox.container {
-        display:flex;
-        /* Send the containers down instead of across the screen */
-        flex-direction:column;
-    }
-    .flexbox.header_container {
-        /* Grow 0 Shrink 0 Basis 80 */
-        flex:0 0 80px;
-    }
-    .flexbox.section_container {
-        /* Grow 1 Shrink 1 Basis 0 */
-        /* This container grows depending upon its content, but always fills the screen such that the footer_container's bottom edge is at the bottom edge of the screen */
-        flex:1 1 0;
-    }
-    .flexbox.footer_container {
-        /* Grow 0 shrink 0 basis 200 */
-        /* The basis be 0 and still work because there is nothing beneath the footer_container, but we declare it for completeness */
-        flex:0 0 200px;
-    }
-    
-    /* Header flexbox */
-    .flex.ui.container {
-        /* No wrapping, this bar should be one live on all devices */
-        display:flex;
-    }
-    .header.side.buffer {
-        flex:1 1 0;
-    }
-    nav.top.navigation {
-        flex:7 7 0;
-    }
-    
-    /* Section flexbox */
-    .flex.section.container {
-        display:flex;
-    }
-    .section.side.buffer {
-        flex:1 1 0;
-    }
-    div.main.content.container {
-        flex:7 7 0;
-    }
+#nav_container {
+    flex: 7 7 0;
+    display: flex;
+}
+.nav_side_buffer {
+    flex: 1 1 0;
+}
+#main_nav {
+    flex: 7 7 0;
+    display: flex;
+}
+#nav_items {
+    display: flex;
+    justify-content: flex-start;
+}
+.nav_item {
+    flex: auto;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+li a {
+    text-decoration: none;
+    color: #ececec;
+    font-size: 18px;
+}
+/* holds the section and footer and allows these
+ tags to scroll under the header. */
+#scroll_container {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+/* pushes the section down from the header to keep
+ content visible.  Unlike the header, this item
+ may use flex because it does not use position. */
+.offset_y {
+    flex: 0 0 80px;
+    background: #ececec;
+}
+/* May contain any number of articles or other
+ content. */
+#section_container {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+}
+/* Contains all the articeles on the page. */
+#main_content {
+    flex: auto;;
+    display: flex;
+    flex-direction: column;
+    background: #ececec;
+}
+/* Ensures that each article is spaced from what
+ is above it.  This helps account for some of the
+ shadow effect use.  Every article_container must
+ be preceeded by a top_buffer to layout appropriately
+ for this site's style (Not a flexbox requirement). */
+.top_buffer {
+    flex: 0 0 20px;
+}
+/* An article may contain prose, but may also
+ contain it's own header or footer.  All articles
+ are placed here. */
+#article_container {
+    flex: 0 0 auto;
+    display: flex;
+}
+/* The bottom_buffer and side_buffers add to the
+ appearence of making the articale a card once shadow
+ is applied. */
+.bottom_buffer {
+    flex: 1 1 15px;
+}
+.side_buffer {
+    flex: 1 1 auto;
+}
+/* An article item - border-radius gives item
+ slightly rounded corners.  The box shadow brings
+ definition to the card:  two shadows are used,
+ separated by a comma.  Padding pushes the text from
+ the border to clean up the appearence. */
+#article {
+    flex: 7 7 0;
+    min-height: 20px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 3px;
+    box-shadow: -6px 8px 20px rgba(0, 0, 0, 0.2), 6px 8px 20px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    background: #ececec;
+}
+/* The footer holds FAQ data or relevent links. */
+#footer_container {
+    height: 200px;
+    background: #4f4f4f;
 }

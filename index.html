@@ -1,76 +1,107 @@
 <!-- Declare the document type, we are using html -->
 <!DOCTYPE html>
-<!-- The <html> tag holds all the html data inside it.  There are two main tage that follow: <head> and <body> -->
-<!-- Specify the language of the website for accessibility -->
+<!-- The <html> tag holds all the html data inside it.
+ There are two main tags that follow: <head> and <body>.
+ Specify the language of the website for accessibility -->
 <html lang="en">
-    <!-- The head holds data specific to how the page is going to be styled.  This is where we pull in CSS code -->
+    <!-- The head tag is where information about style
+     and the site are declared. -->
     <head>
-        <!-- The <title> tage is used for the window title or tab title -->
-        <title> Swift OpenGL Tutorials </title>
-        
-        <!-- Use a <meta> tag to declare the cahraset to be used in the site: we'll use UTF-8 -->
-        <meta charset="utf-8"/>
-        <!-- Get the usable screen space from the user's device -->
-        <meta name="viewport" content="width=device-width initial-scale=1.0">
-            
-        <!-- Site Specific information -->
-        <!-- Describe the website and declare keywords to be used by search engines -->
-        <meta name="description" content="Sequential app targets for learning OpenGL with Swift"/>
-        <meta name="keywords" content="Swift, OpenGL, tutorial, macOS, OS X, Apple, Xcode, app development"/>
-        
-        <!-- Internal style sheet for holding CSS code.  If using more than one page, an external style sheet should be used -->
-        <link rel="stylesheet" href="main.css"/>
-        <link href="https://fonts.googleapis.com/css?family=Oxygen:400,700" rel="stylesheet">
+        <!-- The <title> tag is used for the window title
+         or tab title -->
+        <title>Swift OpenGL Tutorials</title>
+        <!-- Use a <meta> tag to declare the charset to be
+         used on the site: we'll use UTF-8 -->
+        <meta name="charset" content="utf8">
+        <!-- Describe the website and declare keywords to
+        be used by search engines -->
+        <meta name="description" content="Sequential app targets for learning OpenGL with Swift">
+        <meta name="keywords" content="Swift, OpenGL, tutorial, macOS, OS X, Apple, Xcode, app development">
+        <!-- Internal style sheet for holding CSS code.
+        If using more than one page, an external style
+        sheet should be used.  The address of the css
+        document must be declared to be accessed. -->
+        <link rel="stylesheet" href="main.css">
+        <!-- The font to be use in the site. -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen:400,700">
     </head>
-    <!-- The layout and content of the webpage is held within the <body> tag -->
+    <!-- The layout and content of the webpage is held
+     within the <body> tag. -->
     <body>
-        <!-- Flexbox to make sure site stretches top to bottom and
-         avoid having the base of the footer higher than the bottom
-         of the screen -->
-        <div class="flexbox container">
-            <div class="flexbox header_container">
-                <header>
-                    <!-- Pushes page content below header so that no content is hidden with overflow-y enabled -->
-                    <div class="header top-bottom buffer"></div>
-                    <div class="flex ui container">
-                        <div class="header side buffer"></div>
-                        <!-- Navigation through the site -->
-                        <nav class="top navigation">
-                            <div class="icon menu box">
-                                <i id="icon">
-                                    <img src="SwiftOpenGL Logo.png" alt="SwiftOpenGLTutorials Logo"/>
-                                </i>
-                                <div class="menu button">
-                                </div>
-                            </div>
-                       </nav>
-                        <div class="header side buffer"></div>
-                    </div>
-                    <div class="header top-bottom buffer"></div>
-                </header>
+        <!-- The header tag is where introductory elements
+         for the side are placed such as a site icon and
+         the naviaction bar.-->
+        <header id="header_container">
+            <div class="top_buffer"></div>
+            <div id="nav_container">
+                <div class="nav_side_buffer"></div>
+                <div id="main_nav">
+                    <img src="SwiftOpenGL Logo.png" alt="SwiftOpenGLTutorials Logo"/>
+                    <!-- Navigation through the site -->
+                    <ul id="nav_items">
+                        <li class="nav_item"><a href="">Tutorials</a></li>
+                        <li class="nav_item"><a href="">About</a></li>
+                    </ul>
+                </div>
+                <div class="nav_side_buffer"></div>
             </div>
-            <div class="flexbox section_container">
-                <!-- The main content of the site -->
-                <section>
-                    <div class="flex section container">
-                        <div class="section side buffer"></div>
-                        <div class="main content container">
-                            <div class="section top buffer"></div>
-                            <article class="main content">
-                                
-                            </article>
-                            <div class="section bottom buffer"></div>
+            <div class="top_buffer"></div>
+        </header>
+        <!-- This div contains the area of the site that
+         will expand and scroll depending upon the content -->
+        <div id="scroll_container">
+            <!-- Pushses the content to below the header -->
+            <div class="offset_y"></div>
+            <!-- Contains the section portion of the
+             scrollable content. -->
+            <section id="section_container">
+                <!-- The articles of the page are placed here
+                 and surrounded by buffers to push them away
+                 from one another a bit. -->
+                <div id="main_content">
+                    <!-- Pushes an article downward. -->
+                    <div class="top_buffer"></div>
+                    <!-- Contains the article and it's side buffers -->
+                    <article id="article_container">
+                        <!-- pushes the article to the right -->
+                        <div class="side_buffer"></div>
+                        <!-- Contains the text and or image data of an
+                         article. -->
+                        <div id="article">
+                            <h1>Swift and OpenGL</h1>
+                            <p>Programming with Mac has changed a lot since the introduction of Swift to the platform.  It's a great language that has grown so much since its conception a year ago.  The tendency is to continue to use old paradigms with new tools; however, Swift is so different from C and Obj-C.  It demands that we rethink how we program on the Mac so we aren't limiting the potential of this new language.</p>
+                            <p>With those ideas in mind, I have endeavored to rethink OpenGL programming in terms of using Swift.  Classically a C++ dominated topic, graphics programming in Swift offers some interesting twists this programming genre.  Though there are some great tutorials for using OpenGL in a Swift project, most of them do not utilize some of the new Swift paradigms (namely protocols, extensions, and more value types instead of reference types).  I am not an expert or even professional programmer by any means, but the tutorials that I shall write here work and are intended to be in line (as much as possible) with the latest information out the WWDC's.  We're going to look into using OpenGL with Swift instead of Metal with Swift because I have older Macs that do not run Metal.  When I get a new Mac one day, then I'll look into writing some tutorials on using Metal with Swift, but until then it is OpenGL all the way.  Also, with the announcement of Swift going open source, a Swift/OpenGL app has the potential to go cross-platform--the reason C++/OpenGL has been such a favorite.</p>
+                            <p>I've been working on some OpenGL with Swift tutorials for a little while, but after WWDC '15, my eyes have been opened to some new possibilities with Swift 2.0.  The tutorials are all prototypes so I encourage you to add some constructive criticism (Note that if you're comment isn't not constructive and plain rude, I will delete it).  Hopefully, I shall be able to develop an extensive library of tutorials on this topic to collect into a book or teaching app.</P>
+                            <p>I encourage you to help me and others as we travel this road together.</p>
+                            <p>**The above images are property of Apple and OpenGL, respectively.</p>
                         </div>
-                        <div class="section side buffer"></div>
-                        
-                    </div>
-                </section>
-            </div>
-            <div class="flexbox footer_container">
-                <footer class="main footer">
-                    <div class="copyright">&copy; 2016 00buggy00</div>
-                </footer>
-            </div>
+                        <!-- Pushes away from the right most border and
+                         thus centers the article. -->
+                        <div class="side_buffer"></div>
+                    </article>
+                    <div class="top_buffer"></div>
+                    <article id="article_container">
+                        <div class="side_buffer"></div>
+                        <div id="article">
+                            <h1>Swift and OpenGL</h1>
+                            <p>Programming with Mac has changed a lot since the introduction of Swift to the platform.  It's a great language that has grown so much since its conception a year ago.  The tendency is to continue to use old paradigms with new tools; however, Swift is so different from C and Obj-C.  It demands that we rethink how we program on the Mac so we aren't limiting the potential of this new language.</p>
+                            <p>With those ideas in mind, I have endeavored to rethink OpenGL programming in terms of using Swift.  Classically a C++ dominated topic, graphics programming in Swift offers some interesting twists this programming genre.  Though there are some great tutorials for using OpenGL in a Swift project, most of them do not utilize some of the new Swift paradigms (namely protocols, extensions, and more value types instead of reference types).  I am not an expert or even professional programmer by any means, but the tutorials that I shall write here work and are intended to be in line (as much as possible) with the latest information out the WWDC's.  We're going to look into using OpenGL with Swift instead of Metal with Swift because I have older Macs that do not run Metal.  When I get a new Mac one day, then I'll look into writing some tutorials on using Metal with Swift, but until then it is OpenGL all the way.  Also, with the announcement of Swift going open source, a Swift/OpenGL app has the potential to go cross-platform--the reason C++/OpenGL has been such a favorite.</p>
+                            <p>I've been working on some OpenGL with Swift tutorials for a little while, but after WWDC '15, my eyes have been opened to some new possibilities with Swift 2.0.  The tutorials are all prototypes so I encourage you to add some constructive criticism (Note that if you're comment isn't not constructive and plain rude, I will delete it).  Hopefully, I shall be able to develop an extensive library of tutorials on this topic to collect into a book or teaching app.</P>
+                            <p>I encourage you to help me and others as we travel this road together.</p>
+                            <p>**The above images are property of Apple and OpenGL, respectively.</p>
+                        </div>
+                        <div class="side_buffer"></div>
+                    </article>
+                    <!-- Unlike the top buffer, the bottom buffer
+                     strecthes to fill the screen if the article is not
+                     large enough to fill the article section. -->
+                    <div class="bottom_buffer"></div>
+                </div>
+            </section>
+            <!-- Contains links, copyright, etc. pertinent to
+             the site. -->
+            <footer id="footer_container">
+            </footer>
         </div>
     </body>
 </html>
