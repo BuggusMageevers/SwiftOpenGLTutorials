@@ -1,0 +1,72 @@
+<!-- Declare the document type, we are using html -->
+<!DOCTYPE html>
+<!-- The <html> tag holds all the html data inside it.
+ There are two main tags that follow: <head> and <body>.
+ Specify the language of the website for accessibility -->
+<html lang="en">
+    <!-- The head tag is where information about style
+     and the site are declared. -->
+    <head>
+        <!-- The <title> tag is used for the window title
+         or tab title -->
+        <title>Swift OpenGL Tutorials</title>
+        <!-- Use a <meta> tag to declare the charset to be
+         used on the site: we'll use UTF-8 -->
+        <meta name="charset" content="utf8">
+        <!-- Describe the website and declare keywords to
+        be used by search engines -->
+        <meta name="description" content="Sequential app targets for learning OpenGL with Swift">
+        <meta name="keywords" content="Swift, OpenGL, tutorial, macOS, OS X, Apple, Xcode, app development">
+        <!-- Internal style sheet for holding CSS code.
+        If using more than one page, an external style
+        sheet should be used.  The address of the css
+        document must be declared to be accessed. -->
+        <link rel="stylesheet" href="main.css">
+        <!-- The font to be use in the site. -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen:400,700">
+    </head>
+    <!-- The layout and content of the webpage is held
+     within the <body> tag. -->
+    <body>
+        <!-- The header tag is where introductory elements
+         for the side are placed such as a site icon and
+         the naviaction bar.-->
+        <header id="header_container">
+            <div class="top_buffer"></div>
+            <div id="nav_container">
+                <div class="nav_side_buffer"></div>
+                <div id="main_nav">
+                    <img src="SwiftOpenGL Logo.png" alt="SwiftOpenGLTutorials Logo"/>
+                    <!-- Navigation through the site -->
+                    <ul id="nav_items">
+                        <li class="nav_item"><a href="tutorials.html">Tutorials</a></li>
+                        <li class="nav_item"><a href="">About</a></li>
+                    </ul>
+                </div>
+                <div class="nav_side_buffer"></div>
+            </div>
+            <div class="top_buffer"></div>
+        </header>
+        <!-- This div contains the area of the site that
+         will expand and scroll depending upon the content -->
+        <div id="scroll_container">
+            <!-- Pushses the content to below the header -->
+            <div class="offset_y"></div>
+            <!-- Contains the section portion of the
+             scrollable content. -->
+            <section id="section_container">
+                <!-- The articles of the page are placed here
+                 and surrounded by buffers to push them away
+                 from one another a bit. -->
+                <div id="main_content">
+                    
+                    <div class="bottom_buffer"></div>
+                </div>
+            </section>
+            <!-- Contains links, copyright, etc. pertinent to
+             the site. -->
+            <footer id="footer_container">
+            </footer>
+        </div>
+    </body>
+</html>
