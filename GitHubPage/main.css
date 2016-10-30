@@ -133,6 +133,24 @@ li a {
     padding: 10px;
     background: #ececec;
 }
+#tutorial_link {
+    flex: 7 7 0;
+    min-height: 20px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px;
+    box-shadow: -6px 8px 20px rgba(0, 0, 0, 0.2), 6px 8px 20px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    background: #ececec;
+}
+a#tutorial_link {
+  color: #4f4f4f;
+  text-decoration: none;
+}
+a#tutorial_link:hover {
+  color: #ececec;
+  background: #004bff;
+}
 /* The footer holds FAQ data or relevent links. */
 #footer_container {
     height: 200px;
