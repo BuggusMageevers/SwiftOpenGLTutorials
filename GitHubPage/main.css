@@ -1,5 +1,6 @@
 html {
     font-family: 'Oxygen', sans-serif;
+    color: #4f4f4f;
     font-size: 12px;
 }
 h1 {
@@ -127,7 +128,7 @@ li a {
     min-height: 20px;
     display: flex;
     flex-direction: column;
-    border-radius: 3px;
+    border-radius: 4px;
     box-shadow: -6px 8px 20px rgba(0, 0, 0, 0.2), 6px 8px 20px rgba(0, 0, 0, 0.2);
     padding: 10px;
     background: #ececec;
