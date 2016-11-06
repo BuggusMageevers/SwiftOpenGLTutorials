@@ -130,7 +130,7 @@ final class SwiftOpenGLView: NSOpenGLView {
             "    passColor = color;                                            \n" +
             "    passTexturePosition = texturePosition;                        \n" +
             "    passNormal = normal;                                          \n" +
-        "}                                                                 \n"
+            "}                                                                 \n"
         let vss = source.cString(using: String.Encoding.ascii)
         var vssptr = UnsafePointer<GLchar>(vss)
         glShaderSource(vs, 1, &vssptr, nil)
@@ -179,7 +179,7 @@ final class SwiftOpenGLView: NSOpenGLView {
             "    vec3 surface = texture(sample, passTexturePosition).rgb * passColor;                                  \n" +
             "    vec3 rgb = surface * light;                                                                           \n" +
             "    outColor = vec4(rgb, 1.0);                                                                            \n" +
-        "}                                                                                                         \n"
+            "}                                                                                                         \n"
         let fss = source.cString(using: String.Encoding.ascii)
         var fssptr = UnsafePointer<GLchar>(fss)
         glShaderSource(fs, 1, &fssptr, nil)
