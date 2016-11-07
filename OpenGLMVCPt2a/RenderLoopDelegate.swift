@@ -18,11 +18,12 @@ protocol RenderLoopDelegate {
     //Mark: DisplayLink
     var link: CVDisplayLink? { get set }
     var callback: CVDisplayLinkOutputCallback { get }
+    var running: Bool { get set }
     
-    func setup()
+    func setupLink(forView view: SwiftOpenGLView)
     
-    func start()
-    func stop()
+    func startDrawLoop()
+    func stopDrawLoop()
     
     //MARK: Time, Time Calculations
     var currentTime: Double { get set }
