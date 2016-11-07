@@ -15,18 +15,45 @@ import CoreVideo.CVDisplayLink
 
 protocol RenderLoopDelegate {
     
-    //Mark: DisplayLink
+    //  MARK: DisplayLink
+    /**
+     A referrence to a `CVDisplayLink`.
+     */
     var link: CVDisplayLink? { get set }
     var callback: CVDisplayLinkOutputCallback { get }
+    /**
+     A property to indicate if the callback is being called with each
+     refresh of the screen.
+     */
     var running: Bool { get set }
     
-    func setupLink(forView view: SwiftOpenGLView)
+    /**
+     To be used for the creation of a `CVDisplayLink` and the setting
+     of the callback function.
+     */
+    func setupLink()
     
-    func startDrawLoop()
-    func stopDrawLoop()
+    /**
+     Starts the `CVDisplayLink` which will cyclicly call the callback
+     function.
+     */
+    func startDrawing()
+    /**
+     Stops the `CVDisplayLink`.  Should be called anytime the view is not
+     being seen by the user so as to save resources.
+     */
+    func stopDrawing()
     
-    //MARK: Time, Time Calculations
+    //  MARK: Time, Time Calculations
+    /**
+     The current elapsed time from the start of the application.
+     */
     var currentTime: Double { get set }
+    /**
+     Idealy set everytime currentTime is set.  Use didSet on currentTime
+     to acheive this update.  This is the amount of time between the
+     previous frame and the current frame.
+     */
     var deltaTime: Double { get }
     
 }

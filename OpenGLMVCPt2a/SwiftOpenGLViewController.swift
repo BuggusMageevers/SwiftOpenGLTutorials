@@ -22,6 +22,15 @@ class SwiftOpenGLViewController: NSViewController, NSWindowDelegate {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
+        //  Use a notification so our controller knows when the window
+        //  is closing.  Then we can stop the CVDisplayLink
+        //    observer: the object receing the message
+        //    selector:  function to be called when the notification 
+        //        occurs
+        //    name:  The name of the Notifcation.  Swift 3 now uses
+        //        an enum: Notification.Name."NameOfNotification"
+        //    object:  If specified, the object decides if the 
+        //        notification should be sent.
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(windowWillClose(_:)),
                                                name: Notification.Name.NSWindowWillClose,
@@ -59,16 +68,15 @@ class SwiftOpenGLViewController: NSViewController, NSWindowDelegate {
         
     }
     
+    //  A more Cocoa way of stopping our CVDisplayLink.
     func windowWillClose(_ notification: Notification) {
-        interactiveView.stopDrawLoop()
-    }
-    
-    deinit {
+        
+        interactiveView.stopDrawing()
         
         NotificationCenter.default.removeObserver(self,
                                                   name: Notification.Name.NSWindowWillClose,
                                                   object: nil)
-        
+    
     }
     
 }

@@ -368,8 +368,8 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
         
         drawView()
         
-        setupLink(forView: self)
-        startDrawLoop()
+        setupLink()
+        startDrawing()
         
     }
     
@@ -459,7 +459,7 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
         context.makeCurrentContext()
         CGLLockContext(context.cglContextObj!)
         
-//        let mediaTime = CACurrentMediaTime()
+        //  let mediaTime = CACurrentMediaTime()
         
         //  No longer required CACurrentMediaTime() once
         //  RenderLoopDelegate has time calculations.
@@ -468,7 +468,7 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
         updateViewMatrix(atTime: currentTime)
         //  We no longer need the previousTime property since we placed
         //  a didSet observer on currentTime which does this automaticaly
-//            previousTime = time
+        //  previousTime = time
         
         glClearColor(GLfloat(value), GLfloat(value), GLfloat(value), 1.0)
         
@@ -493,12 +493,12 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
     
     
     //  MARK: - CVDisplayLink functions
-    internal func setupLink(forView view: SwiftOpenGLView) {
+    internal func setupLink() {
         CVDisplayLinkCreateWithActiveCGDisplays(&link)
-        CVDisplayLinkSetOutputCallback(link!, callback, UnsafeMutableRawPointer(Unmanaged.passUnretained(view).toOpaque()))
+        CVDisplayLinkSetOutputCallback(link!, callback, UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()))
     }
     
-    func startDrawLoop() {
+    func startDrawing() {
         
         if running == false, let link = self.link {
             
@@ -508,7 +508,7 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
         
     }
     
-    func stopDrawLoop() {
+    func stopDrawing() {
         
         if running == true, let link = self.link {
             
