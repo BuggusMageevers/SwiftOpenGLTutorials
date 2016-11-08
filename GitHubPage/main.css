@@ -11,6 +11,25 @@ h2 {
     font-size: 24px;
     margin: 0px;
 }
+/*  pre, code, and code:before are for
+styling code blocks.
+*/
+pre {
+  counter-reset: line;
+}
+code {
+  counter-increment: line;
+  line-height: 1.8em;
+}
+code:before {
+  display: inline-block;
+  background-color: #303030;
+  color: #ececec;
+  padding: 0 1em;
+  margin-right: 0.5em;
+  border-right: 2px solid #6f6f6f;
+  content: counter(line);
+}
 /*
 */
 #article_img {
@@ -163,6 +182,17 @@ a#tutorial_link:hover {
   color: #ececec;
   background: #004bff;
 }
+#code_block {
+  flex: auto;
+  height: 10px;
+  background: blue;
+}
+#scrollable_code {
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  background: #4f4f4f;
+}
 /* The footer holds FAQ data or relevent links. */
 #footer_container {
   display: flex;
@@ -171,7 +201,7 @@ a#tutorial_link:hover {
   color:#afafaf;
 }
 #footer_sitemap {
-  flex: 7 7 0;
+  flex: auto;
   display: flex;
   flex-direction: column;
 }
