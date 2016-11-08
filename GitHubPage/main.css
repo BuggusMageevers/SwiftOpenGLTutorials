@@ -1,7 +1,7 @@
 html {
     font-family: 'Oxygen', sans-serif;
     color: #4f4f4f;
-    font-size: 12px;
+    font-size: 14px;
 }
 h1 {
     font-size: 36px;
@@ -10,6 +10,16 @@ h1 {
 h2 {
     font-size: 24px;
     margin: 0px;
+}
+/*
+*/
+#article_img {
+  display: block;
+  margin: auto;
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.2);
 }
 /* The main flexbox.  Uses vertical distribution.
  The min-height should be at least the height of
@@ -89,7 +99,7 @@ li a {
 }
 /* Contains all the articeles on the page. */
 #main_content {
-    flex: auto;;
+    flex: auto;
     display: flex;
     flex-direction: column;
     background: #ececec;
@@ -130,7 +140,7 @@ li a {
     flex-direction: column;
     border-radius: 4px;
     box-shadow: -6px 8px 20px rgba(0, 0, 0, 0.2), 6px 8px 20px rgba(0, 0, 0, 0.2);
-    padding: 10px;
+    padding: 20px;
     background: #ececec;
 }
 /* Based upon the article and to be used for the
@@ -155,6 +165,16 @@ a#tutorial_link:hover {
 }
 /* The footer holds FAQ data or relevent links. */
 #footer_container {
-    height: 200px;
-    background: #4f4f4f;
+  display: flex;
+  height: 200px;
+  background: #4f4f4f;
+  color:#afafaf;
+}
+#footer_sitemap {
+  flex: 7 7 0;
+  display: flex;
+  flex-direction: column;
+}
+#footer_links {
+  height: 173px;
 }
