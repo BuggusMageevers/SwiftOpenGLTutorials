@@ -16,18 +16,22 @@ styling code blocks.
 */
 pre {
   counter-reset: line;
+  overflow: auto;
+  background: #343440;
 }
 code {
   counter-increment: line;
-  line-height: 1.8em;
+  line-height: 1.3em;
 }
 code:before {
   display: inline-block;
-  background-color: #303030;
+  background-color: #252530;
   color: #ececec;
-  padding: 0 1em;
+  padding-left: 3.8em;
+  padding-right: 0.8em;
   margin-right: 0.5em;
   border-right: 2px solid #6f6f6f;
+  text-align: right;
   content: counter(line);
 }
 /*
@@ -38,7 +42,7 @@ code:before {
   max-width: 100%;
   height: auto;
   border-radius: 5px;
-  box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
 }
 /* The main flexbox.  Uses vertical distribution.
  The min-height should be at least the height of
@@ -154,6 +158,13 @@ li a {
  the border to clean up the appearence. */
 #article {
     flex: 7 7 0;
+    /*  Weird CSS3 behavior makes every Flexbox container's
+    min-width ambiguous.  When we put pre tags in them,
+    we have to specify the min-width as 0 in order for
+    the tag's content to overflow correctly and not
+    stretch the parent tag to the size of the pre tag's
+    content. */
+    min-width: 0;
     min-height: 20px;
     display: flex;
     flex-direction: column;
@@ -183,15 +194,17 @@ a#tutorial_link:hover {
   background: #004bff;
 }
 #code_block {
-  flex: auto;
-  height: 10px;
-  background: blue;
-}
-#scrollable_code {
-  padding: 0;
-  margin: 0;
-  overflow-x: hidden;
-  background: #4f4f4f;
+  /* Even though this is the parent tage of the pre
+  tag that holds overflowing content, we don't have
+  specify the min-width as 0 here.  The reason being
+  that this element is a flex item, the pre tag
+  is not because this class is not a flex container.
+  It is the flex container that must have the min-width
+  specified, not the flex item. */
+  flex: 1 1 0;
+  min-height: 20px;
+  border-radius: 4px;
+  box-shadow: 0 5px 15px 8px rgba(0, 0, 0, 0.2);
 }
 /* The footer holds FAQ data or relevent links. */
 #footer_container {
