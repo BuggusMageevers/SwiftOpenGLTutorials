@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Swift OpenGL Tutorials</title>
+        <meta name="charset" content="utf8">
+        <meta name="description" content="Sequential app targets for learning OpenGL with Swift">
+        <meta name="keywords" content="Swift, OpenGL, tutorial, macOS, OS X, Apple, Xcode, app development">
+        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen:400,700">
+    </head>
+    <body>
+        <header id="header_container">
+            <div class="top_buffer"></div>
+            <div id="nav_container">
+                <div class="nav_side_buffer"></div>
+                <div id="main_nav">
+                    <img src="SwiftOpenGL Logo.png" alt="SwiftOpenGLTutorials Logo"/>
+                    <div style="flex:1 1 0;"></div>
+                    <ul id="nav_items">
+                        <li class="nav_item"><a href="tutorials.html">Tutorials</a></li>
+                        <li class="nav_item"><a href="https://github.com/00buggy00/SwiftOpenGLTutorials">GitHub Repository</a></li>
+                    </ul>
+                </div>
+                <div class="nav_side_buffer"></div>
+            </div>
+            <div class="top_buffer"></div>
+        </header>
+        <div id="scroll_container">
+            <div class="offset_y"></div>
+            <section id="section_container">
+                <div id="main_content">
+                  <div class="top_buffer"></div>
+                  <article id="article_container">
+                      <div class="side_buffer"></div>
+                      <div id="article">
+                        <h1>Create the Project with Xcode</h1>
+                        <hr>
+                        <h2>Download Xcode</h2>
+                        <p>To follow along with these tutorials, you'll need a Mac
+                          with the latest public version of Xcode (Xcode 6.4 as of
+                          this writing).  To get Xcode, open the App Store and
+                          search for Xcode.</p>
+                        <img id="article_img" src="PageImages/App Store Search.png" alt="App Store Search"/>
+                        <p>You'll see a bunch of applications, but Xcode should be
+                          the first one if you typed in "xcode" into the search
+                          field.  I already have the application downloaded, so
+                          the button says "Open", but if you haven't downloaded
+                          Xcode, the button will say "Get".</p>
+                        <img id="article_img" src="PageImages/Xcode search on App Store.png" alt="Xcode search on App Store"/>
+                        <div style="height:10px;"></div>
+                        <img id="article_img" src="PageImages/Xcode App Store page.png" alt="Xcode App Store page"/>
+                        <p>You may be prompted to input your AppleID and password
+                          and click "Buy".  Remember, the app is free.  The app
+                          will download automatically when you "Buy" the app.
+                          Once it has downloaded, you'll find it in your
+                          Applications folder, Launchpad, or by holding down &#x2318
+                          and pressing the spacebar you'll get Spotlight Search
+                          where you can type in "xcode" and press return on the
+                          keyboard.</p>
+                          <img id="article_img" src="PageImages/Spotlight Search Xcode.png" alt="Spotlight Search Xcode"/>
+                          <div style="height:10px;"></div>
+                          <img id="article_img" src="PageImages/Xcode Splash.png" alt="Xcode Splash"/>
+                        <p>The first time you open Xcode, you should see the
+                          splash screen.  This is a great starting point to create
+                          new projects or open existing and recent projects.
+                          Create a new project by clicking on "Create New Project"
+                          (I've blurred out my previous projects, but you would
+                          see your previous project at the right of the welcome
+                          screen).  While in Xcode, you may open the Welcome
+                          Screen at any time by pressing &#x21e7&#x2318 1 on the
+                          keyboard.</p>
+                        <img id="article_img"src="PageImages/New Project.png" alt="New Project"/>
+                        <p>The page down menu prompts you to select the type of
+                          project to create.  On the left side of the menu, select
+                          Application under OS X.  Then select Cocoa Application
+                          from from the icons at the left.  Click next.  You'll be
+                          prompted for a name, company, etc.  The name of our
+                          project is SwiftOpenGL.  Leave the Organization name
+                          field blank for now.  For Organization Identifier, you
+                          have to put something, so it nothing is there, insert
+                          "com".  Click on the language dropdown menu and select
+                          Swift if it is not selected already.  Finally, make sure
+                          Use Storyboards is checked and Create Document-Based
+                          Application and Use Core Data are not checked.</p>
+                        <img id="article_img"src="PageImages/Naming the project.png" alt="Naming the project"/>
+                        <p>Click next and you'll be asked for a location to save
+                          the project and related files.  I recommend using the
+                          Developer folder that should have been created when you
+                          downloaded Xcode.  You should be able to find it by
+                          click on the dropdown menu at the top of the menu and
+                          click on Macintosh HD.</p>
+                        <img id="article_img"src="PageImages/Selecting a file.png" alt="Selecting a file"/>
+                        <div style="height:10px;"></div>
+                        <img id="article_img"src="PageImages/The Developer Folder.png" alt="The Developer Folder"/>
+                        <p>Select the Developer folder, and click Create.  A
+                          whirlwind of computer magic will ensue and you'll be
+                          presented with your first Xcode app!  At the top left of
+                          the screen, you'll see a play button icon.  This is the
+                          Run button.  Click Run and you're application will build
+                          and launch.  It's not exciting--just a grey window--but
+                          it'll let you know that you have a working application.</p>
+                        <img id="article_img"src="PageImages/Run Button.png" alt="Click the run button"/>
+                        <div style="height:10px;"></div>
+                        <img id="article_img"src="PageImages/First App.png" alt="The window of your first app"/>
+                        <p>Now that we have a working app, we need to add a view to
+                          our window that will display out OpenGL content.</p>
+                      </div>
+                      <div class="side_buffer"></div>
+                  </article>
+                  <div class="bottom_buffer"></div>
+                  <article id="article_container">
+                      <div class="side_buffer"></div>
+                      <div id="article" style="flex-direction:row;">
+                        <div style="flex: 1 1 0;">
+
+                        </div>
+                        <div style="flex: 7 7 0;"></div>
+                        <div style="flex: 1 1 0;text-align:right;">
+                          <h2><a href="SwiftOpenGLView.html" style="text-decoration:none;color:#4f4f4f;">Next</a></h2>
+                        </div>
+                      </div>
+                      <div class="side_buffer"></div>
+                  </article>
+                  <div class="bottom_buffer"></div>
+                </div>
+            </section>
+            <footer id="footer_container">
+              <div class="side_buffer"></div>
+              <div id="footer_sitemap">
+                <div id="footer_links"></div>
+                <div style="display:flex;height:17px;">
+                  <div class="side_buffer"></div>
+                  <span>&copy; 2016 00buggy00 on GitHub</span>
+                  <div class="side_buffer"></div>
+                </div>
+                <div style="height:10px;"></div>
+              </div>
+              <div class="side_buffer"></div>
+            </footer>
+        </div>
+    </body>
+</html>

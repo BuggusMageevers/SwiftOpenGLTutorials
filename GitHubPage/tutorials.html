@@ -37,6 +37,7 @@
                 <div class="nav_side_buffer"></div>
                 <div id="main_nav">
                     <img src="SwiftOpenGL Logo.png" alt="SwiftOpenGLTutorials Logo"/>
+                    <div style="flex:1 1 0;"></div>
                     <!-- Navigation through the site -->
                     <ul id="nav_items">
                         <li class="nav_item"><a href="../index.html">Home</a></li>
@@ -65,16 +66,18 @@
                     <article id="article_container">
                         <!-- pushes the article to the right -->
                         <div class="side_buffer"></div>
-                        <!-- Contains the text and or image data of an
-                         article. -->
-                        <div id="article">
-                            <h1>Swift and OpenGL</h1>
-                            <p>Programming with Mac has changed a lot since the introduction of Swift to the platform.  It's a great language that has grown so much since its conception a year ago.  The tendency is to continue to use old paradigms with new tools; however, Swift is so different from C and Obj-C.  It demands that we rethink how we program on the Mac so we aren't limiting the potential of this new language.</p>
-                            <p>With those ideas in mind, I have endeavored to rethink OpenGL programming in terms of using Swift.  Classically a C++ dominated topic, graphics programming in Swift offers some interesting twists this programming genre.  Though there are some great tutorials for using OpenGL in a Swift project, most of them do not utilize some of the new Swift paradigms (namely protocols, extensions, and more value types instead of reference types).  I am not an expert or even professional programmer by any means, but the tutorials that I shall write here work and are intended to be in line (as much as possible) with the latest information out the WWDC's.  We're going to look into using OpenGL with Swift instead of Metal with Swift because I have older Macs that do not run Metal.  When I get a new Mac one day, then I'll look into writing some tutorials on using Metal with Swift, but until then it is OpenGL all the way.  Also, with the announcement of Swift going open source, a Swift/OpenGL app has the potential to go cross-platform--the reason C++/OpenGL has been such a favorite.</p>
-                            <p>I've been working on some OpenGL with Swift tutorials for a little while, but after WWDC '15, my eyes have been opened to some new possibilities with Swift 2.0.  The tutorials are all prototypes so I encourage you to add some constructive criticism (Note that if you're comment isn't not constructive and plain rude, I will delete it).  Hopefully, I shall be able to develop an extensive library of tutorials on this topic to collect into a book or teaching app.</P>
-                            <p>I encourage you to help me and others as we travel this road together.</p>
-                            <p>**The above images are property of Apple and OpenGL, respectively.</p>
-                        </div>
+                        <!-- The tutorial_link id makes the link look
+                        like the article, but the difference is that
+                        we have added a property to all <a> tags that
+                        use the hover psudoclass that makes the
+                        entire <div> turn blue. -->
+                        <a id="tutorial_link" href="Swift_OpenGL_Setup.html">
+                          <div>
+                            <h1>1. Swift OpenGL Setup</h1>
+                            <hr>
+                            <p>Setting up an Xcode project to be used for further tutorials.</p>
+                          </div>
+                        </a>
                         <!-- Pushes away from the right most border and
                          thus centers the article. -->
                         <div class="side_buffer"></div>
@@ -82,14 +85,157 @@
                     <div class="top_buffer"></div>
                     <article id="article_container">
                         <div class="side_buffer"></div>
-                        <div id="article">
-                            <h1>Swift and OpenGL</h1>
-                            <p>Programming with Mac has changed a lot since the introduction of Swift to the platform.  It's a great language that has grown so much since its conception a year ago.  The tendency is to continue to use old paradigms with new tools; however, Swift is so different from C and Obj-C.  It demands that we rethink how we program on the Mac so we aren't limiting the potential of this new language.</p>
-                            <p>With those ideas in mind, I have endeavored to rethink OpenGL programming in terms of using Swift.  Classically a C++ dominated topic, graphics programming in Swift offers some interesting twists this programming genre.  Though there are some great tutorials for using OpenGL in a Swift project, most of them do not utilize some of the new Swift paradigms (namely protocols, extensions, and more value types instead of reference types).  I am not an expert or even professional programmer by any means, but the tutorials that I shall write here work and are intended to be in line (as much as possible) with the latest information out the WWDC's.  We're going to look into using OpenGL with Swift instead of Metal with Swift because I have older Macs that do not run Metal.  When I get a new Mac one day, then I'll look into writing some tutorials on using Metal with Swift, but until then it is OpenGL all the way.  Also, with the announcement of Swift going open source, a Swift/OpenGL app has the potential to go cross-platform--the reason C++/OpenGL has been such a favorite.</p>
-                            <p>I've been working on some OpenGL with Swift tutorials for a little while, but after WWDC '15, my eyes have been opened to some new possibilities with Swift 2.0.  The tutorials are all prototypes so I encourage you to add some constructive criticism (Note that if you're comment isn't not constructive and plain rude, I will delete it).  Hopefully, I shall be able to develop an extensive library of tutorials on this topic to collect into a book or teaching app.</P>
-                            <p>I encourage you to help me and others as we travel this road together.</p>
-                            <p>**The above images are property of Apple and OpenGL, respectively.</p>
-                        </div>
+                        <a id="tutorial_link" href="SwiftOpenGLView.html">
+                          <div>
+                              <h1>2. The SwiftOpenGLView</h1>
+                              <hr>
+                              <p>Creating a view to be used for drawing OpenGL content.</p>
+                          </div>
+                        </a>
+                        <div class="side_buffer"></div>
+                    </article>
+                    <div class="top_buffer"></div>
+                    <article id="article_container">
+                        <div class="side_buffer"></div>
+                        <a id="tutorial_link" href="">
+                          <div>
+                              <h1>3. The A Point in the Right Direction (Setup)</h1>
+                              <hr>
+                              <p>Create the shader (program) needed to draw a single vertex.</p>
+                          </div>
+                        </a>
+                        <div class="side_buffer"></div>
+                    </article>
+                    <div class="top_buffer"></div>
+                    <article id="article_container">
+                        <div class="side_buffer"></div>
+                        <a id="tutorial_link" href="">
+                          <div>
+                              <h1>4. A Point in the Right Direction</h1>
+                              <hr>
+                              <p>Draw the first vertex into the view.</p>
+                          </div>
+                        </a>
+                        <div class="side_buffer"></div>
+                    </article>
+                    <div class="top_buffer"></div>
+                    <article id="article_container">
+                        <div class="side_buffer"></div>
+                        <a id="tutorial_link" href="">
+                          <div>
+                              <h1>5. VBO's and VAO's</h1>
+                              <hr>
+                              <p>Create a buffer object to hold data for multiple vertices and an array object that will connect that data to shader inputs.</p>
+                          </div>
+                        </a>
+                        <div class="side_buffer"></div>
+                    </article>
+                    <div class="top_buffer"></div>
+                    <article id="article_container">
+                        <div class="side_buffer"></div>
+                        <a id="tutorial_link" href="">
+                          <div>
+                              <h1>6. Custom Color</h1>
+                              <hr>
+                              <p>Add a color attribute to each vertex.</p>
+                          </div>
+                        </a>
+                        <div class="side_buffer"></div>
+                    </article>
+                    <div class="top_buffer"></div>
+                    <article id="article_container">
+                        <div class="side_buffer"></div>
+                        <a id="tutorial_link" href="">
+                          <div>
+                              <h1>7. Adding Some Texture</h1>
+                              <hr>
+                              <p>Apply a texture to a simple triangle model.</p>
+                          </div>
+                        </a>
+                        <div class="side_buffer"></div>
+                    </article>
+                    <div class="top_buffer"></div>
+                    <article id="article_container">
+                        <div class="side_buffer"></div>
+                        <a id="tutorial_link" href="">
+                          <div>
+                              <h1>8. Shedding Some Light On the Scene</h1>
+                              <hr>
+                              <p>Create a simple lighting source.</p>
+                          </div>
+                        </a>
+                        <div class="side_buffer"></div>
+                    </article>
+                    <div class="top_buffer"></div>
+                    <article id="article_container">
+                        <div class="side_buffer"></div>
+                        <a id="tutorial_link" href="">
+                          <div>
+                              <h1>9. Adding in Ambient and Specular Components</h1>
+                              <hr>
+                              <p>Improve the current lighting by replaced complete shadow with ambient lighting and adding specular hightlighting.</p>
+                          </div>
+                        </a>
+                        <div class="side_buffer"></div>
+                    </article>
+                    <div class="top_buffer"></div>
+                    <article id="article_container">
+                        <div class="side_buffer"></div>
+                        <a id="tutorial_link" href="">
+                          <div>
+                              <h1>10. Giving Life to the View</h1>
+                              <hr>
+                              <p>Animating a view by driving rendering with NSTimer or CVDisplayLink.</p>
+                          </div>
+                        </a>
+                        <div class="side_buffer"></div>
+                    </article>
+                    <div class="top_buffer"></div>
+                    <article id="article_container">
+                        <div class="side_buffer"></div>
+                        <a id="tutorial_link" href="">
+                          <div>
+                              <h1>11. A Walk Through a View Part 1</h1>
+                              <hr>
+                              <p>Create vectors and matrices with associated methods to be used in manupulation of the 3D world.</p>
+                          </div>
+                        </a>
+                        <div class="side_buffer"></div>
+                    </article>
+                    <div class="top_buffer"></div>
+                    <article id="article_container">
+                        <div class="side_buffer"></div>
+                        <a id="tutorial_link" href="">
+                          <div>
+                              <h1>12. A Walk Through a View Part 2</h1>
+                              <hr>
+                              <p>Completion of 3D movement with keyboard and mouse controls.</p>
+                          </div>
+                        </a>
+                        <div class="side_buffer"></div>
+                    </article>
+                    <div class="top_buffer"></div>
+                    <article id="article_container">
+                        <div class="side_buffer"></div>
+                        <a id="tutorial_link" href="">
+                          <div>
+                              <h1>13. MVC OpenGL Part 1</h1>
+                              <hr>
+                              <p>Pull out non-view related code into their own files.</p>
+                          </div>
+                        </a>
+                        <div class="side_buffer"></div>
+                    </article>
+                    <div class="top_buffer"></div>
+                    <article id="article_container">
+                        <div class="side_buffer"></div>
+                        <a id="tutorial_link" href="">
+                          <div>
+                              <h1>14. MVC OpenGL Part 2a</h1>
+                              <hr>
+                              <p>Further isolate model, view, and controller realted code by creating a delegate that will allow the view to blindly draw a scene.</p>
+                          </div>
+                        </a>
                         <div class="side_buffer"></div>
                     </article>
                     <!-- Unlike the top buffer, the bottom buffer
@@ -100,8 +246,19 @@
             </section>
             <!-- Contains links, copyright, etc. pertinent to
              the site. -->
-            <footer id="footer_container">
-            </footer>
+             <footer id="footer_container">
+               <div class="side_buffer"></div>
+               <div id="footer_sitemap">
+                 <div id="footer_links"></div>
+                 <div style="display:flex;height:17px;">
+                   <div class="side_buffer"></div>
+                   <span>&copy; 2016 00buggy00 on GitHub</span>
+                   <div class="side_buffer"></div>
+                 </div>
+                 <div style="height:10px;"></div>
+               </div>
+               <div class="side_buffer"></div>
+             </footer>
         </div>
     </body>
 </html>

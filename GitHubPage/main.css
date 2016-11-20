@@ -1,7 +1,7 @@
 html {
     font-family: 'Oxygen', sans-serif;
     color: #4f4f4f;
-    font-size: 12px;
+    font-size: 14px;
 }
 h1 {
     font-size: 36px;
@@ -10,6 +10,61 @@ h1 {
 h2 {
     font-size: 24px;
     margin: 0px;
+}
+/*  pre, code, and code:before are for
+styling code blocks.
+*/
+pre {
+  margin: 0;
+  border-radius: 4px;
+  counter-reset: line;
+  overflow: auto;
+  background: #1e2028;
+  color: #ffffff;
+}
+.comment {
+  color: #008400;
+}
+.keyword {
+  color: #ce0098;
+}
+.Proj_Type {
+  color: #85d06b;
+}
+.Other_Type {
+  color: #00b1cd;
+}
+.string {
+  color: #db2c38;
+}
+.number {
+  color: #786dc4;
+}
+.line {
+  counter-increment: line;
+  line-height: 1.3em;
+  padding-right: 0.8em;
+}
+.line:before {
+  display: inline-block;
+  background-color: #252530;
+  color: #ececec;
+  padding-left: 3.8em;
+  padding-right: 0.8em;
+  margin-right: 0.5em;
+  border-right: 2px solid #6f6f6f;
+  text-align: right;
+  content: counter(line);
+}
+/* An image element to be placed in the
+main content of the article. */
+#article_img {
+  display: block;
+  margin: auto;
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
 }
 /* The main flexbox.  Uses vertical distribution.
  The min-height should be at least the height of
@@ -36,8 +91,6 @@ body {
     position: fixed;
     display: flex;
     flex-direction: column;
-    /* shadow: x-position | y-position | blur-distance | spread | color */
-    box-shadow: 2px 0 8px 10px rgba(0, 0, 0, 0.2);
 }
 #nav_container {
     flex: 7 7 0;
@@ -89,7 +142,7 @@ li a {
 }
 /* Contains all the articeles on the page. */
 #main_content {
-    flex: auto;;
+    flex: auto;
     display: flex;
     flex-direction: column;
     background: #ececec;
@@ -125,16 +178,67 @@ li a {
  the border to clean up the appearence. */
 #article {
     flex: 7 7 0;
+    /*  Weird CSS3 behavior makes every Flexbox container's
+    min-width ambiguous.  When we put pre tags in them,
+    we have to specify the min-width as 0 in order for
+    the tag's content to overflow correctly and not
+    stretch the parent tag to the size of the pre tag's
+    content. */
+    min-width: 0;
     min-height: 20px;
     display: flex;
     flex-direction: column;
     border-radius: 4px;
+    /* shadow: x-position | y-position | blur-distance | spread | color (commas separate multiple shadows) */
     box-shadow: -6px 8px 20px rgba(0, 0, 0, 0.2), 6px 8px 20px rgba(0, 0, 0, 0.2);
-    padding: 10px;
+    padding: 20px;
     background: #ececec;
+}
+/* Based upon the article and to be used for the
+tutorial links on the tutorial page. */
+a#tutorial_link {
+  flex: 7 7 0;
+  min-height: 20px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  box-shadow: -6px 8px 20px rgba(0, 0, 0, 0.2), 6px 8px 20px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  background: #ececec;
+  color: #4f4f4f;
+  text-decoration: none;
+}
+/* When the mouse hovers over one of the links, it
+will turn blue and the text a light grey. */
+a#tutorial_link:hover {
+  color: #ececec;
+  background: #004bff;
+}
+#code_block {
+  /* Even though this is the parent tage of the pre
+  tag that holds overflowing content, we don't have
+  specify the min-width as 0 here.  The reason being
+  that this element is a flex item, the pre tag
+  is not because this class is not a flex container.
+  It is the flex container that must have the min-width
+  specified, not the flex item. */
+  flex: 1 1 0;
+  min-height: 20px;
+  border-radius: 4px;
+  box-shadow: 0 5px 15px 8px rgba(0, 0, 0, 0.2);
 }
 /* The footer holds FAQ data or relevent links. */
 #footer_container {
-    height: 200px;
-    background: #4f4f4f;
+  display: flex;
+  height: 200px;
+  background: #4f4f4f;
+  color:#afafaf;
+}
+#footer_sitemap {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+}
+#footer_links {
+  height: 173px;
 }

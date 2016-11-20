@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Swift OpenGL Tutorials</title>
+        <meta name="charset" content="utf8">
+        <meta name="description" content="Sequential app targets for learning OpenGL with Swift">
+        <meta name="keywords" content="Swift, OpenGL, tutorial, macOS, OS X, Apple, Xcode, app development">
+        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen:400,700">
+    </head>
+    <body>
+        <header id="header_container">
+            <div class="top_buffer"></div>
+            <div id="nav_container">
+                <div class="nav_side_buffer"></div>
+                <div id="main_nav">
+                    <img src="SwiftOpenGL Logo.png" alt="SwiftOpenGLTutorials Logo"/>
+                    <div style="flex:1 1 0;"></div>
+                    <ul id="nav_items">
+                        <li class="nav_item"><a href="tutorials.html">Tutorials</a></li>
+                        <li class="nav_item"><a href="https://github.com/00buggy00/SwiftOpenGLTutorials">GitHub Repository</a></li>
+                    </ul>
+                </div>
+                <div class="nav_side_buffer"></div>
+            </div>
+            <div class="top_buffer"></div>
+        </header>
+        <div id="scroll_container">
+            <div class="offset_y"></div>
+            <section id="section_container">
+                <div id="main_content">
+                  <div class="top_buffer"></div>
+                  <article id="article_container">
+                      <div class="side_buffer"></div>
+                      <div id="article">
+                        <h1>Setup For Drawing a Point On Screen</h1>
+                        <hr>
+                        <p>Now that have a view that allows us to draw to the
+                          screen, let's start drawing something.  We'll start
+                          by drawing one vertex to the screen.  That may sound
+                          boring, but drawing requires covering several concepts
+                          at once:  shaders, shader programs (what artists are
+                          usually referring to when they talk about "shaders"),
+                          buffers (for data, attributes, etc.), and draw commands
+                          (we'll just cover one in this post).  All of these
+                          concepts together are the foundations of a rendering
+                          engine:  another concept that is thrown around, but has
+                          a rather ambiguous meaning.  I've seen it used in
+                          regard to everything from full applications for making
+                          games, to bare bones API's.  If you search for the
+                          definition of "rendering engine" on Google, you'll see
+                          a definition from PC Mag stating that a rendering
+                          engine is, essentially, "software that forms the text
+                          and images for display and printing".  What we will be
+                          writing here fits that definition quite well.</p>
+                        <h2>Setting Up the Project</h2>
+                        <p>This step is entirely optional, but it allows you to
+                          keep the steps of your code all in one project.  Xcode
+                          offers a "Snapshot" feature which you are welcome to
+                          use as well, but this rewrites the files in your
+                          current project to reflect the changes.  Instead, we're
+                          going to use Schemes and Targets.  Essentially this
+                          makes a new app within your project.  This means all of
+                          your code is accessible right when you need it, and
+                          running a particular target (app) is as easy as
+                          selecting the appropriate scheme.</p>
+                        <p>Before we set up a new scheme, let's work on the one
+                          we have.  Every time you make a new scheme, you'll make
+                          a new target, info-plist, app, test target, test
+                          info-plist, app delegate, view controller, image assets
+                          folder, and storyboard.  If you duplicate a target, you
+                          reuse the app delegate, view controller, image assets,
+                          and storyboard.  In order to tell the difference between
+                          each target, we'll rename the target, info-plist, and
+                          product.  Click on SwiftOpenGL at the top of the Project
+                          Navigator. Then in the Editor, click on the Target and
+                          press Return on the keyboard to change the name to
+                          Beginning.</p>
+                        <img id="article_img" src="PageImages/Renaming the target.png" alt="Renaming the Tartget"/>
+                        <p>Also, rename the Group folder to Beginning as well.
+                          If you don't have a group, select <code>AppDelegate.swift</code>,
+                          <code>ViewController.swift</code>, <code>SwiftOpenGLView.swift</code>,
+                          <code>images.xcassets</code>, <code>main.storyboard</code>,
+                          and Supporting Files.  Then right click on the selection
+                          and click on New Group from Selection.  Name this group
+                          Beginning.  In the Supporting Files folder, change the
+                          name of the <code>Info.plist</code> to <code>Beginning-Info.plist</code>.
+                          Once the name is changed, you need to let Xcode know
+                          what the plist is called now and where it is located.
+                          Before we do that though, let's clean up the project's
+                          folder in Finder.  You can go straight to the folder to
+                          selecting any of the files in the Project Navigator
+                          (we'll select <code>Beginning-Info.plist</code>), and
+                          then click on the arrow next to the path name.</p>
+                        <img id="article_img" src="PageImages/Navigating to a Folder.png" alt="Navigating to a Folder"/>
+                        <p>This will open up the selected file in a Finder window.</p>
+                        <img id="article_img" src="PageImages/Make new folder.png" alt="Make a New Folder"/>
+                        <p>Within the SwiftOpenGL project folder, you'll see
+                          <code>AppDelegate.swift</code>, <code>ViewController.swift</code>,
+                          <code>SwiftOpenGLView.swift</code>, <code>image.xcassets</code>,
+                          and <code>Base.proj</code>.  Select these items, right
+                          click on them, and click on New Folder with Selection
+                          (6 items).  Name this folder Beginning.  Close the
+                          window.  In Xcode, you'll notice that you're folders are
+                          now red!  You have to click on each and set the path
+                          manually.  This is why we didn't set the <code>Info.plist</code>
+                          path earlier--we would have had to do that twice!
+                          Click on <code>AppDelegate.swift</code>.  In the
+                          Utilities panel, on the File Inspector tab, click on
+                          the Folder icon instead of the arrow icon.  This brings
+                          up a page down menu.  Navigate to the Beginning folder
+                          where the <code>AppDelegate.swift</code> file is located.
+                          Select <code>AppDelegate.swift</code>, and click Choose.</p>
+                        <img id="article_img" src="PageImages/The path icon.png" alt="The Path Icon"/>
+                        <img id="article_img" src="PageImages/Choosing the file path.png" alt="Choosing the File Path"/>
+                        <p>Repeat this for <code>ViewController.swift</code>,
+                          <code>SwiftOpenGLView.swift</code>, and <code>images.xcassets</code>
+                          as well as the group folder Beginning (if you miss this
+                          one, look at post 1.2).  For the <code>Info.plist</code>,
+                          click on the SwiftOpenGL project at the top of the
+                          Project Navigator.  Then click on Build Settings.
+                          Search for "<code>info.plist</code>".  Under Packaging
+                          you'll see see Info.plist File.  To the right of that is
+                          the plist file path.  Double click on the path that's
+                          there and change it to <code>Beginning/Beginning-info.plist</code>
+                          and press Return on the keyboard.</p>
+                        <img id="article_img" src="PageImages/Setting plist path.png" alt="Setting the Plist Path"/>
+                        <p>Now we'll change the name of the scheme.  At the top
+                          left of the window, to the right of the Stop button is
+                          the Scheme dropdown menu.  Click on it and then click on
+                          Manage Schemes... at the bottom.</p>
+                        <img id="article_img" src="PageImages/Manage schemes.png" alt="Manage Schemes"/>
+                        <p>Again, you see some of the future targets that we're
+                          going to create in the image above.  The Manage Schemes
+                          menu lists all of the available schemes.  You'll only
+                          have one target.  Click on it and press Return on the
+                          keyboard.  Rename the scheme as Beginning.  Click close.</p>
+                        <img id="article_img" src="PageImages/Naming the scheme.png" alt="Naming the Scheme"/>
+                        <p>Test your app to make sure it still runs.  If it does,
+                          you're set to move on to create the next target.  Again,
+                          click on the SwiftOpenGL project in the Project Navigator.
+                          In the Editor, at the bottom left of the window, click
+                          on the "+".</p>
+                        <img id="article_img" src="PageImages/New target.png" alt="New Target"/>
+                        <p>You'll see the same menu you saw when you created the
+                          project.  Make sure Application under the OS X section
+                          is selected.  Then select Cocoa Application and click
+                          Next.  On the next window, the only change new thing
+                          here, is the Project field.  There's only one option
+                          here:  SwiftOpenGL.  Set the Product Name as FirstVertex
+                          and all the other fields will be the same.  Click Finish.
+                          Delete the FirstVertex Test target and its plist.</p>
+                        <p>In the Project Navigator, make a new group of the
+                          FirstVertex's <code>AppDelegate.swift</code>,
+                          <code>ViewController.swift</code>, <code>images.xcassets</code>,
+                          <code>main.storyboard</code>, and <code>Info.plist</code>.
+                          You can also make a group called Supporting Files out
+                          the <code>Info.plist</code>, if you like.</p>
+                        <img id="article_img" src="PageImages/FirstVertex Group.png" alt="FirstVertex Group"/>
+                        <p>Rename the <code>Info.plist</code> as <code>FirstVertex-Info.plist</code>
+                          as you see at the bottom of the image above.  Now open
+                          a Finder window to location of these files like we did
+                          for the last target.  Create a new folder in the
+                          SwiftOpenGL project folder called FirstVertex.  Now
+                          you'll have Beginning and FirstVertex in your project
+                          folder.  Move all of the FirstVertex files into the
+                          FirstVertex folder like you did for the Beginning target
+                          files.</p>
+                        <p>Back in Xcode, set the paths for each file like we did
+                          before (remember to set the path for the
+                          <code>FirstVertex-Info.plist</code> through Build Phases).
+                          Change the name of the scheme for FirstVertex by
+                          clicking Manage Schemes... in the Scheme dropdown.  Test
+                          the app by running it.</p>
+                        <p>If you're app runs, you're ready to set up the UI just
+                          like the last post.  I won't go back through that process,
+                          except for one detail.  I want to remind you to select
+                          the right target when you create a file for the
+                          SwiftOpenGLView.  Make sure you save the file to
+                          FirstVertex, select the FirstVertex group, and select
+                          the FirstVertex target, and not Beginning.</p>
+                        <img id="article_img" src="PageImages/Selecting the right target.png" alt="Selecting the Right Target"/>
+                        <p>Now you have two working targets.  Make sure the scheme
+                          is set to FirstVertex and <code>SwiftOpenGLView.swift</code>
+                          is selected before you jump into writing the first
+                          version of the render engine.</p>
+                      </div>
+                      <div class="side_buffer"></div>
+                  </article>
+                  <div class="bottom_buffer"></div>
+                  <article id="article_container">
+                      <div class="side_buffer"></div>
+                      <div id="article" style="flex-direction:row;">
+                        <div style="flex: 1 1 0;">
+                          <h2><a href="SwiftOpenGLView.html" style="text-decoration:none;color:#4f4f4f;">Previous</a></h2>
+                        </div>
+                        <div style="flex: 7 7 0;"></div>
+                        <div style="flex: 1 1 0;text-align:right;">
+                          <h2><a href="Point_in_the_Right_Direction.html" style="text-decoration:none;color:#4f4f4f;">Next</a></h2>
+                        </div>
+                      </div>
+                      <div class="side_buffer"></div>
+                  </article>
+                  <div class="bottom_buffer"></div>
+                </div>
+            </section>
+            <footer id="footer_container">
+              <div class="side_buffer"></div>
+              <div id="footer_sitemap">
+                <div id="footer_links"></div>
+                <div style="display:flex;height:17px;">
+                  <div class="side_buffer"></div>
+                  <span>&copy; 2016 00buggy00 on GitHub</span>
+                  <div class="side_buffer"></div>
+                </div>
+                <div style="height:10px;"></div>
+              </div>
+              <div class="side_buffer"></div>
+            </footer>
+        </div>
+    </body>
+</html>

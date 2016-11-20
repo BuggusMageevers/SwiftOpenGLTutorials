@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Swift OpenGL Tutorials</title>
+        <meta name="charset" content="utf8">
+        <meta name="description" content="Sequential app targets for learning OpenGL with Swift">
+        <meta name="keywords" content="Swift, OpenGL, tutorial, macOS, OS X, Apple, Xcode, app development">
+        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen:400,700">
+    </head>
+    <body>
+        <header id="header_container">
+            <div class="top_buffer"></div>
+            <div id="nav_container">
+                <div class="nav_side_buffer"></div>
+                <div id="main_nav">
+                    <img src="SwiftOpenGL Logo.png" alt="SwiftOpenGLTutorials Logo"/>
+                    <div style="flex:1 1 0;"></div>
+                    <ul id="nav_items">
+                        <li class="nav_item"><a href="tutorials.html">Tutorials</a></li>
+                        <li class="nav_item"><a href="https://github.com/00buggy00/SwiftOpenGLTutorials">GitHub Repository</a></li>
+                    </ul>
+                </div>
+                <div class="nav_side_buffer"></div>
+            </div>
+            <div class="top_buffer"></div>
+        </header>
+        <div id="scroll_container">
+            <div class="offset_y"></div>
+            <section id="section_container">
+                <div id="main_content">
+                  <div class="top_buffer"></div>
+                  <article id="article_container">
+                      <div class="side_buffer"></div>
+                      <div id="article">
+                        <h1>Create the View</h1>
+                        <hr>
+                        <p>Now that you have a working Xcode project, we can set up the app for displaying some OpenGL content.  Cocoa apps are built using a number of windows and views.  A single window contains one base view--the content view.  It is the content view that holds subsequent views such as buttons, labels, text fields, etc.  Notice that every part of the user interface is at it's heart, a view.</p>
+                        <p>To insert a view into the app that will display our OpenGL content, we need to do two things:  1) use interface builder to insert an NSOpenGLView object into the app's window's content view, and 2) create a subclass of NSOpenGLView.</p>
+                        <h2>Interface Builder</h2>
+                        <img id="article_img" src="PageImages/Go to the storyboard.png" alt="Go to the storyboard"/>
+                        <p>To get to Interface Builder, click on Main.storyboard in the Project Navigator (if you can't see it press &#x2318 1 to show the Navigator view or &#x21e7&#x2318 Space to search the project for Main.storyboard).  The Editor view in the center of the project, will display a white background or it might show some windows.  To see everything currently built into the UI, click on the Document Outline button at the bottom left of the Editor view.</p>
+                        <img id="article_img" src="PageImages/Document Outline.png" alt="Document Outline"/>
+                        <p>This shows you a tree hierarchy of the objects being used to make the UI.  Click on View Controller Scene in the Document Outline.  You'll see two objects drop down in the list:  View Controller and First Responder.  Click on the toggle arrow next to View Controller.  This View Controller is used to control the actions and initiation of view updates according to user interaction.  The View Controller controls a view--the one you see drop down when you click on the toggle arrow.  This is the content view two which we will add our customized OpenGL View.</p>
+                        <p>Open the Utilities Panel by clicking on the right most button at the top of the Xcode window (as shown below), or press &#x2325 &#x2318 0 on the keyboard.</p>
+                        <img id="article_img" src="PageImages/Utilities Panel.png" alt="Utilities Panel"/>
+                        <p>In the Utilities Panel, locate the Object Library in the bottom portion of the panel.  Find the NSOpenGLView Object by scrolling through the objects, or by searching for it in the search field at the bottom of the Object Library.</p>
+                        <img id="article_img" src="PageImages/NSOpenGLView Object.png" alt="NSOpenGLView Object"/>
+                        <p>Drag and drop this into the are that says View Controller, or drop it directly into the View in the Document Outline.  Dropping directly in the Document Outline objects allows for more specific control of where you object is going.  As you develop your UI, this fine control becomes more important so you are not adding a child view to the wrong parent view.</p>
+                        <img id="article_img" src="PageImages/Drop into the View Controller in the Editor View.png" alt="Drop into the View Controller in the Editor View"/>
+                        <div style="height:10px;"></div>
+                        <img id="article_img" src="PageImages/Drop onto the view.png" alt="Drop onto the view"/>
+                        <p>We want our view to fill the window and to resize with the window when we click on the window edges.  If you want to see what I mean, leave out this step until after we have finished our custom view subclass.  You'll see that there will be a black box that does not adjust with window resizing.  Adding constraints makes the view stay stuck to the boundaries you specify.  We want the view to fill the window, for now, so we will specify 0 in the top, bottom, left and right fields.  I suggest clicking in the top field and entering 0 then pressing Tab to go to the next field and simultaneous activating the constraint.  By activating, I mean clicking on the red bar that is between the input field and a white box such that it becomes a bold red bar.  When you use tab to go from field to field, these bars will automatically activate if you have placed in a new value.  Lately, click on the the drop down next to Update Frames and select Items of New Constraints to make the frame of the view stretch to accommodate the size of the window.  An alternate method is to just click Apply Constraints at the bottom without this step and then make sure the view you added is selected before clicking on the Resolve Autolayout Issues button next to the Pin button.  Then click on Update Frames under the Selected Views heading.  Either way, you'll see the view stretch out to the size of the parent view's frame.</p>
+                        <img id="article_img" src="PageImages/Click on the Pin button at the bottom right of the editor.png" alt="Click on the Pin button at the bottom right of the editor"/>
+                        <p>Now we're going to do a little coding.  The NSOpenGLView that we put into our interface is an instance of NSOpenGLView.  There are a few customization options available in the Utilities Panel under the Attributes Inspector, but they don't offer the customization that we want for this project.</p>
+                        <img id="article_img" src="PageImages/Attributes Inspector.png" alt="Attributes Inspector"/>
+                        <p>Instead, we are going to make this view a custom subclass of NSOpenGLView.  Create a new file by clicking <i>File</i> \ <i>New File</i> at the top left of the screen, or &#x2318 N on the keyboard.  Under OS X, select Cocoa Class and click Next.</p>
+                        <img id="article_img" src="PageImages/Cocoa Class.png" alt="Cocoa Class"/>
+                        <p>On the next screen, type SwiftOpenGLView into the Class field, set the Subclass of to NSOpenGLView, and set the Language to Swift.  Click Next.</p>
+                        <img id="article_img" src="PageImages/SwiftOpenGLView Naming.png" alt="SwiftOpenGLView Naming"/>
+                        <p>Choose a location to save the file.  Make sure you are in the SwiftOpenGL project folder.  We're going to be adding a number of new Schemes to the project as we go on (and we'll talk about what those are later), so make sure the SwiftOpenGL folder is selected and then create a new folder by clicking on the New Folder button in the bottom left of the menu screen.  Name this folder Beginnings (I called it Begin in my project as an accident that I never fixed).  You can name it what you like, really, but it'll help you know what I am talking about if you use the same names for now.  Next, make sure the App target is selected (We're going to be deleting the Test Target as we don't need it right now).  When you're done, click Create.</p>
+                        <img id="article_img" src="PageImages/Saving SwiftOpenGLView.png" alt="Saving SwiftOpenGLView"/>
+                        <p>You might have noticed I have some additional targets, files, and a Group called Begin shown here.  This is a project I have been working on for a little while so it has some stuff that we will be building together.  Think of it as a sneak peak.</p>
+                        <h2>SwiftOpenGLView.swift</h2>
+                        <p>You should see the new file opened in the Editor view, but if you don't, you may select it in the Project Navigator, or by searching for it with &#x2325 &#x2318 O.  I have added some extra annotation to the class to make it more self explanatory.</p>
+                        <div id="code_block">
+                          <pre><code class="line"><span class="comment">//</span></code>
+<code class="line"><span class="comment">//  SwiftOpenGLView.swift</span></code>
+<code class="line"><span class="comment">//  SwiftOpenGL</span></code>
+<code class="line"><span class="comment">//  This is the first iteration of the SwiftOpenGLView class.  It starts a CVDisplayLink</span></code>
+<code class="line"><span class="comment">//  and draws a black background.</span></code>
+<code class="line"><span class="comment">//</span></code>
+<code class="line"> class="line"</code>
+<code class="line"></code>
+<code class="line"><span class="keyword">import</span> Cocoa</code>
+<code class="line"><span class="keyword">import</span> OpenGL.GL3</code>
+<code class="line"></code>
+<code class="line"></code>
+<code class="line"><span class="comment">//  To optimize the binary created for this class, we'll set the class to final.  This tells the</span></code>
+<code class="line"><span class="comment">//  compiler methods declared in this file are owned by the file and you don't have to worry about</span></code>
+<code class="line"><span class="comment">//  the potential of a subclass's implementation.  In other words, this eliminates some behind the</span></code>
+<code class="line"><span class="comment">//  scenes stack calls which speeds things up (this is per WWDC 15, so it is probably something</span></code>
+<code class="line"><span class="comment">//  realized in Swift 2 and not Swift 1.2).  It's good practice to mark class you do not intend to</span></code>
+<code class="line"><span class="comment">//  subclass as final, and methods you do not accessible to other classes, structs, and enums as</span></code>
+<code class="line"><span class="comment">//  private.</span></code>
+<code class="line"><span class="keyword">final class</span> SwiftOpenGLView: <span class="Other_Type">NSOpenGLView</span> {</code>
+<code class="line"></code>
+<code class="line">    <span class="keyword">required init</span>?(coder: <span class="Other_Type">NSCoder</span>) {</code>
+<code class="line">        <span class="comment">//  Allow the super class to initialize it's properties (phase 1 initialization)</span></code>
+<code class="line">       <span class="keyword">super</span>.<span class="keyword">init</span>(coder: coder)</code>
+<code class="line"></code>
+<code class="line">       <span class="comment">//  Some OpenGL setup</span></code>
+<code class="line">       <span class="comment">//  NSOpenGLPixelFormatAttribute is a typealias for UInt32 in Swift, but the individual</span></code>
+<code class="line">       <span class="comment">//  attributes are Int's.  We have initialize them as Int32's to fit them into an array</span></code>
+<code class="line">       <span class="comment">//  of NSOpenGLPixelFormatAttributes</span></code>
+<code class="line"></code>
+<code class="line">        <span class="keyword">let</span> attrs: [<span class="Other_Type">NSOpenGLPixelFormatAttribute</span>] = [</code>
+<code class="line">            <span class="Other_Type">UInt32</span>(<span class="Other_Type">NSOpenGLPFAAccelerated</span>),            <span class="comment">//  Use accelerated renderers</span></code>
+<code class="line">            <span class="Other_Type">UInt32</span>(<span class="Other_Type">NSOpenGLPFAColorSize</span>), <span class="Other_Type">UInt32</span>(<span class="number">32</span>),  <span class="comment">//  Use 32-bit color</span></code>
+<code class="line">            <span class="Other_Type">UInt32</span>(<span class="Other_Type">NSOpenGLPFAOpenGLProfile</span>),          <span class="comment">//  Use version's >= 3.2 core</span></code>
+<code class="line">            <span class="Other_Type">UInt32</span>(<span class="Other_Type">NSOpenGLProfileVersion3_2Core</span>),</code>
+<code class="line">            <span class="Other_Type">UInt32</span>(<span class="number">0</span>)                                  <span class="comment">//  C API's expect to end with 0</span></code>
+<code class="line">        ]</code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  Create a pixel format using our attributes</span></code>
+<code class="line">        <span class="keyword">guard let</span> pixelFormat = <span class="Other_Type">NSOpenGLPixelFormat</span>(attributes: attrs) <span class="keyword">else</span> {</code>
+<code class="line">            Swift.<span class="Other_Type">print</span>(<span class="string">"pixelFormat could not be constructed"</span>)</code>
+<code class="line">            <span class="keyword">return</span></code>
+<code class="line">        }</code>
+<code class="line">        <span class="keyword">self</span>.<span class="Other_Type">pixelFormat</span> = pixelFormat</code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  Create a context with our pixel format (we have no other context, so nil)</span></code>
+<code class="line">        <span class="keyword">guard let</span> context = <span class="Other_Type">NSOpenGLContext</span>(format: pixelFormat, shareContext: <span class="keyword">nil</span>) <span class="keyword">else</span> {</code>
+<code class="line">            Swift.<span class="Other_Type">print</span>(<span class="string">"context could not be constructed"</span>)</code>
+<code class="line">            <span class="keyword">return</span></code>
+<code class="line">        }</code>
+<code class="line">        <span class="keyword">self</span>.<span class="Other_Type">openGLContext</span> = context</code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  Set the context's swap interval parameter to 60Hz (i.e. 1 frame per swamp)</span></code>
+<code class="line">        <span class="keyword">self</span>.<span class="Other_Type">openGLContext</span>?.<span class="Other_Type">setValues</span>([<span class="number">1</span>], for: .<span class="Other_Type">swapInterval</span>)</code>
+<code class="line"></code>
+<code class="line">    }</code>
+<code class="line"></code>
+<code class="line">    <span class="keyword">override func</span> prepareOpenGL() {</code>
+<code class="line">        <span class="comment">//  Allow the superclass to perform it's tasks</span></code>
+<code class="line">        <span>super</span>.<span class="Other_Type">prepareOpenGL</span>()</code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  Setup OpenGL</span></code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  The buffer will clear each pixel to black upon starting the creation of a new frame</span></code>
+<code class="line">        <span class="Other_Type">glClearColor</span>(<span class="number">0</span>.<span class="number">0</span>, <span class="number">0</span>.<span class="number">0</span>, <span class="number">0</span>.<span class="number">0</span>, <span class="number">1</span>.<span class="number">0</span>)</code>
+<code class="line"></code>
+<code class="line">        <span class="comment">/*  other setup here, e.g. gelable() calls */</span></code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  Run a test render</span></code>
+<code class="line">        <span class="Proj_Type">drawView</span>()</code>
+<code class="line">    }</code>
+<code class="line"></code>
+<code class="line">    <span class="keyword">override func</span> drawRect(dirtyRect: <span class="Other_Type">NSRect</span>) {</code>
+<code class="line">        <span class="keyword">super</span>.<span class="Other_Type">drawRect</span>(dirtyRect)</code>
+<code class="line"></code>
+<code class="line">        <span class="comment">// Drawing code here.</span></code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  Call our OpenGL rendering code.</span></code>
+<code class="line"></code>
+<code class="line">        <span class="Proj_Type">drawView</span>()</code>
+<code class="line">    }</code>
+<code class="line"></code>
+<code class="line">    <span class="keyword">private func</span> drawView() {</code>
+<code class="line">        <span class="comment">//  Clear out the context before rendering</span></code>
+<code class="line">        <span class="comment">//  This uses the clear color we set earlier (0.0, 0.0, 0.0, 1.0 or black)</span></code>
+<code class="line">        <span class="comment">//  We're only drawing with colors now, but if we were using a depth or stencil buffer</span></code>
+<code class="line">        <span class="comment">//  we would also want to clear those here separated by "logical or" " | "</span></code>
+<code class="line">        <span class="Other_Type">glClear</span>(<span class="Other_Type">GLbitfield</span>(<span class="Other_Type">GL_COLOR_BUFFER_BIT</span>))</code>
+<code class="line"></code>
+<code class="line">        <span class="comment">/*  Drawing code here  */</span></code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  Tell OpenGL that you're done rendering and it's time to send the context to the screen</span></code>
+<code class="line">        <span class="Other_Type">glFlush</span>()</code>
+<code class="line">    }</code>
+<code class="line">}</code></pre>
+                        </div>
+                        <p>When we subclass <code>NSOpenGLView</code> and use storyboards, we are required to implement <code>init?(coder:)</code>. This is a perfect place to set up our <code>pixelFormat</code> and <code>context</code>.  The <code>pixelFormat</code> describes the information used to calculate the color of a pixel.  This includes color, depth, and stencil buffers (e.g. 2 bits per r, g, b, a for 8 bit color, 4 bits per r, g, b, a for 16 bit color, etc), various optimizations, and very important, the OpenGL version we wish to use.  Currently, <code>NSOpenGLView</code> uses the legacy profile.  However, to work with modern OpenGL we need to use the core profile.  If you have a new enough Mac, you can select version 4.1, but my Mac is not new enough so we shall specify <code>NSOpenGLProfileVersion3_2Core</code> which allows use of versions newer than 3.2 (on my Mac that is version 3.3 core).  We're starting out simply so we have specified that we want to use accelerated renderers, 32-bit color, and versions newer than 3.2 core.  Using these attributes we create a <code>pixelFormat</code>.  Then we create a <code>context</code> with our <code>pixelFormat</code>.  We set the <code>NSOpenGLView</code>'s <code>pixelFormat</code> and <code>context</code> attributes to our newly created <code>pixelFormat</code> and <code>context</code>.</p>
+                        <p>The next method to implement is <code>prepareOpenGL()</code>.  This is a setup method you may have seen in other OpenGL tutorials.  In this method, we initialize OpenGL state--we'll set the clear color here and submit a test render (though we do not have to do so).  Later we would also use this opportunity to enable various OpenGL capabilities like alpha.</p>
+                        <p>If you do not decide to do a test render, then you don't need declare the <code>drawView()</code> method.  You can just call <code>glClear()</code> and <code>glFlush()</code> in <code>drawRect(_:_)</code>.  Otherwise, this method allows us to attempt a test render and render to the view with calls to <code>drawRect(_:_)</code>.</p>
+                        <h2>Using a subclass in Interface Builder</h2>
+                        <p>To make our <code>NSOpenGLView</code> object in Interface Builder behave like a <code>SwiftOpenGLView</code>, we have to set the Class in the Identity Inspector.  Navigate to <code>main.storyboard</code>, select the <code>NSOpenGLView</code> object in the Document Outline, and in the Utilities Panel, click on the Identity Inspector tab.</p>
+                        <img id="article_img" src="PageImages/Identity Inspector.png" alt="Identity Inspector"/>
+                        <p>When you set the class to <code>SwiftOpenGLView</code>, you are telling Interface Builder that the OpenGL view object is actually our <code>SwiftOpenGLView</code> object.  This means that instead of calling the <code>init?(coder:_)</code> method in <code>NSOpenGLView</code>, it calls the <code>init?(coder:_)</code> in our <code>SwiftOpenGLView</code> subclass.</p>
+                        <h2>The difference a view makes</h2>
+                        <p>As a last touch, click on the window controller object in the editor view.  Look at the Attribute Inspector in the Utility Panel for the Title field under Window.  Change this title to SwiftOpenGL.  Now click on Run and you should see your app, but this time with a black view.  Success!</p>
+                        <img id="article_img" src="PageImages/SwiftOpenGL App.png" alt="SwiftOpenGL App"/>
+                        <p>From here, we have one more topic to cover before we can start really working with OpenGL.  There is much to learn:  some of it is easy, and some complicated.  Hopefully, these tutorials will help lesson the learning curve and make some sense out of the complicated topic that is computer graphics.</p>
+                      </div>
+                      <div class="side_buffer"></div>
+                  </article>
+                  <div class="bottom_buffer"></div>
+                  <article id="article_container">
+                      <div class="side_buffer"></div>
+                      <div id="article" style="flex-direction:row;">
+                        <div style="flex: 1 1 0;">
+                          <h2><a href="Swift_OpenGL_Setup.html" style="text-decoration:none;color:#4f4f4f;">Previous</a></h2>
+                        </div>
+                        <div style="flex: 7 7 0;"></div>
+                        <div style="flex: 1 1 0;text-align:right;">
+                          <h2><a href="Point_in_the_Right_Direction.html" style="text-decoration:none;color:#4f4f4f;">Next</a></h2>
+                        </div>
+                      </div>
+                      <div class="side_buffer"></div>
+                  </article>
+                  <div class="bottom_buffer"></div>
+                </div>
+            </section>
+            <footer id="footer_container">
+              <div class="side_buffer"></div>
+              <div id="footer_sitemap">
+                <div id="footer_links"></div>
+                <div style="display:flex;height:17px;">
+                  <div class="side_buffer"></div>
+                  <span>&copy; 2016 00buggy00 on GitHub</span>
+                  <div class="side_buffer"></div>
+                </div>
+                <div style="height:10px;"></div>
+              </div>
+              <div class="side_buffer"></div>
+            </footer>
+        </div>
+    </body>
+</html>
