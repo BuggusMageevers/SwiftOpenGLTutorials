@@ -64,20 +64,126 @@
                         <h2>SwiftOpenGLView.swift</h2>
                         <p>You should see the new file opened in the Editor view, but if you don't, you may select it in the Project Navigator, or by searching for it with &#x2325 &#x2318 O.  I have added some extra annotation to the class to make it more self explanatory.</p>
                         <div id="code_block">
-                          <pre><code>//</code>
-<code>//  SwiftOpenGLView.swift</code>
-<code>//  SwiftOpenGL</code>
-<code>//  This is the first iteration of the SwiftOpenGLView class.  It starts a CVDisplayLink</code>
-<code>//  and draws a black background.</code>
-<code>//</code>
-<code></code>
-<code></code>
-<code>import Cocoa</code>
-<code>import OpenGL.GL3</code>
-<code></code>
-<code></code>
-<code></code>
-                          </pre>
+                          <pre><code class="line"><span class="comment">//</span></code>
+<code class="line"><span class="comment">//  SwiftOpenGLView.swift</span></code>
+<code class="line"><span class="comment">//  SwiftOpenGL</span></code>
+<code class="line"><span class="comment">//  This is the first iteration of the SwiftOpenGLView class.  It starts a CVDisplayLink</span></code>
+<code class="line"><span class="comment">//  and draws a black background.</span></code>
+<code class="line"><span class="comment">//</span></code>
+<code class="line"> class="line"</code>
+<code class="line"></code>
+<code class="line"><span class="keyword">import</span> Cocoa</code>
+<code class="line"><span class="keyword">import</span> OpenGL.GL3</code>
+<code class="line"></code>
+<code class="line"></code>
+<code class="line"><span class="comment">//  To optimize the binary created for this class, we'll set the class to final.  This tells the</span></code>
+<code class="line"><span class="comment">//  compiler methods declared in this file are owned by the file and you don't have to worry about</span></code>
+<code class="line"><span class="comment">//  the potential of a subclass's implementation.  In other words, this eliminates some behind the</span></code>
+<code class="line"><span class="comment">//  scenes stack calls which speeds things up (this is per WWDC 15, so it is probably something</span></code>
+<code class="line"><span class="comment">//  realized in Swift 2 and not Swift 1.2).  It's good practice to mark class you do not intend to</span></code>
+<code class="line"><span class="comment">//  subclass as final, and methods you do not accessible to other classes, structs, and enums as</span></code>
+<code class="line"><span class="comment">//  private.</span></code>
+<code class="line"><span class="keyword">final class</span> SwiftOpenGLView: <span class="Other_Type">NSOpenGLView</span> {</code>
+<code class="line"></code>
+<code class="line">    <span class="keyword">required init</span>?(coder: <span class="Other_Type">NSCoder</span>) {</code>
+<code class="line">        <span class="comment">//  Allow the super class to initialize it's properties (phase 1 initialization)</span></code>
+<code class="line">       <span class="keyword">super</span>.<span class="keyword">init</span>(coder: coder)</code>
+<code class="line"></code>
+<code class="line">       <span class="comment">//  Some OpenGL setup</span></code>
+<code class="line">       <span class="comment">//  NSOpenGLPixelFormatAttribute is a typealias for UInt32 in Swift, but the individual</span></code>
+<code class="line">       <span class="comment">//  attributes are Int's.  We have initialize them as Int32's to fit them into an array</span></code>
+<code class="line">       <span class="comment">//  of NSOpenGLPixelFormatAttributes</span></code>
+<code class="line"></code>
+<code class="line">        <span class="keyword">let</span> attrs: [<span class="Other_Type">NSOpenGLPixelFormatAttribute</span>] = [</code>
+<code class="line">            <span class="Other_Type">UInt32</span>(<span class="Other_Type">NSOpenGLPFAAccelerated</span>),            <span class="comment">//  Use accelerated renderers</span></code>
+<code class="line">            <span class="Other_Type">UInt32</span>(<span class="Other_Type">NSOpenGLPFAColorSize</span>), <span class="Other_Type">UInt32</span>(<span class="number">32</span>),  <span class="comment">//  Use 32-bit color</span></code>
+<code class="line">            <span class="Other_Type">UInt32</span>(<span class="Other_Type">NSOpenGLPFAOpenGLProfile</span>),          <span class="comment">//  Use version's >= 3.2 core</span></code>
+<code class="line">            <span class="Other_Type">UInt32</span>(<span class="Other_Type">NSOpenGLProfileVersion3_2Core</span>),</code>
+<code class="line">            <span class="Other_Type">UInt32</span>(<span class="number">0</span>)                                  <span class="comment">//  C API's expect to end with 0</span></code>
+<code class="line">        ]</code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  Create a pixel format using our attributes</span></code>
+<code class="line">        <span class="keyword">guard let</span> pixelFormat = <span class="Other_Type">NSOpenGLPixelFormat</span>(attributes: attrs) <span class="keyword">else</span> {</code>
+<code class="line">            Swift.<span class="Other_Type">print</span>(<span class="string">"pixelFormat could not be constructed"</span>)</code>
+<code class="line">            <span class="keyword">return</span></code>
+<code class="line">        }</code>
+<code class="line">        <span class="keyword">self</span>.<span class="Other_Type">pixelFormat</span> = pixelFormat</code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  Create a context with our pixel format (we have no other context, so nil)</span></code>
+<code class="line">        <span class="keyword">guard let</span> context = <span class="Other_Type">NSOpenGLContext</span>(format: pixelFormat, shareContext: <span class="keyword">nil</span>) <span class="keyword">else</span> {</code>
+<code class="line">            Swift.<span class="Other_Type">print</span>(<span class="string">"context could not be constructed"</span>)</code>
+<code class="line">            <span class="keyword">return</span></code>
+<code class="line">        }</code>
+<code class="line">        <span class="keyword">self</span>.<span class="Other_Type">openGLContext</span> = context</code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  Set the context's swap interval parameter to 60Hz (i.e. 1 frame per swamp)</span></code>
+<code class="line">        <span class="keyword">self</span>.<span class="Other_Type">openGLContext</span>?.<span class="Other_Type">setValues</span>([<span class="number">1</span>], for: .<span class="Other_Type">swapInterval</span>)</code>
+<code class="line"></code>
+<code class="line">    }</code>
+<code class="line"></code>
+<code class="line">    <span class="keyword">override func</span> prepareOpenGL() {</code>
+<code class="line">        <span class="comment">//  Allow the superclass to perform it's tasks</span></code>
+<code class="line">        <span>super</span>.<span class="Other_Type">prepareOpenGL</span>()</code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  Setup OpenGL</span></code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  The buffer will clear each pixel to black upon starting the creation of a new frame</span></code>
+<code class="line">        <span class="Other_Type">glClearColor</span>(<span class="number">0</span>.<span class="number">0</span>, <span class="number">0</span>.<span class="number">0</span>, <span class="number">0</span>.<span class="number">0</span>, <span class="number">1</span>.<span class="number">0</span>)</code>
+<code class="line"></code>
+<code class="line">        <span class="comment">/*  other setup here, e.g. gelable() calls */</span></code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  Run a test render</span></code>
+<code class="line">        <span class="Proj_Type">drawView</span>()</code>
+<code class="line">    }</code>
+<code class="line"></code>
+<code class="line">    <span class="keyword">override func</span> drawRect(dirtyRect: <span class="Other_Type">NSRect</span>) {</code>
+<code class="line">        <span class="keyword">super</span>.<span class="Other_Type">drawRect</span>(dirtyRect)</code>
+<code class="line"></code>
+<code class="line">        <span class="comment">// Drawing code here.</span></code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  Call our OpenGL rendering code.</span></code>
+<code class="line"></code>
+<code class="line">        <span class="Proj_Type">drawView</span>()</code>
+<code class="line">    }</code>
+<code class="line"></code>
+<code class="line">    <span class="keyword">private func</span> drawView() {</code>
+<code class="line">        <span class="comment">//  Clear out the context before rendering</span></code>
+<code class="line">        <span class="comment">//  This uses the clear color we set earlier (0.0, 0.0, 0.0, 1.0 or black)</span></code>
+<code class="line">        <span class="comment">//  We're only drawing with colors now, but if we were using a depth or stencil buffer</span></code>
+<code class="line">        <span class="comment">//  we would also want to clear those here separated by "logical or" " | "</span></code>
+<code class="line">        <span class="Other_Type">glClear</span>(<span class="Other_Type">GLbitfield</span>(<span class="Other_Type">GL_COLOR_BUFFER_BIT</span>))</code>
+<code class="line"></code>
+<code class="line">        <span class="comment">/*  Drawing code here  */</span></code>
+<code class="line"></code>
+<code class="line">        <span class="comment">//  Tell OpenGL that you're done rendering and it's time to send the context to the screen</span></code>
+<code class="line">        <span class="Other_Type">glFlush</span>()</code>
+<code class="line">    }</code>
+<code class="line">}</code></pre>
+                        </div>
+                        <p>When we subclass <code>NSOpenGLView</code> and use storyboards, we are required to implement <code>init?(coder:)</code>. This is a perfect place to set up our <code>pixelFormat</code> and <code>context</code>.  The <code>pixelFormat</code> describes the information used to calculate the color of a pixel.  This includes color, depth, and stencil buffers (e.g. 2 bits per r, g, b, a for 8 bit color, 4 bits per r, g, b, a for 16 bit color, etc), various optimizations, and very important, the OpenGL version we wish to use.  Currently, <code>NSOpenGLView</code> uses the legacy profile.  However, to work with modern OpenGL we need to use the core profile.  If you have a new enough Mac, you can select version 4.1, but my Mac is not new enough so we shall specify <code>NSOpenGLProfileVersion3_2Core</code> which allows use of versions newer than 3.2 (on my Mac that is version 3.3 core).  We're starting out simply so we have specified that we want to use accelerated renderers, 32-bit color, and versions newer than 3.2 core.  Using these attributes we create a <code>pixelFormat</code>.  Then we create a <code>context</code> with our <code>pixelFormat</code>.  We set the <code>NSOpenGLView</code>'s <code>pixelFormat</code> and <code>context</code> attributes to our newly created <code>pixelFormat</code> and <code>context</code>.</p>
+                        <p>The next method to implement is <code>prepareOpenGL()</code>.  This is a setup method you may have seen in other OpenGL tutorials.  In this method, we initialize OpenGL state--we'll set the clear color here and submit a test render (though we do not have to do so).  Later we would also use this opportunity to enable various OpenGL capabilities like alpha.</p>
+                        <p>If you do not decide to do a test render, then you don't need declare the <code>drawView()</code> method.  You can just call <code>glClear()</code> and <code>glFlush()</code> in <code>drawRect(_:_)</code>.  Otherwise, this method allows us to attempt a test render and render to the view with calls to <code>drawRect(_:_)</code>.</p>
+                        <h2>Using a subclass in Interface Builder</h2>
+                        <p>To make our <code>NSOpenGLView</code> object in Interface Builder behave like a <code>SwiftOpenGLView</code>, we have to set the Class in the Identity Inspector.  Navigate to <code>main.storyboard</code>, select the <code>NSOpenGLView</code> object in the Document Outline, and in the Utilities Panel, click on the Identity Inspector tab.</p>
+                        <img id="article_img" src="PageImages/Identity Inspector.png" alt="Identity Inspector"/>
+                        <p>When you set the class to <code>SwiftOpenGLView</code>, you are telling Interface Builder that the OpenGL view object is actually our <code>SwiftOpenGLView</code> object.  This means that instead of calling the <code>init?(coder:_)</code> method in <code>NSOpenGLView</code>, it calls the <code>init?(coder:_)</code> in our <code>SwiftOpenGLView</code> subclass.</p>
+                        <h2>The difference a view makes</h2>
+                        <p>As a last touch, click on the window controller object in the editor view.  Look at the Attribute Inspector in the Utility Panel for the Title field under Window.  Change this title to SwiftOpenGL.  Now click on Run and you should see your app, but this time with a black view.  Success!</p>
+                        <img id="article_img" src="PageImages/SwiftOpenGL App.png" alt="SwiftOpenGL App"/>
+                        <p>From here, we have one more topic to cover before we can start really working with OpenGL.  There is much to learn:  some of it is easy, and some complicated.  Hopefully, these tutorials will help lesson the learning curve and make some sense out of the complicated topic that is computer graphics.</p>
+                      </div>
+                      <div class="side_buffer"></div>
+                  </article>
+                  <div class="bottom_buffer"></div>
+                  <article id="article_container">
+                      <div class="side_buffer"></div>
+                      <div id="article" style="flex-direction:row;">
+                        <div style="flex: 1 1 0;">
+                          <h2><a href="Swift_OpenGL_Setup.html" style="text-decoration:none;color:#4f4f4f;">Previous</a></h2>
+                        </div>
+                        <div style="flex: 7 7 0;"></div>
+                        <div style="flex: 1 1 0;text-align:right;">
+                          <h2><a href="Point_in_the_Right_Direction.html" style="text-decoration:none;color:#4f4f4f;">Next</a></h2>
                         </div>
                       </div>
                       <div class="side_buffer"></div>

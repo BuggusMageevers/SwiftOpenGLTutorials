@@ -15,15 +15,37 @@ h2 {
 styling code blocks.
 */
 pre {
+  margin: 0;
+  border-radius: 4px;
   counter-reset: line;
   overflow: auto;
-  background: #343440;
+  background: #1e2028;
+  color: #ffffff;
 }
-code {
+.comment {
+  color: #008400;
+}
+.keyword {
+  color: #ce0098;
+}
+.Proj_Type {
+  color: #85d06b;
+}
+.Other_Type {
+  color: #00b1cd;
+}
+.string {
+  color: #db2c38;
+}
+.number {
+  color: #786dc4;
+}
+.line {
   counter-increment: line;
   line-height: 1.3em;
+  padding-right: 0.8em;
 }
-code:before {
+.line:before {
   display: inline-block;
   background-color: #252530;
   color: #ececec;
@@ -34,8 +56,8 @@ code:before {
   text-align: right;
   content: counter(line);
 }
-/*
-*/
+/* An image element to be placed in the
+main content of the article. */
 #article_img {
   display: block;
   margin: auto;
@@ -69,8 +91,6 @@ body {
     position: fixed;
     display: flex;
     flex-direction: column;
-    /* shadow: x-position | y-position | blur-distance | spread | color */
-    box-shadow: 2px 0 8px 10px rgba(0, 0, 0, 0.2);
 }
 #nav_container {
     flex: 7 7 0;
@@ -169,6 +189,7 @@ li a {
     display: flex;
     flex-direction: column;
     border-radius: 4px;
+    /* shadow: x-position | y-position | blur-distance | spread | color (commas separate multiple shadows) */
     box-shadow: -6px 8px 20px rgba(0, 0, 0, 0.2), 6px 8px 20px rgba(0, 0, 0, 0.2);
     padding: 20px;
     background: #ececec;
