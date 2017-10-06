@@ -1,5 +1,5 @@
 //
-//  RenderLoopDelegate.swift
+//  SwiftOpenGLViewProtocols.swift
 //  SwiftOpenGL
 //
 //  Created by Myles Schultz on 10/8/16.

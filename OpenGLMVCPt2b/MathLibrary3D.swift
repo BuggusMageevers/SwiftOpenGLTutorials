@@ -21,7 +21,20 @@ func *(lhs: Vector3, rhs: Float) -> Vector3 {
     return Vector3(v0: lhs.v0 * rhs, v1: lhs.v1 * rhs, v2: lhs.v2 * rhs)
 }
 func /(lhs: Vector3, rhs: Vector3) -> Vector3 {
-    return Vector3(v0: lhs.v0 / rhs.v0, v1: lhs.v1 / rhs.v1, v2: lhs.v2 / rhs.v2)
+    let zeroVector = Vector3(v0: 0.0, v1: 0.0, v2: 0.0)
+    if lhs != zeroVector && rhs != zeroVector {
+        return Vector3(v0: lhs.v0 / rhs.v0, v1: lhs.v1 / rhs.v1, v2: lhs.v2 / rhs.v2)
+    } else {
+        return zeroVector
+    }
+}
+func /(lhs: Vector3, rhs: Float) -> Vector3 {
+    let zeroVector = Vector3(v0: 0.0, v1: 0.0, v2: 0.0)
+    if lhs != zeroVector && rhs != 0.0 {
+        return Vector3(v0: lhs.v0 / rhs, v1: lhs.v1 / rhs, v2: lhs.v2 / rhs)
+    } else {
+        return zeroVector
+    }
 }
 func +(lhs: Vector3, rhs: Vector3) -> Vector3 {
     return Vector3(v0: lhs.v0 + rhs.v0, v1: lhs.v1 + rhs.v1, v2: lhs.v2 + rhs.v2)
@@ -52,21 +65,22 @@ struct Vector3: CustomStringConvertible, Hashable {
      sqrt(v0^2 + v1^2 + v2^2)
      ```
      - returns:
-        The length of the vector as a Float
-    */
+     The length of the vector as a Float
+     */
     func length() -> Float {
-        return sqrt(v0 * v0 + v1 * v1 + v2 * v2)
+        return sqrt((v0 * v0) + (v1 * v1) + (v2 * v2))
     }
     
     /**
      Calculates a unit vector from the vector the method was called upon
      - returns:
-        The unit vector as Vector3
+     The unit vector as Vector3
      */
     func normalize() -> Vector3 {
+        
         let length = self.length()
         
-        return Vector3(v0: self.v0 / length, v1: self.v1 / length, v2: self.v2 / length)
+        return self / length
     }
     
 }
@@ -175,13 +189,13 @@ struct Matrix4: CustomStringConvertible, Hashable {
     
     init(fieldOfView fov: Float, aspect: Float, nearZ: Float, farZ: Float) {
         
-        m00 = (1 / tanf(fov * (Float(M_PI) / 180.0) * 0.5)) / aspect
+        m00 = (1 / tanf(fov * (Float.pi / 180.0) * 0.5)) / aspect
         m01 = 0.0
         m02 = 0.0
         m03 = 0.0
         
         m10 = 0.0
-        m11 = 1 / tanf(fov * (Float(M_PI) / 180.0) * 0.5)
+        m11 = 1 / tanf(fov * (Float.pi / 180.0) * 0.5)
         m12 = 0.0
         m13 = 0.0
         

@@ -58,7 +58,7 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
     //  they have been designated as internal--thus protecting them from
     //  being tampered with from outside.
     internal var running = false
-    internal let callback: CVDisplayLinkOutputCallback = {(displayLink: CVDisplayLink, inNow: UnsafePointer<CVTimeStamp>, inOutputTime: UnsafePointer<CVTimeStamp>, flagsIn: CVOptionFlags, flagsOut: UnsafeMutablePointer<CVOptionFlags>, displayLinkContext: UnsafeMutableRawPointer?) -> CVReturn in
+    internal var callback: CVDisplayLinkOutputCallback = { (displayLink: CVDisplayLink, inNow: UnsafePointer<CVTimeStamp>, inOutputTime: UnsafePointer<CVTimeStamp>, flagsIn: CVOptionFlags, flagsOut: UnsafeMutablePointer<CVOptionFlags>, displayLinkContext: UnsafeMutableRawPointer?) -> CVReturn in
         
         //  CVTimeStamp has five fields.  Three of the five are very useful for
         //  keeping track of the current time, calculating delta time, the frame

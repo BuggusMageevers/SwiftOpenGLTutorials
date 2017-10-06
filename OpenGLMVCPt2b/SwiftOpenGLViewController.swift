@@ -13,50 +13,40 @@ import Cocoa
 import OpenGL.GLTypes
 
 
-class SwiftOpenGLViewController: NSViewController, NSWindowDelegate, RenderDelegate {
+class SwiftOpenGLViewController: NSViewController, NSWindowDelegate, Respondable, RenderDelegate {
     
     @IBOutlet weak var interactiveView: SwiftOpenGLView!
-    fileprivate var camera = SwiftCamera()
+    private var camera = SwiftCamera()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        interactiveView.delegate = self
+        interactiveView.renderDelegate = self
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(windowWillClose(_:)),
                                                name: .NSWindowWillClose,
                                                object: nil)
+        camera.register("camera")
     }
     
-    // MARK: - User Interaction
+    // MARK: - User Interactions
+    func respondTo(_ input: UserInput) {
+        <#code#>
+    }
     override func keyDown(with theEvent: NSEvent) {
-        
-        if let keyName = SwiftCamera.KeyCodeName(rawValue: theEvent.keyCode) {
-            
-            if camera.directionKeys[keyName] != true {
-                
-                camera.directionKeys[keyName] = true
-                
-            }
-            
-        } else { super.keyDown(with: theEvent) }
         
     }
     
     override func keyUp(with theEvent: NSEvent) {
         
-        if let keyName = SwiftCamera.KeyCodeName(rawValue: theEvent.keyCode) {
-            
-            camera.directionKeys[keyName] = false
-            
-        } else { super.keyUp(with: theEvent) }
+        
         
     }
     
     override func mouseDragged(with theEvent: NSEvent) {
         
-        camera.rotateCamera(pitch: Float(theEvent.deltaY), yaw: Float(theEvent.deltaX))
+        
         
     }
     
@@ -71,11 +61,7 @@ class SwiftOpenGLViewController: NSViewController, NSWindowDelegate, RenderDeleg
     }
     
     //  MARK: - Render Delegate
-    func prepareToDraw() {
-        
-        interactiveView.value = Float(sin(interactiveView.currentTime))
-        
-        interactiveView.view = camera.updateViewMatrix(forTime: interactiveView.deltaTime)
+    func prepareToDraw(frame atTime: Double) {
         
     }
     

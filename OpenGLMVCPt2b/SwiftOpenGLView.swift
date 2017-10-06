@@ -10,18 +10,6 @@ import Cocoa
 import OpenGL.GL3
 
 
-/**
- The RenderDelegate is used by an instance of SwiftOpenGLView to
- outsource the drawing methods.  This allows a controller to take
- over non-view-related code.
- */
-protocol RenderDelegate {
-    
-    func prepareToDraw()
-    
-}
-
-
 final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
     
     fileprivate var programID: GLuint = 0
@@ -33,26 +21,24 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
     
     var view = Matrix4()
     fileprivate var projection = Matrix4()
-    // FIXME: remove me
-    var value: Float = 0.0
     
-    /*  The delegate is used to prepare a scene and the view for drawing.
+    /** The delegate is used to prepare a scene and the view for drawing.
         Through this method, we'll be able to update the view matrices,
         thus we'll move the viewProjectionMatrix related code to the 
         controller.  */
-    var delegate: RenderDelegate?
+    var renderDelegate: RenderDelegate?
     
-    /*  CVDisplayLink for driving the render loop. After several attempts
+    /** CVDisplayLink for driving the render loop. After several attempts
         at trying to pull the CVDisplayLink out of the view, I have
-        decided to leave it.  While taking the link of the view would
-        seem more appropriate, it is very awkward to have the using the
-        view to set the current time from within the controller. Not only
-        does leaving the link in the view remove this awkward line of
+        decided to leave it.  While taking the link out of the view would
+        seem more appropriate, it is very awkward to have to reference the
+        the view to set the current time from within the controller. Not
+        only does leaving the link in the view remove this awkward line of
         code, it also allows us to use view.startDrawLoop() which is very
-        clear in it's purpose.  Starting the link through a delegate is
-        more ambiguous.  Another reason for using this format is that
-        Apple's MTLView does something very similar. In moving to Metal
-        eventually, this would allow for better symmetry.  */
+        clear in it's purpose.  Starting the link through a delegate
+        produces more ambiguous lines of code.  Another reason for using
+        this format is that Apple's MTLView does something very similar.
+        In moving to Metal eventually, this would allow for better symmetry.  */
     internal var link: CVDisplayLink?
     var currentTime: Double = 0.0 {
         didSet(previousTime) {
@@ -62,9 +48,9 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
         }
     }
     var deltaTime: Double = 0.0
-    //  Both running and callback are for use within the view alone so
-    //  they have been designated as internal--thus protecting them from
-    //  being tampered with from outside.
+    /** Both running and callback are for use within the view alone so
+        they have been designated as internal--thus protecting them from
+        being tampered with from outside. */
     internal var running = false
     /**
      CVTimeStamp has five fields.  Three of the five are very useful
@@ -80,31 +66,30 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
      Thankfully, CaptainRedmuff on StackOverflow asked a question that
      provided the equation that calculates frames per second.  From
      that equation, we can extrapolate the value of each field.
-     - parameters:
-        - hostTime: Current time in Units of the "root".  Yeah, I don't know.  The key to this field is to understand that it is in nanoseconds (e.g. 1/1_000_000_000 of a second) not units.  To convert it to seconds divide by 1_000_000_000.  Interestingly, dividing by videoRefreshPeriod and videoTimeScale in a calculation for frames per second still yields the appropriate number of frames.  This works as a result of proportionality-- dividing seconds by seconds. by videoTimeScale to get the time in seconds does not work like it   does for viedoTime.
-            ````
-            framesPerSecond: (videoTime / videoRefreshPeriod) / (videoTime / videoTimeScale) = 59
-            ````
-            and
-            ````
-            (hostTime / videoRefreshPeriod) / (hostTime / videoTimeScale) = 59
-            ````
-            but `hostTime * videoTimeScale ≠ seconds`, but Units (i.e. `seconds * (Units / seconds) = Units`)
-        - rateScalar Ratio of "rate of device in CVTimeStamp/unitOfTime" to the "Nominal Rate".  I think the "Nominal Rate" is videoRefreshPeriod, but unfortunately, the documentation doesn't just say videoRefreshPeriod is the Nominal rate and then define what that means.  Regardless, because this is a ratio, and we know the value of one of the parts (e.g. Units/frame), we know that the "rate of the device" is frame/Units (the units of measure need to cancel out for the ratio to be a ratio).  This makes sense in that rateScalar's definition tells us the rate is "measured by timeStamps".  Since there is a frame for every timeStamp, the rate of the device equals CVTimeStamp/Unit or frame/Unit.  Thus,
-            ````
-            rateScalar = frame/Units : Units/frame
-            ````
-        - videoTime: the time the frame was created since computer started up.  If you turn your computer off and then turn it back on, this timer returns to zero.  The timer is paused when you put your computer to sleep, but it is paused.This value is in Units not seconds.  To get the number of seconds this value represents, you have to apply videoTimeScale.
-        - videoRefreshPeriod: the number of Units per frame (i.e. Units/frame) This is useful in calculating the frame number or frames per second.  The documentation calls this the "nominal update period"
-            ````
-            frame = videoTime / videoRefreshPeriod
-            ````
-        - videoTimeScale: Units/second, used to convert videoTime into seconds and may also be used with videoRefreshPeriod to calculate the expected framesPerSecond.  I say expected, because videoTimeScale and videoRefreshPeriod don't change while videoTime does change.  Thus, to to calculate fps in the case of system slow down, one would need to use videoTime with videoTimeScale to calculate the actual fps value.
-            ````
-            seconds = videoTime / videoTimeScale
+    - hostTime: Current time in Units of the "root".  Yeah, I don't know.  The key to this field is to understand that it is in nanoseconds (e.g. 1/1_000_000_000 of a second) not units.  To convert it to seconds divide by 1_000_000_000.  Interestingly, dividing by videoRefreshPeriod and videoTimeScale in a calculation for frames per second still yields the appropriate number of frames.  This works as a result of proportionality-- dividing seconds by seconds. by videoTimeScale to get the time in seconds does not work like it   does for viedoTime.
+        ````
+        framesPerSecond: (videoTime / videoRefreshPeriod) / (videoTime / videoTimeScale) = 59
+        ````
+        and
+        ````
+        (hostTime / videoRefreshPeriod) / (hostTime / videoTimeScale) = 59
+        ````
+        but `hostTime * videoTimeScale ≠ seconds`, but Units (i.e. `seconds * (Units / seconds) = Units`)
+    - rateScalar Ratio of "rate of device in CVTimeStamp/unitOfTime" to the "Nominal Rate".  I think the "Nominal Rate" is videoRefreshPeriod, but unfortunately, the documentation doesn't just say videoRefreshPeriod is the Nominal rate and then define what that means.  Regardless, because this is a ratio, and we know the value of one of the parts (e.g. Units/frame), we know that the "rate of the device" is frame/Units (the units of measure need to cancel out for the ratio to be a ratio).  This makes sense in that rateScalar's definition tells us the rate is "measured by timeStamps".  Since there is a frame for every timeStamp, the rate of the device equals CVTimeStamp/Unit or frame/Unit.  Thus,
+        ````
+        rateScalar = frame/Units : Units/frame
+        ````
+    - videoTime: the time the frame was created since computer started up.  If you turn your computer off and then turn it back on, this timer returns to zero.  The timer is paused when you put your computer to sleep, but it is paused.This value is in Units not seconds.  To get the number of seconds this value represents, you have to apply videoTimeScale.
+    - videoRefreshPeriod: the number of Units per frame (i.e. Units/frame) This is useful in calculating the frame number or frames per second.  The documentation calls this the "nominal update period"
+        ````
+        frame = videoTime / videoRefreshPeriod
+        ````
+    - videoTimeScale: Units/second, used to convert videoTime into seconds and may also be used with videoRefreshPeriod to calculate the expected framesPerSecond.  I say expected, because videoTimeScale and videoRefreshPeriod don't change while videoTime does change.  Thus, to to calculate fps in the case of system slow down, one would need to use videoTime with videoTimeScale to calculate the actual fps value.
+        ````
+        seconds = videoTime / videoTimeScale
 
-            framesPerSecondConstant = videoTimeScale / videoRefreshPeriod
-            ````
+        framesPerSecondConstant = videoTimeScale / videoRefreshPeriod
+        ````
      Time in DD:HH:mm:ss using hostTime
      ````
      let rootTotalSeconds = inNow.pointee.hostTime
@@ -137,7 +122,7 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
         
     }
     
-    //  In order to recieve keyboard input, we need to enable the view to accept first responder status
+    /// In order to recieve keyboard input, we need to enable the view to accept first responder status
     override var acceptsFirstResponder: Bool { return true }
     
     required init?(coder: NSCoder) {
@@ -241,7 +226,7 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
             "    passColor = color;                                            \n" +
             "    passTexturePosition = texturePosition;                        \n" +
             "    passNormal = normal;                                          \n" +
-        "}                                                                 \n"
+            "}                                                                 \n"
         let vss = source.cString(using: String.Encoding.ascii)
         var vssptr = UnsafePointer<GLchar>(vss)
         glShaderSource(vs, 1, &vssptr, nil)
@@ -290,7 +275,7 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
             "    vec3 surface = texture(sample, passTexturePosition).rgb * passColor;                                  \n" +
             "    vec3 rgb = surface * light;                                                                           \n" +
             "    outColor = vec4(rgb, 1.0);                                                                            \n" +
-        "}                                                                                                         \n"
+            "}                                                                                                         \n"
         let fss = source.cString(using: String.Encoding.ascii)
         var fssptr = UnsafePointer<GLchar>(fss)
         glShaderSource(fs, 1, &fssptr, nil)
@@ -374,7 +359,9 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
         context.makeCurrentContext()
         CGLLockContext(context.cglContextObj!)
         
-        delegate?.prepareToDraw()
+        let value = Float(sin(currentTime))
+
+        renderDelegate?.prepareToDraw(frame: currentTime)
         
         glClearColor(GLfloat(value), GLfloat(value), GLfloat(value), 1.0)
         
