@@ -13,7 +13,7 @@ import Cocoa
 import OpenGL.GLTypes
 
 
-class SwiftOpenGLViewController: NSViewController, NSWindowDelegate, Respondable, RenderDelegate {
+class SwiftOpenGLViewController: NSViewController, NSWindowDelegate, RenderDelegate {
     
     @IBOutlet weak var interactiveView: SwiftOpenGLView!
     private var camera = SwiftCamera()
@@ -22,31 +22,41 @@ class SwiftOpenGLViewController: NSViewController, NSWindowDelegate, Respondable
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        interactiveView.renderDelegate = self
+        interactiveView.delegate = self
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(windowWillClose(_:)),
-                                               name: .NSWindowWillClose,
+                                               name: NSWindow.willCloseNotification,
                                                object: nil)
-        camera.register("camera")
     }
     
-    // MARK: - User Interactions
-    func respondTo(_ input: UserInput) {
-        <#code#>
-    }
+    // MARK: - User Interaction
     override func keyDown(with theEvent: NSEvent) {
+        
+        if let keyName = SwiftCamera.KeyCodeName(rawValue: theEvent.keyCode) {
+            
+            if camera.directionKeys[keyName] != true {
+                
+                camera.directionKeys[keyName] = true
+                
+            }
+            
+        } else { super.keyDown(with: theEvent) }
         
     }
     
     override func keyUp(with theEvent: NSEvent) {
         
-        
+        if let keyName = SwiftCamera.KeyCodeName(rawValue: theEvent.keyCode) {
+            
+            camera.directionKeys[keyName] = false
+            
+        } else { super.keyUp(with: theEvent) }
         
     }
     
     override func mouseDragged(with theEvent: NSEvent) {
         
-        
+        camera.rotateCamera(pitch: Float(theEvent.deltaY), yaw: Float(theEvent.deltaX))
         
     }
     
@@ -55,13 +65,17 @@ class SwiftOpenGLViewController: NSViewController, NSWindowDelegate, Respondable
         interactiveView.stopDrawing()
         
         NotificationCenter.default.removeObserver(self,
-                                                  name: .NSWindowWillClose,
+                                                  name: NSWindow.willCloseNotification,
                                                   object: nil)
         
     }
     
     //  MARK: - Render Delegate
-    func prepareToDraw(frame atTime: Double) {
+    func prepareToDraw() {
+        
+        interactiveView.value = Float(sin(interactiveView.currentTime))
+        
+        interactiveView.view = camera.updateViewMatrix(forTime: interactiveView.deltaTime)
         
     }
     

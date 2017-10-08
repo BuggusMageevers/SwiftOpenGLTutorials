@@ -10,6 +10,18 @@ import Cocoa
 import OpenGL.GL3
 
 
+/**
+ The RenderDelegate is used by an instance of SwiftOpenGLView to
+ outsource the drawing methods.  This allows a controller to take
+ over non-view-related code.
+ */
+protocol RenderDelegate {
+    
+    func prepareToDraw()
+    
+}
+
+
 final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
     
     fileprivate var programID: GLuint = 0
@@ -21,12 +33,14 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
     
     var view = Matrix4()
     fileprivate var projection = Matrix4()
+    // FIXME: remove me
+    var value: Float = 0.0
     
     /** The delegate is used to prepare a scene and the view for drawing.
         Through this method, we'll be able to update the view matrices,
         thus we'll move the viewProjectionMatrix related code to the 
         controller.  */
-    var renderDelegate: RenderDelegate?
+    var delegate: RenderDelegate?
     
     /** CVDisplayLink for driving the render loop. After several attempts
         at trying to pull the CVDisplayLink out of the view, I have
@@ -170,7 +184,7 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
          texture to take input from the image assests catalog.  We can access these images
          by name as NSImage representations.  The raw data can then be passed by getting
          the TIFF representation and then the a pointer to that data.    */
-        guard let textureData = NSImage(named: "Texture")?.tiffRepresentation else {
+        guard let textureData = NSImage(named: NSImage.Name("Texture"))?.tiffRepresentation else {
             Swift.print("Image name not located in Image Asset Catalog")
             return
         }
@@ -359,9 +373,7 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
         context.makeCurrentContext()
         CGLLockContext(context.cglContextObj!)
         
-        let value = Float(sin(currentTime))
-
-        renderDelegate?.prepareToDraw(frame: currentTime)
+        delegate?.prepareToDraw()
         
         glClearColor(GLfloat(value), GLfloat(value), GLfloat(value), 1.0)
         
