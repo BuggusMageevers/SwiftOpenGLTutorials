@@ -25,17 +25,15 @@ class SwiftOpenGLViewController: NSViewController, NSWindowDelegate, Respondable
         interactiveView.renderDelegate = self
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(windowWillClose(_:)),
-                                               name: .NSWindowWillClose,
+                                               name: NSWindow.willCloseNotification,
                                                object: nil)
-        camera.register("camera")
     }
     
     // MARK: - User Interactions
-    func respondTo(_ input: UserInput) {
-        <#code#>
-    }
     override func keyDown(with theEvent: NSEvent) {
-        
+        if let key = UserInput.Key(rawValue: theEvent.keyCode) {
+            respondTo(InputDevice.keyboard(key), in: .move)
+        }
     }
     
     override func keyUp(with theEvent: NSEvent) {
@@ -55,7 +53,7 @@ class SwiftOpenGLViewController: NSViewController, NSWindowDelegate, Respondable
         interactiveView.stopDrawing()
         
         NotificationCenter.default.removeObserver(self,
-                                                  name: .NSWindowWillClose,
+                                                  name: NSWindow.willCloseNotification,
                                                   object: nil)
         
     }

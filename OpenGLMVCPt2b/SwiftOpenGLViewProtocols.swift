@@ -84,13 +84,7 @@ protocol RenderDelegate {
  method to move the camera position foward.
  */
 protocol Instructable {
-    func register(_ name: String)
     func perform(_ instruction: Instruction)
-}
-extension Instructable {
-    func register(_ name: String) {
-        instructables[name] = self
-    }
 }
 
 /**
@@ -101,13 +95,50 @@ extension Instructable {
  a global change
  */
 protocol Respondable {
-    associatedtype activeObject
-    func respondTo(_ input: UserInput)
+    func respondTo(_ input: InputDevice, in mode: ViewControllerMode)
 }
 extension Respondable {
-    func respondTo(_ input: UserInput) {
+    func respondTo(_ input: InputDevice, in mode: ViewControllerMode) {
+        // Is the instruction global?
         
+        
+        // Not global, so case sensative
+        switch mode {
+        case .move:
+            <#code#>
+        case .edit:
+            <#code#>
+        }
     }
+}
+
+enum ViewControllerMode {
+    case move
+    case edit
+}
+fileprivate var moveInstructions = [String : Instruction]()
+fileprivate var editInstructions = [String : Instruction]()
+enum InputDevice {
+    case keyboard(UserInput.Key)
+    case mouse(UserInput.Action)
+}
+enum UserInput {
+    enum Key : UInt16 {
+        case a = 0
+        case s = 1
+        case d = 2
+        case w = 13
+    }
+    
+    enum Action {
+        case leftButton
+        case rightButton
+        case move
+    }
+}
+
+struct Instruction {
+    
 }
 
 
