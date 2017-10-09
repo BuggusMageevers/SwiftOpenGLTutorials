@@ -95,20 +95,17 @@ protocol Instructable {
  a global change
  */
 protocol Respondable {
-    func respondTo(_ input: InputDevice, in mode: ViewControllerMode)
+    func respondTo(_ input: InputDevice, in mode: ViewControllerMode) -> Instruction?
 }
 extension Respondable {
-    func respondTo(_ input: InputDevice, in mode: ViewControllerMode) {
+    func respondTo(_ input: InputDevice, in mode: ViewControllerMode) -> Instruction? {
         // Is the instruction global?
-        
-        
-        // Not global, so case sensative
-        switch mode {
-        case .move:
-            <#code#>
-        case .edit:
-            <#code#>
+        if let instructionMap = keyInstructionMaps[input] {
+            if let instruction = instructionMap[input] {
+                return instruction
+            }
         }
+        return nil
     }
 }
 
@@ -116,11 +113,55 @@ enum ViewControllerMode {
     case move
     case edit
 }
-fileprivate var moveInstructions = [String : Instruction]()
-fileprivate var editInstructions = [String : Instruction]()
-enum InputDevice {
+enum InputDevice: Hashable, Equatable {
     case keyboard(UserInput.Key)
     case mouse(UserInput.Action)
+    
+    var hashValue: Int {
+        switch self {
+        case .keyboard(let key):
+            return key.rawValue.hashValue
+        case .mouse(let action):
+            return action.hashValue
+        }
+    }
+    
+    static func ==(lhs: InputDevice, rhs: InputDevice) -> Bool {
+        switch lhs {
+        case .keyboard(let leftKey):
+            switch rhs {
+            case .keyboard(let rightKey):
+                return leftKey.rawValue == rightKey.rawValue
+            case .mouse(_):
+                return false
+            }
+        case .mouse(let leftAction):
+            switch rhs {
+            case .keyboard(_):
+                return false
+            case .mouse(let rightAction):
+                return leftAction == rightAction
+            }
+        }
+    }
+    static func !=(lhs: InputDevice, rhs: InputDevice) -> Bool {
+        switch lhs {
+        case .keyboard(let leftKey):
+            switch rhs {
+            case .keyboard(let rightKey):
+                return leftKey.rawValue != rightKey.rawValue
+            case .mouse(_):
+                return false
+            }
+        case .mouse(let leftAction):
+            switch rhs {
+            case .keyboard(_):
+                return false
+            case .mouse(let rightAction):
+                return leftAction != rightAction
+            }
+        }
+    }
 }
 enum UserInput {
     enum Key : UInt16 {
@@ -136,9 +177,28 @@ enum UserInput {
         case move
     }
 }
-
-struct Instruction {
+enum Instruction {
+    enum Camera {
+        enum Move {
+            case forward
+            case backward
+            case left
+            case right
+        }
+        enum Orient {
+            case pitchUp
+            case pitchDown
+            case yawLeft
+            case yawRight
+            case rollLeft
+            case rollRight
+        }
+    }
     
 }
+fileprivate var keyInstructionMaps = [InputDevice : [InputDevice : Instruction]]()
+fileprivate var globalInstructions = [InputDevice : Instruction]()
+fileprivate var moveInstructions = [InputDevice : Instruction]()
+fileprivate var editInstructions = [InputDevice : Instruction]()
 
 

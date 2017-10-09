@@ -13,7 +13,7 @@ import Cocoa
 import OpenGL.GLTypes
 
 
-class SwiftOpenGLViewController: NSViewController, NSWindowDelegate, Respondable, RenderDelegate {
+class SwiftOpenGLViewController: NSViewController, NSWindowDelegate, RenderDelegate, Respondable {
     
     @IBOutlet weak var interactiveView: SwiftOpenGLView!
     private var camera = SwiftCamera()
@@ -32,7 +32,7 @@ class SwiftOpenGLViewController: NSViewController, NSWindowDelegate, Respondable
     // MARK: - User Interactions
     override func keyDown(with theEvent: NSEvent) {
         if let key = UserInput.Key(rawValue: theEvent.keyCode) {
-            respondTo(InputDevice.keyboard(key), in: .move)
+            let instruction = respondTo(InputDevice.keyboard(key), in: .move)
         }
     }
     
