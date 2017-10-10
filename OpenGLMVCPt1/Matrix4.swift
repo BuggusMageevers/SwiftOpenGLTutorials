@@ -112,13 +112,13 @@ struct Matrix4: CustomStringConvertible, Hashable {
     
     init(fieldOfView fov: Float, aspect: Float, nearZ: Float, farZ: Float) {
         
-        m00 = (1 / tanf(fov * (Float(M_PI) / 180.0) * 0.5)) / aspect
+        m00 = (1 / tanf(fov * (Float.pi / 180.0) * 0.5)) / aspect
         m01 = 0.0
         m02 = 0.0
         m03 = 0.0
         
         m10 = 0.0
-        m11 = 1 / tanf(fov * (Float(M_PI) / 180.0) * 0.5)
+        m11 = 1 / tanf(fov * (Float.pi / 180.0) * 0.5)
         m12 = 0.0
         m13 = 0.0
         

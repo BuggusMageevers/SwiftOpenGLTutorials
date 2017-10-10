@@ -160,13 +160,13 @@ struct Matrix4: CustomStringConvertible, Hashable {
     
     init(fieldOfView fov: Float, aspect: Float, nearZ: Float, farZ: Float) {
         
-        m00 = (1 / tanf(fov * (Float(M_PI) / 180.0) * 0.5)) / aspect
+        m00 = (1 / tanf(fov * (Float.pi / 180.0) * 0.5)) / aspect
         m01 = 0.0
         m02 = 0.0
         m03 = 0.0
         
         m10 = 0.0
-        m11 = 1 / tanf(fov * (Float(M_PI) / 180.0) * 0.5)
+        m11 = 1 / tanf(fov * (Float.pi / 180.0) * 0.5)
         m12 = 0.0
         m13 = 0.0
         
@@ -383,7 +383,7 @@ final class SwiftOpenGLView: NSOpenGLView {
             texture to take input from the image assests catalog.  We can access these images
             by name as NSImage representations.  The raw data can then be passed by getting
             the TIFF representation and then the a pointer to that data.    */
-        guard let textureData = NSImage(named: "Texture")?.tiffRepresentation else {
+        guard let textureData = NSImage(named: NSImage.Name(rawValue: "Texture"))?.tiffRepresentation else {
             Swift.print("Image name not located in Image Asset Catalog")
             return
         }
@@ -602,7 +602,7 @@ final class SwiftOpenGLView: NSOpenGLView {
     
     func rotateCamera(pitch xRotation: Float, yaw yRotation: Float) {
         
-        let xRadians = cameraOrientation.v0 + -xRotation * Float(M_PI) / 180
+        let xRadians = cameraOrientation.v0 + -xRotation * Float.pi / 180
         
         if 0 <= xRadians || xRadians <= Float(M_2_PI) {
             cameraOrientation.v0 = xRadians
@@ -612,7 +612,7 @@ final class SwiftOpenGLView: NSOpenGLView {
             cameraOrientation.v0 = xRadians + Float(M_2_PI)
         }
         
-        let yRadians = cameraOrientation.v1 + -yRotation * Float(M_PI) / 180
+        let yRadians = cameraOrientation.v1 + -yRotation * Float.pi / 180
 
         if 0 <= yRadians || yRadians <= Float(M_2_PI) {
             cameraOrientation.v1 = yRadians

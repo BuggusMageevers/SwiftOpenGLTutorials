@@ -72,7 +72,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         //  To get the file's contents into the CGImage, we need a data provider
         //  The dataProvider is what actually writes the data into the the CGImage from the file
         //  The second parameter of our CGImageCreate function is for a decode
-        let dataProvider = CGDataProvider(url: fileURL as! CFURL)
+        let dataProvider = CGDataProvider(url: fileURL! as CFURL)
         let image = CGImage(pngDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
         
         //  Declare a pointer to a collection of memory that will hold the texture data.

@@ -89,7 +89,7 @@ final class SwiftOpenGLView: NSOpenGLView {
          texture to take input from the image assests catalog.  We can access these images
          by name as NSImage representations.  The raw data can then be passed by getting
          the TIFF representation and then the a pointer to that data.    */
-        guard let textureData = NSImage(named: "Texture")?.tiffRepresentation else {
+        guard let textureData = NSImage(named: NSImage.Name(rawValue: "Texture"))?.tiffRepresentation else {
             Swift.print("Image name not located in Image Asset Catalog")
             return
         }
@@ -308,7 +308,7 @@ final class SwiftOpenGLView: NSOpenGLView {
     
     func rotateCamera(pitch xRotation: Float, yaw yRotation: Float) {
         
-        let xRadians = cameraOrientation.v0 + -xRotation * Float(M_PI) / 180
+        let xRadians = cameraOrientation.v0 + -xRotation * Float.pi / 180
         
         if 0 <= xRadians || xRadians <= Float(M_2_PI) {
             cameraOrientation.v0 = xRadians
@@ -318,7 +318,7 @@ final class SwiftOpenGLView: NSOpenGLView {
             cameraOrientation.v0 = xRadians + Float(M_2_PI)
         }
         
-        let yRadians = cameraOrientation.v1 + -yRotation * Float(M_PI) / 180
+        let yRadians = cameraOrientation.v1 + -yRotation * Float.pi / 180
         
         if 0 <= yRadians || yRadians <= Float(M_2_PI) {
             cameraOrientation.v1 = yRadians

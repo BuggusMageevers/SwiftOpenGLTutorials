@@ -33,7 +33,7 @@ class SwiftOpenGLViewController: NSViewController, NSWindowDelegate {
         //        notification should be sent.
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(windowWillClose(_:)),
-                                               name: Notification.Name.NSWindowWillClose,
+                                               name: NSWindow.willCloseNotification,
                                                object: nil)
     }
     
@@ -74,7 +74,7 @@ class SwiftOpenGLViewController: NSViewController, NSWindowDelegate {
         interactiveView.stopDrawing()
         
         NotificationCenter.default.removeObserver(self,
-                                                  name: Notification.Name.NSWindowWillClose,
+                                                  name: NSWindow.willCloseNotification,
                                                   object: nil)
     
     }

@@ -15,9 +15,9 @@
 import Cocoa
 
 
-class SwiftOpenGLViewController: NSViewController {
+class MoveViewController: NSViewController {
 
-    var interactiveView: SwiftOpenGLView!
+    @IBOutlet weak var interactiveView: SwiftOpenGLView!
     
     override func viewDidLoad() {
         super.viewDidLoad()

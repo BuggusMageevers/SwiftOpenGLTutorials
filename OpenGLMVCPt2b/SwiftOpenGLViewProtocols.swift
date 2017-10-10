@@ -6,7 +6,7 @@
 //  Copyright © 2017 MyKo. All rights reserved.
 //
 //  Ver 2:  Protocols to drive redraws of an OpenGLView, provide
-//      view management, and eventually, a data source.
+//      user interaction, and eventually, a data source.
 //
 
 import Cocoa
@@ -18,7 +18,6 @@ import Cocoa
  calculations are required.
  */
 protocol RenderLoopDelegate {
-    
     //  MARK: DisplayLink
     /**
      A referrence to a `CVDisplayLink`.
@@ -59,7 +58,6 @@ protocol RenderLoopDelegate {
      previous frame and the current frame.
      */
     var deltaTime: Double { get }
-    
 }
 
 /**
@@ -68,9 +66,7 @@ protocol RenderLoopDelegate {
  over non-view-related code.
  */
 protocol RenderDelegate {
-    
     func prepareToDraw(frame atTime: Double)
-    
 }
 
 
@@ -95,21 +91,20 @@ protocol Instructable {
  a global change
  */
 protocol Respondable {
-    func respondTo(_ input: InputDevice, in mode: ViewControllerMode) -> Instruction?
+    var instructables: [InstructionTarget : Instructable] { get set }
+    
+    func respondTo(_ input: InputDevice, in mode: InstructionMode)
 }
 extension Respondable {
-    func respondTo(_ input: InputDevice, in mode: ViewControllerMode) -> Instruction? {
-        // Is the instruction global?
-        if let instructionMap = keyInstructionMaps[input] {
-            if let instruction = instructionMap[input] {
-                return instruction
-            }
+    func respondTo(_ input: InputDevice, in mode: InstructionMode) {
+        if let instructionSet = keyInstructionMaps[input] {
+            instructables[instructionSet.target]?.perform(instructionSet.instruction)
         }
-        return nil
     }
 }
 
-enum ViewControllerMode {
+enum InstructionMode {
+    case global
     case move
     case edit
 }
@@ -177,28 +172,46 @@ enum UserInput {
         case move
     }
 }
-enum Instruction {
-    enum Camera {
-        enum Move {
-            case forward
-            case backward
-            case left
-            case right
-        }
-        enum Orient {
-            case pitchUp
-            case pitchDown
-            case yawLeft
-            case yawRight
-            case rollLeft
-            case rollRight
-        }
+protocol Instruction {}
+enum Move: Instruction {
+    case forward
+    case backward
+    case left
+    case right
+}
+enum Orient: Instruction {
+    case pitchUp
+    case pitchDown
+    case yawLeft
+    case yawRight
+    case rollLeft
+    case rollRight
+}
+enum InstructionTarget: Hashable, Equatable {
+    case globalCamera
+    case selectedObject
+    
+    static func == (lhs: InstructionTarget, rhs: InstructionTarget) -> Bool {
+        return lhs.hashValue == rhs.hashValue
     }
+    static func != (lhs: InstructionTarget, rhs: InstructionTarget) -> Bool {
+        return lhs.hashValue != rhs.hashValue
+    }
+}
+struct InstructionSet {
+    var mode: InstructionMode
+    var target: InstructionTarget
+    var instruction: Instruction
+}
+fileprivate var keyInstructionMaps = [
+    InputDevice.keyboard(UserInput.Key.w) : InstructionSet(mode: InstructionMode.global, target: InstructionTarget.globalCamera, instruction: Move.forward),
+    InputDevice.keyboard(UserInput.Key.s) : InstructionSet(mode: InstructionMode.global, target: InstructionTarget.globalCamera, instruction: Move.backward),
+    InputDevice.keyboard(UserInput.Key.a) : InstructionSet(mode: InstructionMode.global, target: InstructionTarget.globalCamera, instruction: Move.left),
+    InputDevice.keyboard(UserInput.Key.d) : InstructionSet(mode: InstructionMode.global, target: InstructionTarget.globalCamera, instruction: Move.right)
+]
+
+struct ObjectGraph {
     
 }
-fileprivate var keyInstructionMaps = [InputDevice : [InputDevice : Instruction]]()
-fileprivate var globalInstructions = [InputDevice : Instruction]()
-fileprivate var moveInstructions = [InputDevice : Instruction]()
-fileprivate var editInstructions = [InputDevice : Instruction]()
 
 

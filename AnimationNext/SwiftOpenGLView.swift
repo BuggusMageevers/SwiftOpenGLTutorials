@@ -67,7 +67,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         
         let fileURL = Bundle.main.url(forResource: "Texture", withExtension: "png")
         
-        let dataProvider = CGDataProvider(url: fileURL as! CFURL)
+        let dataProvider = CGDataProvider(url: fileURL! as CFURL)
         let image = CGImage(pngDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: false, intent: CGColorRenderingIntent.defaultIntent)
         
         let textureData = UnsafeMutableRawPointer.allocate(bytes: 256 * 4 * 256, alignedTo: MemoryLayout<GLint>.alignment)

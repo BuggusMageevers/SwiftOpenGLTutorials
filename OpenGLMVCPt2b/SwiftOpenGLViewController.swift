@@ -14,53 +14,55 @@ import OpenGL.GLTypes
 
 
 class SwiftOpenGLViewController: NSViewController, NSWindowDelegate, RenderDelegate, Respondable {
-    
     @IBOutlet weak var interactiveView: SwiftOpenGLView!
-    private var camera = SwiftCamera()
+    private var globalCamera = SwiftCamera()
+    internal var instructables: [InstructionTarget : Instructable] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
+        // Do any additional set after loading the view.
         interactiveView.renderDelegate = self
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(windowWillClose(_:)),
                                                name: NSWindow.willCloseNotification,
                                                object: nil)
+        
+        instructables = [
+            InstructionTarget.globalCamera : globalCamera
+        ]
     }
     
     // MARK: - User Interactions
-    override func keyDown(with theEvent: NSEvent) {
-        if let key = UserInput.Key(rawValue: theEvent.keyCode) {
-            let instruction = respondTo(InputDevice.keyboard(key), in: .move)
+    override func keyDown(with event: NSEvent) {
+        if let key = UserInput.Key(rawValue: event.keyCode) {
+            respondTo(InputDevice.keyboard(key), in: .move)
         }
     }
     
-    override func keyUp(with theEvent: NSEvent) {
+    override func keyUp(with event: NSEvent) {
         
         
         
     }
     
-    override func mouseDragged(with theEvent: NSEvent) {
+    override func mouseDragged(with event: NSEvent) {
         
         
         
     }
     
     func windowWillClose(_ notification: Notification) {
-        
         interactiveView.stopDrawing()
-        
         NotificationCenter.default.removeObserver(self,
                                                   name: NSWindow.willCloseNotification,
                                                   object: nil)
-        
     }
     
-    //  MARK: - Render Delegate
+    // MARK: - Render Delegate
     func prepareToDraw(frame atTime: Double) {
         
+        
+        
     }
-    
 }
