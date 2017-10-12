@@ -19,9 +19,9 @@ class SwiftOpenGLViewController: NSViewController, NSWindowDelegate, RenderDeleg
     internal var instructables: [InstructionTarget : Instructable] = [:]
     
     override func viewDidLoad() {
+        print("Initializing views and controls...")
         super.viewDidLoad()
         
-        // Do any additional set after loading the view.
         interactiveView.renderDelegate = self
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(windowWillClose(_:)),

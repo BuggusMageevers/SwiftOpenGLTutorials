@@ -9,7 +9,8 @@
 //      user interaction, and eventually, a data source.
 //
 
-import Cocoa
+import Foundation
+import CoreVideo.CVDisplayLink
 
 /**
  A delegate to be used in driving redraws to a view that draws OpenGL
@@ -103,11 +104,6 @@ extension Respondable {
     }
 }
 
-enum InstructionMode {
-    case global
-    case move
-    case edit
-}
 enum InputDevice: Hashable, Equatable {
     case keyboard(UserInput.Key)
     case mouse(UserInput.Action)
@@ -172,6 +168,12 @@ enum UserInput {
         case move
     }
 }
+enum InstructionMode {
+    case global
+    case move
+    case edit
+}
+
 protocol Instruction {}
 enum Move: Instruction {
     case forward
@@ -209,9 +211,3 @@ fileprivate var keyInstructionMaps = [
     InputDevice.keyboard(UserInput.Key.a) : InstructionSet(mode: InstructionMode.global, target: InstructionTarget.globalCamera, instruction: Move.left),
     InputDevice.keyboard(UserInput.Key.d) : InstructionSet(mode: InstructionMode.global, target: InstructionTarget.globalCamera, instruction: Move.right)
 ]
-
-struct ObjectGraph {
-    
-}
-
-
