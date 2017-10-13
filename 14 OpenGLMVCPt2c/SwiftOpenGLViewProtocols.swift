@@ -68,7 +68,6 @@ protocol RenderLoopDelegate {
  */
 protocol RenderDelegate {
     func prepareToDraw(frame atTime: Double)
-    func drawing(_ scene: SwiftScene, atTime: Double)
 }
 
 
