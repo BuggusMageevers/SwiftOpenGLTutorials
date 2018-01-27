@@ -62,27 +62,17 @@ protocol RenderLoopDelegate {
 }
 
 /**
- The RenderDelegate is used by an instance of SwiftOpenGLView to
+ The `RenderDelegate` is used by an instance of SwiftOpenGLView to
  outsource the drawing methods.  This allows a controller to take
  over non-view-related code.
  */
 protocol RenderDelegate {
-    func prepareToDraw(frame atTime: Double)
+    func mayPrepareContent()
+    func prepareToRender(_ scene: String?, at time: Double)
+    func retrieve(_ scene: String) -> Scene?
 }
-
 
 // MARK: - User Interaction
-
-
-/**
- An `Instructable` takes instruction from a respondable. Each instructable
- must have a definition for each accepted instruction. For example, a
- camera object may accept the instruction move.forward and defines a move
- method to move the camera position foward.
- */
-protocol Instructable {
-    func perform(_ instruction: Instruction)
-}
 
 /**
  A `Respondable` receives an event and notifies an `Instructable` to
@@ -92,122 +82,35 @@ protocol Instructable {
  a global change
  */
 protocol Respondable {
-    var instructables: [InstructionTarget : Instructable] { get set }
+    var instructions: [ UserInput : InstructionSet ] { get set }
     
-    func respondTo(_ input: InputDevice, in mode: InstructionMode)
-}
-extension Respondable {
-    func respondTo(_ input: InputDevice, in mode: InstructionMode) {
-        if let instructionSet = keyInstructionMaps[input] {
-            instructables[instructionSet.target]?.perform(instructionSet.instruction)
-        }
-    }
+    mutating func respond(to input: UserInput, at time: Double)
 }
 
-enum InputDevice: Hashable, Equatable {
-    case keyboard(UserInput.Key)
-    case mouse(UserInput.Action)
+enum UserInput: Hashable, Equatable {
+    case keyboard(Key)
+    
+    enum Key: UInt16 {
+        case w = 13
+    }
     
     var hashValue: Int {
         switch self {
         case .keyboard(let key):
-            return key.rawValue.hashValue
-        case .mouse(let action):
-            return action.hashValue
+            return key.hashValue &* 65_537
         }
     }
-    
-    static func ==(lhs: InputDevice, rhs: InputDevice) -> Bool {
-        switch lhs {
-        case .keyboard(let leftKey):
-            switch rhs {
-            case .keyboard(let rightKey):
-                return leftKey.rawValue == rightKey.rawValue
-            case .mouse(_):
-                return false
-            }
-        case .mouse(let leftAction):
-            switch rhs {
-            case .keyboard(_):
-                return false
-            case .mouse(let rightAction):
-                return leftAction == rightAction
-            }
-        }
-    }
-    static func !=(lhs: InputDevice, rhs: InputDevice) -> Bool {
-        switch lhs {
-        case .keyboard(let leftKey):
-            switch rhs {
-            case .keyboard(let rightKey):
-                return leftKey.rawValue != rightKey.rawValue
-            case .mouse(_):
-                return false
-            }
-        case .mouse(let leftAction):
-            switch rhs {
-            case .keyboard(_):
-                return false
-            case .mouse(let rightAction):
-                return leftAction != rightAction
-            }
-        }
-    }
-}
-enum UserInput {
-    enum Key : UInt16 {
-        case a = 0
-        case s = 1
-        case d = 2
-        case w = 13
-    }
-    
-    enum Action {
-        case leftButton
-        case rightButton
-        case move
-    }
-}
-enum InstructionMode {
-    case global
-    case move
-    case edit
-}
-
-protocol Instruction {}
-enum Move: Instruction {
-    case forward
-    case backward
-    case left
-    case right
-}
-enum Orient: Instruction {
-    case pitchUp
-    case pitchDown
-    case yawLeft
-    case yawRight
-    case rollLeft
-    case rollRight
-}
-enum InstructionTarget: Hashable, Equatable {
-    case globalCamera
-    case selectedObject
-    
-    static func == (lhs: InstructionTarget, rhs: InstructionTarget) -> Bool {
+    static func ==(lhs: UserInput, rhs: UserInput) -> Bool {
         return lhs.hashValue == rhs.hashValue
     }
-    static func != (lhs: InstructionTarget, rhs: InstructionTarget) -> Bool {
+    static func != (lhs: UserInput, rhs: UserInput) -> Bool {
         return lhs.hashValue != rhs.hashValue
     }
 }
-struct InstructionSet {
-    var mode: InstructionMode
-    var target: InstructionTarget
-    var instruction: Instruction
+enum Instruction {
+    case move(Float3)
 }
-fileprivate var keyInstructionMaps = [
-    InputDevice.keyboard(UserInput.Key.w) : InstructionSet(mode: InstructionMode.global, target: InstructionTarget.globalCamera, instruction: Move.forward),
-    InputDevice.keyboard(UserInput.Key.s) : InstructionSet(mode: InstructionMode.global, target: InstructionTarget.globalCamera, instruction: Move.backward),
-    InputDevice.keyboard(UserInput.Key.a) : InstructionSet(mode: InstructionMode.global, target: InstructionTarget.globalCamera, instruction: Move.left),
-    InputDevice.keyboard(UserInput.Key.d) : InstructionSet(mode: InstructionMode.global, target: InstructionTarget.globalCamera, instruction: Move.right)
-]
+struct InstructionSet {
+    let target: String
+    let instruction: Instruction
+}

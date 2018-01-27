@@ -9,16 +9,29 @@
 import Cocoa
 import OpenGL.GL3
 
+protocol Renderer {
+    func draw(triangels start: Int32, to end: Int32)
+}
+extension Renderer {
+    func draw(triangels start: Int32, to end: Int32) {
+        glDrawArrays(GLenum(GL_TRIANGLES), start, end)
+    }
+}
+extension NSOpenGLContext: Renderer {}
 
 final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
+    var sceneName: String? {
+        didSet {
+            if !running {
+                startDrawing()
+            }
+        }
+    }
     
-    fileprivate var shader = SwiftShader()
-    fileprivate var modelGroup = SwiftModelGroup()
-    fileprivate var model = SwiftModel()
-    fileprivate var texture = SwiftTexture()
+    private var value: Float = 0.0
     
-    var view = Matrix4()
-    fileprivate var projection = Matrix4()
+    var view = FloatMatrix4()
+    var projection = FloatMatrix4()
     
     /** The delegate is used to prepare a scene and the view for drawing.
         Through this method, we'll be able to update the view matrices,
@@ -40,9 +53,7 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
     internal var link: CVDisplayLink?
     var currentTime: Double = 0.0 {
         didSet(previousTime) {
-            
             deltaTime = currentTime - previousTime
-            
         }
     }
     var deltaTime: Double = 0.0
@@ -88,36 +99,34 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
 
         framesPerSecondConstant = videoTimeScale / videoRefreshPeriod
         ````
-     Time in DD:HH:mm:ss using hostTime
+     EXAMPLE: Time in DD:HH:mm:ss using `hostTime`
      ````
      let rootTotalSeconds = inNow.pointee.hostTime
      let rootDays = inNow.pointee.hostTime / (1_000_000_000 * 60 * 60 * 24) % 365
      let rootHours = inNow.pointee.hostTime / (1_000_000_000 * 60 * 60) % 24
      let rootMinutes = inNow.pointee.hostTime / (1_000_000_000 * 60) % 60
      let rootSeconds = inNow.pointee.hostTime / 1_000_000_000 % 60
-     Swift.print("rootTotalSeconds: \(rootTotalSeconds) rootDays: \(rootDays) rootHours: \(rootHours) rootMinutes: \(rootMinutes) rootSeconds: \(rootSeconds)")
+     print("rootTotalSeconds: \(rootTotalSeconds) rootDays: \(rootDays) rootHours: \(rootHours) rootMinutes: \(rootMinutes) rootSeconds: \(rootSeconds)")
      ````
-     Time in DD:HH:mm:ss using videoTime
+     EXAMPLE: Time in DD:HH:mm:ss using `videoTime`
      ````
      let totalSeconds = inNow.pointee.videoTime / Int64(inNow.pointee.videoTimeScale)
      let days = (totalSeconds / (60 * 60 * 24)) % 365
      let hours = (totalSeconds / (60 * 60)) % 24
      let minutes = (totalSeconds / 60) % 60
      let seconds = totalSeconds % 60
-     Swift.print("totalSeconds: \(totalSeconds) Days: \(days) Hours: \(hours) Minutes: \(minutes) Seconds: \(seconds)")
+     print("totalSeconds: \(totalSeconds) Days: \(days) Hours: \(hours) Minutes: \(minutes) Seconds: \(seconds)")
     
-     Swift.print("fps: \(Double(inNow.pointee.videoTimeScale) / Double(inNow.pointee.videoRefreshPeriod)) seconds: \(Double(inNow.pointee.videoTime) / Double(inNow.pointee.videoTimeScale))")
+     print("fps: \(Double(inNow.pointee.videoTimeScale) / Double(inNow.pointee.videoRefreshPeriod)) seconds: \(Double(inNow.pointee.videoTime) / Double(inNow.pointee.videoTimeScale))")
      ````
      */
     internal let callback: CVDisplayLinkOutputCallback = {(displayLink: CVDisplayLink, inNow: UnsafePointer<CVTimeStamp>, inOutputTime: UnsafePointer<CVTimeStamp>, flagsIn: CVOptionFlags, flagsOut: UnsafeMutablePointer<CVOptionFlags>, displayLinkContext: UnsafeMutableRawPointer?) -> CVReturn in
- 
         weak var view = unsafeBitCast(displayLinkContext, to: SwiftOpenGLView.self)
         
         view!.currentTime = Double(Double(inNow.pointee.videoTime) / Double(inNow.pointee.videoTimeScale))
         view!.drawView()
         
         return kCVReturnSuccess
-        
     }
     
     /// In order to recieve keyboard input, we need to enable the view to accept first responder status
@@ -148,44 +157,28 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
         
         //  Set the context's swap interval parameter to 60Hz (i.e. 1 frame per swamp)
         self.openGLContext?.setValues([1], for: .swapInterval)
-        
     }
     
     override func prepareOpenGL() {
-        
         super.prepareOpenGL()
         
+        print("Preparing OpenGL parameters...")
+        
         glClearColor(0.0, 0.0, 0.0, 1.0)
-        
-        texture.create(from: "Texture")
-        model.create()
-        modelGroup.create()
-        
-        shader.create()
-        shader.setUniforms()
-        
-        //  Push the triangle back from the viewer
-        view.m23 = -5.0
-        projection = Matrix4(fieldOfView: 35, aspect: Float(bounds.size.width) / Float(bounds.size.height), nearZ: 0.001, farZ: 1000)
-        
-        drawView()
         
         setupLink()
         startDrawing()
         
+        renderDelegate?.mayPrepareContent()
     }
     
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
         
-        // Drawing code here.
-        
-        drawView()
-        
+//        drawView()
     }
     
     func drawView() {
-        
         guard let context = self.openGLContext else {
             Swift.print("oops")
             return
@@ -193,27 +186,23 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
         
         context.makeCurrentContext()
         CGLLockContext(context.cglContextObj!)
-        
-        let value = Float(sin(currentTime))
 
-        renderDelegate?.prepareToDraw(frame: currentTime)
+        renderDelegate?.prepareToRender(sceneName, at: currentTime)
+        
+        guard let sceneName = sceneName else {
+            print("Default scene does not exist.")
+            stopDrawing()
+            return
+        }
+        value = sinf(Float(currentTime))
         
         glClearColor(GLfloat(value), GLfloat(value), GLfloat(value), 1.0)
-        
         glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
         
-        shader.bind()
-        modelGroup.bind()
-        
-        shader.updateAnimatedUniforms(with: (value, [view, projection]))
-        
-        model.draw()
-        
-        modelGroup.unbind()
+        renderDelegate?.retrieve(sceneName)?.draw(with: context)
         
         CGLFlushDrawable(context.cglContextObj!)
         CGLUnlockContext(context.cglContextObj!)
-        
     }
     
     
@@ -224,30 +213,18 @@ final class SwiftOpenGLView: NSOpenGLView, RenderLoopDelegate {
     }
     
     func startDrawing() {
-        
         if running == false, let link = self.link {
-            
+            print("Currently not drawing:  drawing initiated...")
             CVDisplayLinkStart(link)
-            
+            running = true
         }
-        
     }
     
     func stopDrawing() {
-        
         if running == true, let link = self.link {
-            
+            print("Drawing stopped.")
             CVDisplayLinkStop(link)
-            
+            running = false
         }
-        
     }
-    
-    deinit {
-        modelGroup.delete()
-        model.delete()
-        shader.delete()
-        texture.delete()
-    }
-    
 }
