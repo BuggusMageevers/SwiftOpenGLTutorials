@@ -4,7 +4,6 @@
 ### Misc. Files ###
 CodeIdeas*
 *.obj
-RefineRenderEnginePt2/
 
 ### Xcode ###
 # Xcode
@@ -16,6 +15,7 @@ RefineRenderEnginePt2/
 Base.lproj/
 *.plist
 *.xcassets
+Supporting\ Files/
 
 ## Build generated
 build/
