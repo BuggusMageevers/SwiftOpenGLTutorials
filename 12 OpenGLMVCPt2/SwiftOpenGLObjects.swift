@@ -1,51 +1,14 @@
 //
-//  GraphicSceneObjects.swift
-//  SwiftOpenGLRefactor
+//  SwiftOpenGLObjects.swift
+//  OpenGLMVCPt2a
 //
-//  Created by Myles Schultz on 1/19/18.
+//  Created by Myles Schultz on 1/27/18.
 //  Copyright © 2018 MyKo. All rights reserved.
 //
 
 import Foundation
 import Quartz
-import OpenGL.GL3
 
-
-func glLogCall(file: String, line: Int) -> Bool {
-    var error = GLenum(GL_NO_ERROR)
-    
-    repeat {
-        error = glGetError()
-        
-        switch error {
-        case  GLenum(GL_INVALID_ENUM):
-            print("\(file), line: \(line), ERROR:  invalid Enum")
-            return false
-        case GLenum(GL_INVALID_VALUE):
-            print("\(file), line: \(line), ERROR:  invalid value passed")
-            return false
-        case GLenum(GL_INVALID_OPERATION):
-            print("\(file), line: \(line), ERROR:  invalid operation attempted")
-            return false
-        case GLenum(GL_INVALID_FRAMEBUFFER_OPERATION):
-            print("\(file), line: \(line), ERROR:  invalid framebuffer operation attempted")
-            return false
-        case GLenum(GL_OUT_OF_MEMORY):
-            print("\(file), line: \(line), ERROR:  out of memory")
-            return false
-        default:
-            return true
-        }
-    } while error != GLenum(GL_NO_ERROR)
-}
-func glCall<T>(_ function: @autoclosure () -> T, file: String = #file, line: Int = #line) -> T {
-    while glGetError() != GL_NO_ERROR {}
-    
-    let result = function()
-    assert(glLogCall(file: file, line: line))
-    
-    return result
-}
 
 protocol OpenGLObject {
     var id: GLuint { get set }
@@ -63,7 +26,6 @@ struct Vertex {
 }
 struct VertexBufferObject: OpenGLObject {
     var id: GLuint = 0
-    let type: GLenum = GLenum(GL_ARRAY_BUFFER)
     var vertexCount: Int32 {
         return Int32(data.count)
     }
@@ -72,90 +34,94 @@ struct VertexBufferObject: OpenGLObject {
     mutating func load(_ data: [Vertex]) {
         self.data = data
         
-        glCall(glGenBuffers(1, &id))
+        glGenBuffers(1, &id)
         bind()
-        glCall(glBufferData(GLenum(GL_ARRAY_BUFFER), data.count * MemoryLayout<Vertex>.size, data, GLenum(GL_STATIC_DRAW)))
+        glBufferData(GLenum(GL_ARRAY_BUFFER), data.count * MemoryLayout<Vertex>.size, data, GLenum(GL_STATIC_DRAW))
     }
     
     func bind() {
-        glCall(glBindBuffer(type, id))
+        glBindBuffer(GLenum(GL_ARRAY_BUFFER), id)
     }
     
     func unbind() {
-        glCall(glBindBuffer(type, id))
+        glBindBuffer(GLenum(GL_ARRAY_BUFFER), id)
     }
     
     mutating func delete() {
-        glCall(glDeleteBuffers(1, &id))
+        glDeleteBuffers(1, &id)
     }
 }
 struct VertexArrayObject: OpenGLObject {
     var id: GLuint = 0
     
     mutating func layoutVertexPattern() {
-        glCall(glGenVertexArrays(1, &id))
+        glGenVertexArrays(1, &id)
         bind()
         
-        glCall(glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 44, UnsafePointer<GLuint>(bitPattern: 0)))
-        glCall(glEnableVertexAttribArray(0))
+        /* Position */
+        glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 44, UnsafePointer<GLuint>(bitPattern: 0))
+        glEnableVertexAttribArray(0)
         
-        glCall(glVertexAttribPointer(1, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 44, UnsafePointer<GLuint>(bitPattern: 12)))
-        glCall(glEnableVertexAttribArray(1))
+        /* Normal */
+        glVertexAttribPointer(1, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 44, UnsafePointer<GLuint>(bitPattern: 12))
+        glEnableVertexAttribArray(1)
         
-        glCall(glVertexAttribPointer(2, 2, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 44, UnsafePointer<GLuint>(bitPattern: 24)))
-        glCall(glEnableVertexAttribArray(2))
+        /* Texture Coordinate */
+        glVertexAttribPointer(2, 2, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 44, UnsafePointer<GLuint>(bitPattern: 24))
+        glEnableVertexAttribArray(2)
         
-        glCall(glVertexAttribPointer(3, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 44, UnsafePointer<GLuint>(bitPattern:32)))
-        glCall(glEnableVertexAttribArray(3))
+        /* Color */
+        glVertexAttribPointer(3, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 44, UnsafePointer<GLuint>(bitPattern:32))
+        glEnableVertexAttribArray(3)
     }
     
     func bind() {
-        glCall(glBindVertexArray(id))
+        glBindVertexArray(id)
     }
     func unbind() {
-        glCall(glBindVertexArray(id))
+        glBindVertexArray(id)
     }
     
     mutating func delete() {
-        glCall(glDeleteVertexArrays(1, &id))
+        glDeleteVertexArrays(1, &id)
     }
 }
 enum TextureSlot: GLint {
-    case texture1 = 33984
+    case texture0 = 33984   /* GL_TEXTURE0 */
 }
 struct TextureBufferObject: OpenGLObject {
     var id: GLuint = 0
-    var textureSlot: GLint = TextureSlot.texture1.rawValue
+    var textureSlot: GLint = TextureSlot.texture0.rawValue
     
     mutating func loadTexture(named name: String) {
         guard let textureData = NSImage(named: NSImage.Name(rawValue: name))?.tiffRepresentation else {
-            Swift.print("Image name not located in Image Asset Catalog")
+            print("Image name not located in Image Asset Catalog")
             return
         }
         
-        glCall(glGenTextures(1, &id))
+        glGenTextures(1, &id)
         bind()
         
-        glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_LINEAR))
-        glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_LINEAR))
-        glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GL_REPEAT))
-        glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GL_REPEAT))
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_LINEAR)
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_LINEAR)
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GL_REPEAT)
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GL_REPEAT)
         
-        glCall(glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_RGBA, 256, 256, 0, GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE), (textureData as NSData).bytes))
+        glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_RGBA, 256, 256, 0, GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE), (textureData as NSData).bytes)
     }
     
     func bind() {
-        glCall(glBindTexture(GLenum(GL_TEXTURE_2D), id))
+        glBindTexture(GLenum(GL_TEXTURE_2D), id)
     }
     func unbind() {
-        glCall(glBindTexture(GLenum(GL_TEXTURE_2D), 0))
+        glBindTexture(GLenum(GL_TEXTURE_2D), 0)
     }
     
     mutating func delete() {
-        glCall(glDeleteTextures(1, &id))
+        glDeleteTextures(1, &id)
     }
 }
-enum ShaderType: UInt32 {
+enum ShaderType: GLenum {
     case vertex = 35633     /* GL_VERTEX_SHADER */
     case fragment = 35632   /* GL_FRAGMENT_SHADER */
 }
@@ -163,7 +129,7 @@ struct Shader: OpenGLObject {
     var id: GLuint = 0
     
     mutating func create(withVertex vertexSource: String, andFragment fragmentSource: String) {
-        id = glCall(glCreateProgram())
+        id = glCreateProgram()
         
         let vertex = compile(shaderType: .vertex, withSource: vertexSource)
         let fragment = compile(shaderType: .fragment, withSource: fragmentSource)
@@ -172,21 +138,21 @@ struct Shader: OpenGLObject {
     }
     
     func compile(shaderType type: ShaderType, withSource source: String) -> GLuint {
-        let shader = glCall(glCreateShader(type.rawValue))
+        let shader = glCreateShader(type.rawValue)
         var pointerToShader = UnsafePointer<GLchar>(source.cString(using: String.Encoding.ascii))
-        glCall(glShaderSource(shader, 1, &pointerToShader, nil))
-        glCall(glCompileShader(shader))
+        glShaderSource(shader, 1, &pointerToShader, nil)
+        glCompileShader(shader)
         var compiled: GLint = 0
-        glCall(glGetShaderiv(shader, GLbitfield(GL_COMPILE_STATUS), &compiled))
+        glGetShaderiv(shader, GLbitfield(GL_COMPILE_STATUS), &compiled)
         if compiled <= 0 {
             print("Could not compile shader type: \(type), getting log...")
             var logLength: GLint = 0
             print("Log length: \(logLength)")
-            glCall(glGetShaderiv(shader, GLenum(GL_INFO_LOG_LENGTH), &logLength))
+            glGetShaderiv(shader, GLenum(GL_INFO_LOG_LENGTH), &logLength)
             if logLength > 0 {
                 let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
-                glCall(glGetShaderInfoLog(shader, GLsizei(logLength), &logLength, cLog))
-                Swift.print("\n\t\(String.init(cString: cLog))")
+                glGetShaderInfoLog(shader, GLsizei(logLength), &logLength, cLog)
+                print("\n\t\(String.init(cString: cLog))")
                 free(cLog)
             }
         }
@@ -195,26 +161,26 @@ struct Shader: OpenGLObject {
     }
     
     func link(vertexShader vertex: GLuint, fragmentShader fragment: GLuint) {
-        glCall(glAttachShader(id, vertex))
-        glCall(glAttachShader(id, fragment))
-        glCall(glLinkProgram(id))
+        glAttachShader(id, vertex)
+        glAttachShader(id, fragment)
+        glLinkProgram(id)
         var linked: GLint = 0
-        glCall(glGetProgramiv(id, UInt32(GL_LINK_STATUS), &linked))
+        glGetProgramiv(id, UInt32(GL_LINK_STATUS), &linked)
         if linked <= 0 {
-            Swift.print("Could not link, getting log")
+            print("Could not link, getting log")
             var logLength: GLint = 0
-            glCall(glGetProgramiv(id, UInt32(GL_INFO_LOG_LENGTH), &logLength))
-            Swift.print(" logLength = \(logLength)")
+            glGetProgramiv(id, UInt32(GL_INFO_LOG_LENGTH), &logLength)
+            print(" logLength = \(logLength)")
             if logLength > 0 {
                 let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
-                glCall(glGetProgramInfoLog(id, GLsizei(logLength), &logLength, cLog))
-                Swift.print("log: \(String.init(cString:cLog))")
+                glGetProgramInfoLog(id, GLsizei(logLength), &logLength, cLog)
+                print("log: \(String.init(cString:cLog))")
                 free(cLog)
             }
         }
         
-        glCall(glDeleteShader(vertex))
-        glCall(glDeleteShader(fragment))
+        glDeleteShader(vertex)
+        glDeleteShader(fragment)
     }
     
     func setInitialUniforms(for scene: inout Scene) {
@@ -231,53 +197,17 @@ struct Shader: OpenGLObject {
     }
     
     func bind() {
-        glCall(glUseProgram(id))
+        glUseProgram(id)
     }
     func unbind() {
-        glCall(glUseProgram(0))
+        glUseProgram(0)
     }
     
     func delete() {
-        glCall(glDeleteProgram(id))
+        glDeleteProgram(id)
     }
 }
 
-struct DisplayLink {
-    let id: CVDisplayLink
-    let displayLinkOutputCallback: CVDisplayLinkOutputCallback = {(displayLink: CVDisplayLink, inNow: UnsafePointer<CVTimeStamp>, inOutputTime: UnsafePointer<CVTimeStamp>, flagsIn: CVOptionFlags, flagsOut: UnsafeMutablePointer<CVOptionFlags>, displayLinkContext: UnsafeMutableRawPointer?) -> CVReturn in
-//        print("fps:  \(Double(inNow.pointee.videoTimeScale) / Double(inNow.pointee.videoRefreshPeriod))")
-        
-        let view = unsafeBitCast(displayLinkContext, to: GraphicView.self)
-        view.displayLink?.currentTime = Double(inNow.pointee.videoTime) / Double(inNow.pointee.videoTimeScale)
-        let result = view.drawView()
-        
-        return result
-    }
-    var currentTime: Double = 0.0 {
-        willSet {
-            deltaTime = currentTime - newValue
-        }
-    }
-    var deltaTime: Double = 0.0
-    
-    init?(forView view: GraphicView) {
-        var newID: CVDisplayLink?
-        
-        if CVDisplayLinkCreateWithActiveCGDisplays(&newID) == kCVReturnSuccess {
-            self.id = newID!
-            CVDisplayLinkSetOutputCallback(id, displayLinkOutputCallback, UnsafeMutableRawPointer(Unmanaged.passUnretained(view).toOpaque()))
-        } else {
-            return nil
-        }
-    }
-    
-    func start() {
-        CVDisplayLinkStart(id)
-    }
-    func stop() {
-        CVDisplayLinkStop(id)
-    }
-}
 struct Light {
     private enum Parameter: String {
         case color = "light.color"
@@ -320,11 +250,11 @@ struct Light {
         let shader = shader.id
         var parameterLocations = [Parameter : Int32]()
         
-        parameterLocations[.color] = glCall(glGetUniformLocation(shader, Parameter.color.rawValue))
-        parameterLocations[.position] = glCall(glGetUniformLocation(shader, Parameter.position.rawValue))
-        parameterLocations[.ambientStrength] = glCall(glGetUniformLocation(shader, Parameter.ambientStrength.rawValue))
-        parameterLocations[.specularStrength] = glCall(glGetUniformLocation(shader, Parameter.specularStrength.rawValue))
-        parameterLocations[.specularHardness] = glCall(glGetUniformLocation(shader, Parameter.specularHardness.rawValue))
+        parameterLocations[.color] = glGetUniformLocation(shader, Parameter.color.rawValue)
+        parameterLocations[.position] = glGetUniformLocation(shader, Parameter.position.rawValue)
+        parameterLocations[.ambientStrength] = glGetUniformLocation(shader, Parameter.ambientStrength.rawValue)
+        parameterLocations[.specularStrength] = glGetUniformLocation(shader, Parameter.specularStrength.rawValue)
+        parameterLocations[.specularHardness] = glGetUniformLocation(shader, Parameter.specularHardness.rawValue)
         
         shaderParameterLocations[shader] = parameterLocations
     }
@@ -334,23 +264,23 @@ struct Light {
                 switch parameter {
                 case .color:
                     if let location = parameterLocations[parameter] {
-                        glCall(glUniform3fv(location, 1, color))
+                        glUniform3fv(location, 1, color)
                     }
                 case .position:
                     if let location = parameterLocations[parameter] {
-                        glCall(glUniform3fv(location, 1, position))
+                        glUniform3fv(location, 1, position)
                     }
                 case .ambientStrength:
                     if let location = parameterLocations[parameter] {
-                        glCall(glUniform1f(location, ambietStrength))
+                        glUniform1f(location, ambietStrength)
                     }
                 case .specularStrength:
                     if let location = parameterLocations[parameter] {
-                        glCall(glUniform1f(location, specularStrength))
+                        glUniform1f(location, specularStrength)
                     }
                 case .specularHardness:
                     if let location = parameterLocations[parameter] {
-                        glCall(glUniform1f(location, specularHardness))
+                        glUniform1f(location, specularHardness)
                     }
                 }
             }
@@ -358,7 +288,7 @@ struct Light {
         }
     }
 }
-struct Camera: Asset {
+struct Camera {
     private enum Parameter: String {
         case position = "view"
         case projection = "projection"
@@ -383,8 +313,8 @@ struct Camera: Asset {
         let shader = shader.id
         var parameterLocations = [Parameter : Int32]()
         
-        parameterLocations[.position] = glCall(glGetUniformLocation(shader, Parameter.position.rawValue))
-        parameterLocations[.projection] = glCall(glGetUniformLocation(shader, Parameter.projection.rawValue))
+        parameterLocations[.position] = glGetUniformLocation(shader, Parameter.position.rawValue)
+        parameterLocations[.projection] = glGetUniformLocation(shader, Parameter.projection.rawValue)
         
         shaderParameterLocations[shader] = parameterLocations
     }
@@ -394,11 +324,11 @@ struct Camera: Asset {
                 switch parameter {
                 case .position:
                     if let location = parameterLocations[parameter] {
-                        glCall(glUniformMatrix4fv(location, 1, GLboolean(GL_FALSE), position.columnMajorArray()))
+                        glUniformMatrix4fv(location, 1, GLboolean(GL_FALSE), position.columnMajorArray())
                     }
                 case .projection:
                     if let location = parameterLocations[parameter] {
-                        glCall(glUniformMatrix4fv(location, 1, GLboolean(GL_FALSE), projection.columnMajorArray()))
+                        glUniformMatrix4fv(location, 1, GLboolean(GL_FALSE), projection.columnMajorArray())
                     }
                 }
             }
@@ -406,7 +336,9 @@ struct Camera: Asset {
         }
     }
 }
+typealias SceneName = String
 struct Scene {
+    var name = SceneName()
     var shader = Shader()
     var vao = VertexArrayObject()
     var vbo =  VertexBufferObject()
@@ -415,9 +347,9 @@ struct Scene {
     var camera = Camera()
     let data: [Vertex] = [
         Vertex(position: Float3(x: -1.0, y: -1.0, z: 1.0),  /* Front face 1 */
-               normal: Float3(x: 0.0, y: 0.0, z: 1.0),
-               textureCoordinate: Float2(x: 0.0, y: 0.0),
-               color: Float3(x: 1.0, y: 0.0, z: 0.0)),
+            normal: Float3(x: 0.0, y: 0.0, z: 1.0),
+            textureCoordinate: Float2(x: 0.0, y: 0.0),
+            color: Float3(x: 1.0, y: 0.0, z: 0.0)),
         Vertex(position: Float3(x: 1.0, y: -1.0, z: 1.0),
                normal: Float3(x: 0.0, y: 0.0, z: 1.0),
                textureCoordinate: Float2(x: 1.0, y: 0.0),
@@ -428,9 +360,9 @@ struct Scene {
                color: Float3(x: 0.0, y: 1.0, z: 0.0)),
         
         Vertex(position: Float3(x: 1.0, y: 1.0, z: 1.0),    /* Front face 2 */
-               normal: Float3(x: 0.0, y: 0.0, z: 1.0),
-               textureCoordinate: Float2(x: 1.0, y: 1.0),
-               color: Float3(x: 0.0, y: 1.0, z: 0.0)),
+            normal: Float3(x: 0.0, y: 0.0, z: 1.0),
+            textureCoordinate: Float2(x: 1.0, y: 1.0),
+            color: Float3(x: 0.0, y: 1.0, z: 0.0)),
         Vertex(position: Float3(x: -1.0, y: 1.0, z: 1.0),
                normal: Float3(x: 0.0, y: 0.0, z: 1.0),
                textureCoordinate: Float2(x: 0.0, y: 1.0),
@@ -441,9 +373,9 @@ struct Scene {
                color: Float3(x: 1.0, y: 0.0, z: 0.0)),
         
         Vertex(position: Float3(x: 1.0, y: -1.0, z: 1.0),   /* Right face 1 */
-               normal: Float3(x: 1.0, y: 0.0, z: 0.0),
-               textureCoordinate: Float2(x: 0.0, y: 0.0),
-               color: Float3(x: 0.0, y: 0.0, z: 1.0)),
+            normal: Float3(x: 1.0, y: 0.0, z: 0.0),
+            textureCoordinate: Float2(x: 0.0, y: 0.0),
+            color: Float3(x: 0.0, y: 0.0, z: 1.0)),
         Vertex(position: Float3(x: 1.0, y: -1.0, z: -1.0),
                normal: Float3(x: 1.0, y: 0.0, z: 0.0),
                textureCoordinate: Float2(x: 1.0, y: 0.0),
@@ -454,9 +386,9 @@ struct Scene {
                color: Float3(x: 0.0, y: 1.0, z: 1.0)),
         
         Vertex(position: Float3(x: 1.0, y: 1.0, z: -1.0),   /* Right face 2 */
-               normal: Float3(x: 1.0, y: 0.0, z: 0.0),
-               textureCoordinate: Float2(x: 1.0, y: 1.0),
-               color: Float3(x: 0.0, y: 1.0, z: 1.0)),
+            normal: Float3(x: 1.0, y: 0.0, z: 0.0),
+            textureCoordinate: Float2(x: 1.0, y: 1.0),
+            color: Float3(x: 0.0, y: 1.0, z: 1.0)),
         Vertex(position: Float3(x: 1.0, y: 1.0, z: 1.0),
                normal: Float3(x: 1.0, y: 0.0, z: 0.0),
                textureCoordinate: Float2(x: 0.0, y: 1.0),
@@ -467,9 +399,9 @@ struct Scene {
                color: Float3(x: 0.0, y: 0.0, z: 1.0)),
         
         Vertex(position: Float3(x: 1.0, y: -1.0, z: -1.0),  /* Back face 1 */
-               normal: Float3(x: 0.0, y: 0.0, z: -1.0),
-               textureCoordinate: Float2(x: 0.0, y: 0.0),
-               color: Float3(x: 1.0, y: 1.0, z: 0.0)),
+            normal: Float3(x: 0.0, y: 0.0, z: -1.0),
+            textureCoordinate: Float2(x: 0.0, y: 0.0),
+            color: Float3(x: 1.0, y: 1.0, z: 0.0)),
         Vertex(position: Float3(x: -1.0, y: -1.0, z: -1.0),
                normal: Float3(x: 0.0, y: 0.0, z: -1.0),
                textureCoordinate: Float2(x: 1.0, y: 0.0),
@@ -480,9 +412,9 @@ struct Scene {
                color: Float3(x: 1.0, y: 0.0, z: 1.0)),
         
         Vertex(position: Float3(x: -1.0, y: 1.0, z: -1.0),  /* Back face 2 */
-               normal: Float3(x: 0.0, y: 0.0, z: -1.0),
-               textureCoordinate: Float2(x: 1.0, y: 1.0),
-               color: Float3(x: 1.0, y: 0.0, z: 1.0)),
+            normal: Float3(x: 0.0, y: 0.0, z: -1.0),
+            textureCoordinate: Float2(x: 1.0, y: 1.0),
+            color: Float3(x: 1.0, y: 0.0, z: 1.0)),
         Vertex(position: Float3(x: 1.0, y: 1.0, z: -1.0),
                normal: Float3(x: 0.0, y: 0.0, z: -1.0),
                textureCoordinate: Float2(x: 0.0, y: 1.0),
@@ -493,9 +425,9 @@ struct Scene {
                color: Float3(x: 1.0, y: 1.0, z: 0.0)),
         
         Vertex(position: Float3(x: -1.0, y: -1.0, z: -1.0), /* Left face 1 */
-               normal: Float3(x: -1.0, y: 0.0, z: 0.0),
-               textureCoordinate: Float2(x: 0.0, y: 0.0),
-               color: Float3(x: 0.0, y: 0.0, z: 0.0)),
+            normal: Float3(x: -1.0, y: 0.0, z: 0.0),
+            textureCoordinate: Float2(x: 0.0, y: 0.0),
+            color: Float3(x: 0.0, y: 0.0, z: 0.0)),
         Vertex(position: Float3(x: -1.0, y: -1.0, z: 1.0),
                normal: Float3(x: -1.0, y: 0.0, z: 0.0),
                textureCoordinate: Float2(x: 1.0, y: 0.0),
@@ -506,9 +438,9 @@ struct Scene {
                color: Float3(x: 1.0, y: 1.0, z: 1.0)),
         
         Vertex(position: Float3(x: -1.0, y: 1.0, z: 1.0),   /* Left face 2 */
-               normal: Float3(x: -1.0, y: 0.0, z: 0.0),
-               textureCoordinate: Float2(x: 1.0, y: 1.0),
-               color: Float3(x: 1.0, y: 1.0, z: 1.0)),
+            normal: Float3(x: -1.0, y: 0.0, z: 0.0),
+            textureCoordinate: Float2(x: 1.0, y: 1.0),
+            color: Float3(x: 1.0, y: 1.0, z: 1.0)),
         Vertex(position: Float3(x: -1.0, y: 1.0, z: -1.0),
                normal: Float3(x: -1.0, y: 0.0, z: 0.0),
                textureCoordinate: Float2(x: 0.0, y: 1.0),
@@ -519,9 +451,9 @@ struct Scene {
                color: Float3(x: 0.0, y: 0.0, z: 0.0)),
         
         Vertex(position: Float3(x: -1.0, y: -1.0, z: 1.0),  /* Bottom face 1 */
-               normal: Float3(x: 0.0, y: -1.0, z: 0.0),
-               textureCoordinate: Float2(x: 0.0, y: 0.0),
-               color: Float3(x: 1.0, y: 0.0, z: 0.0)),
+            normal: Float3(x: 0.0, y: -1.0, z: 0.0),
+            textureCoordinate: Float2(x: 0.0, y: 0.0),
+            color: Float3(x: 1.0, y: 0.0, z: 0.0)),
         Vertex(position: Float3(x: -1.0, y: -1.0, z: -1.0),
                normal: Float3(x: 0.0, y: -1.0, z: 0.0),
                textureCoordinate: Float2(x: 1.0, y: 0.0),
@@ -532,9 +464,9 @@ struct Scene {
                color: Float3(x: 1.0, y: 1.0, z: 0.0)),
         
         Vertex(position: Float3(x: 1.0, y: -1.0, z: -1.0),  /* Bottom face 2 */
-               normal: Float3(x: 0.0, y: -1.0, z: 0.0),
-               textureCoordinate: Float2(x: 1.0, y: 1.0),
-               color: Float3(x: 1.0, y: 1.0, z: 0.0)),
+            normal: Float3(x: 0.0, y: -1.0, z: 0.0),
+            textureCoordinate: Float2(x: 1.0, y: 1.0),
+            color: Float3(x: 1.0, y: 1.0, z: 0.0)),
         Vertex(position: Float3(x: 1.0, y: -1.0, z: 1.0),
                normal: Float3(x: 0.0, y: -1.0, z: 0.0),
                textureCoordinate: Float2(x: 0.0, y: 1.0),
@@ -545,9 +477,9 @@ struct Scene {
                color: Float3(x: 1.0, y: 0.0, z: 0.0)),
         
         Vertex(position: Float3(x: -1.0, y: 1.0, z: 1.0),   /* Top face 1 */
-               normal: Float3(x: 0.0, y: 1.0, z: 0.0),
-               textureCoordinate: Float2(x: 0.0, y: 0.0),
-               color: Float3(x: 1.0, y: 1.0, z: 1.0)),
+            normal: Float3(x: 0.0, y: 1.0, z: 0.0),
+            textureCoordinate: Float2(x: 0.0, y: 0.0),
+            color: Float3(x: 1.0, y: 1.0, z: 1.0)),
         Vertex(position: Float3(x: 1.0, y: 1.0, z: 1.0),
                normal: Float3(x: 0.0, y: 1.0, z: 0.0),
                textureCoordinate: Float2(x: 0.0, y: 1.0),
@@ -558,9 +490,9 @@ struct Scene {
                color: Float3(x: 0.0, y: 1.0, z: 1.0)),
         
         Vertex(position: Float3(x: 1.0, y: 1.0, z: -1.0),   /* Top face 2 */
-               normal: Float3(x: 0.0, y: 1.0, z: 0.0),
-               textureCoordinate: Float2(x: 1.0, y: 1.0),
-               color: Float3(x: 0.0, y: 1.0, z: 1.0)),
+            normal: Float3(x: 0.0, y: 1.0, z: 0.0),
+            textureCoordinate: Float2(x: 1.0, y: 1.0),
+            color: Float3(x: 0.0, y: 1.0, z: 1.0)),
         Vertex(position: Float3(x: -1.0, y: 1.0, z: -1.0),
                normal: Float3(x: 0.0, y: 1.0, z: 0.0),
                textureCoordinate: Float2(x: 0.0, y: 1.0),
@@ -569,9 +501,15 @@ struct Scene {
                normal: Float3(x: 0.0, y: 1.0, z: 0.0),
                textureCoordinate: Float2(x: 0.0, y: 0.0),
                color: Float3(x: 1.0, y: 1.0, z: 1.0))
-        ]
+    ]
     
-    mutating func load(into view: GraphicView) {
+    private init() {}
+    init(named name: String) {
+        self.name = name
+    }
+    
+    mutating func load(into view: SwiftOpenGLView) {
+        view.scene = name
         tbo.loadTexture(named: "Texture")
         
         vbo.load(data)
@@ -580,7 +518,7 @@ struct Scene {
         vao.unbind()
         
         camera.position = FloatMatrix4().translate(x: 0.0, y: 0.0, z: -5.0)
-//        camera.projection = FloatMatrix4.orthographic(width: Float(view.bounds.size.width), height: Float(view.bounds.size.height))
+        //        camera.projection = FloatMatrix4.orthographic(width: Float(view.bounds.size.width), height: Float(view.bounds.size.height))
         camera.projection = FloatMatrix4.projection(aspect: Float(view.bounds.size.width / view.bounds.size.height))
         
         let vertexSource = "#version 330 core                                  \n" +
@@ -598,7 +536,7 @@ struct Scene {
             "{                                                                 \n" +
             "    gl_Position = projection * view * vec4(position, 1.0);        \n" +
             "    passPosition = position;                                      \n" +
-            "    passNormal = normal;                                          \n" +
+            "    passNormal = vec4(view * vec4(normal, 1.0)).xyz;              \n" +
             "    passTexturePosition = texturePosition;                        \n" +
             "    passColor = color;                                            \n" +
             "}                                                                 \n"
@@ -635,17 +573,17 @@ struct Scene {
     }
     mutating func update(with value: Float) {
         light.position = [sin(value), -5.0, 5.0]
-        camera.position = FloatMatrix4().translate(x: 0.0, y: 0.0, z: -5.0).rotateYAxis(value).rotateXAxis(-0.5)
+        camera.position = FloatMatrix4().translate(x: 0.0, y: 0.0, z: -6.0).rotateYAxis(value).rotateXAxis(-0.5)
     }
     mutating func draw(with renderer: Renderer) {
         shader.bind()
         vao.bind()
-
+        
         light.updateParameters(for: shader)
         camera.updateParameters(for: shader)
-
+        
         renderer.render(vbo.vertexCount, as: .triangles)
-
+        
         vao.unbind()
     }
     

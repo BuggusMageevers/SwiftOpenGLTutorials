@@ -1,22 +1,14 @@
 //
-//  GraphicView.swift
-//  SwiftOpenGLRefactor
+//  SwiftOpenGLView.swift
+//  SwiftOpenGL
 //
-//  Created by Myles Schultz on 1/17/18.
-//  Copyright © 2018 MyKo. All rights reserved.
+//  Created by Myles Schultz on 10/5/16.
+//  Copyright © 2016 MyKo. All rights reserved.
 //
 
 import Cocoa
 import OpenGL.GL3
 
-
-protocol RenderDelegate {
-    typealias SceneName = String
-    
-    func loadScene()
-    func prepareToRender(_ scene: SceneName, for time: Double)
-    func render(_ scene: SceneName, with renderer: Renderer)
-}
 
 enum RenderElementType: UInt32 {
     case points = 0
@@ -28,38 +20,29 @@ protocol Renderer {
 }
 extension NSOpenGLContext: Renderer {
     func render(_ elementCount: Int32, as elementType: RenderElementType) {
-        glCall(glDrawArrays(elementType.rawValue, 0, elementCount))
+        glDrawArrays(elementType.rawValue, 0, elementCount)
     }
 }
-extension _CGLContextObject: Renderer {
-    func render(_ elementCount: Int32, as elementType: RenderElementType) {
-        glCall(glDrawArrays(elementType.rawValue, 0, elementCount))
-    }
-}
-
-final class GraphicView: NSOpenGLView {
-    typealias SceneName = String
-    
+final class SwiftOpenGLView: NSOpenGLView {
     var scene: SceneName?
     var displayLink: DisplayLink?
     var renderDelegate: RenderDelegate?
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        
-        let attributes: [NSOpenGLPixelFormatAttribute] = [
+    
+        let attrs: [NSOpenGLPixelFormatAttribute] = [
             NSOpenGLPixelFormatAttribute(NSOpenGLPFAAllRenderers),
             NSOpenGLPixelFormatAttribute(NSOpenGLPFADoubleBuffer),
             NSOpenGLPixelFormatAttribute(NSOpenGLPFAColorSize), 32,
             NSOpenGLPixelFormatAttribute(NSOpenGLPFAOpenGLProfile), NSOpenGLPixelFormatAttribute(NSOpenGLProfileVersion3_2Core),
             0
         ]
-        guard let pixelFormat = NSOpenGLPixelFormat(attributes: attributes) else {
+        guard let pixelFormat = NSOpenGLPixelFormat(attributes: attrs) else {
             Swift.print("pixelFormat could not be constructed")
             return
         }
         self.pixelFormat = pixelFormat
-        
         guard let context = NSOpenGLContext(format: pixelFormat, share: nil) else {
             Swift.print("context could not be constructed")
             return
@@ -86,28 +69,27 @@ final class GraphicView: NSOpenGLView {
     }
     
     func drawView() -> CVReturn {
-        guard let context = self.openGLContext?.cglContextObj else {
+        guard let context = self.openGLContext else {
             print("Could not acquire an OpenGL context")
             return kCVReturnError
         }
         
-        CGLSetCurrentContext(context)
-        CGLLockContext(context)
+        context.makeCurrentContext()
+        context.lock()
         
         if let time = displayLink?.currentTime {
-            glCall(glClear(GLbitfield(GL_COLOR_BUFFER_BIT)))
-            glCall(glCullFace(GLenum(GL_BACK)))
-            glCall(glEnable(GLenum(GL_CULL_FACE)))
+            glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
+            glEnable(GLenum(GL_CULL_FACE))
             
             if let scene = scene {
                 renderDelegate?.prepareToRender(scene, for: time)
                 
-                renderDelegate?.render(scene, with: context.pointee)
+                renderDelegate?.render(scene, with: context)
             }
         }
         
-        CGLFlushDrawable(context)
-        CGLUnlockContext(context)
+        context.flushBuffer()
+        context.unlock()
         
         return kCVReturnSuccess
     }
