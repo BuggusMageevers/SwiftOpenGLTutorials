@@ -12,5 +12,4 @@ Sequential OpenGL targets to be used as tutorials in learning OpenGL with Swift.
 09. AnimationNext
 10. OnTheMove
 11. OpenGLMVCPt1
-12. OpenGLMVCPt2a
-13. OpenGLMVCPt2b
+12. OpenGLMVCPt2
