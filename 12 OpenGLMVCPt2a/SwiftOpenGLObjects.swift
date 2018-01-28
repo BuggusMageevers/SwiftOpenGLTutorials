@@ -573,7 +573,7 @@ struct Scene {
     }
     mutating func update(with value: Float) {
         light.position = [sin(value), -5.0, 5.0]
-        camera.position = FloatMatrix4().translate(x: 0.0, y: 0.0, z: -5.0).rotateYAxis(value).rotateXAxis(-0.5)
+        camera.position = FloatMatrix4().translate(x: 0.0, y: 0.0, z: -5.0)
     }
     mutating func draw(with renderer: Renderer) {
         shader.bind()
