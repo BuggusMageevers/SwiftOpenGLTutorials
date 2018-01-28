@@ -536,7 +536,7 @@ struct Scene {
             "{                                                                 \n" +
             "    gl_Position = projection * view * vec4(position, 1.0);        \n" +
             "    passPosition = position;                                      \n" +
-            "    passNormal = normal;                                          \n" +
+            "    passNormal = vec4(view * vec4(normal, 1.0)).xyz;              \n" +
             "    passTexturePosition = texturePosition;                        \n" +
             "    passColor = color;                                            \n" +
             "}                                                                 \n"
@@ -573,7 +573,7 @@ struct Scene {
     }
     mutating func update(with value: Float) {
         light.position = [sin(value), -5.0, 5.0]
-        camera.position = FloatMatrix4().translate(x: 0.0, y: 0.0, z: -5.0)
+        camera.position = FloatMatrix4().translate(x: 0.0, y: 0.0, z: -6.0).rotateYAxis(value).rotateXAxis(-0.5)
     }
     mutating func draw(with renderer: Renderer) {
         shader.bind()
