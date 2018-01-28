@@ -46,6 +46,8 @@ protocol Respondable {
 }
 protocol Asset {
     var name: String { get set }
+    
+    init(named name: String)
 }
 protocol Moveable {
     var position: Float3 { get set }

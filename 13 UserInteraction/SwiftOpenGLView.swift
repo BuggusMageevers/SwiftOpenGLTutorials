@@ -26,7 +26,7 @@ extension NSOpenGLContext: Renderer {
 final class SwiftOpenGLView: NSOpenGLView {
     var scene: SceneName?
     var displayLink: DisplayLink?
-    var renderDelegate: RenderDelegate?
+    var dataSource: GraphicViewDataSource?
     
     override var acceptsFirstResponder: Bool {
         return true
@@ -64,7 +64,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         
         glClearColor(0.5, 0.5, 0.5, 1.0)
         
-        renderDelegate?.loadScene()
+        dataSource?.load(sceneNamed: "Scene", into: self)
         displayLink?.start()
     }
     
@@ -86,9 +86,9 @@ final class SwiftOpenGLView: NSOpenGLView {
             glEnable(GLenum(GL_CULL_FACE))
             
             if let scene = scene {
-                renderDelegate?.prepareToRender(scene, for: time)
+                dataSource?.prepareToRender(scene, for: Float(time))
                 
-                renderDelegate?.render(scene, with: context)
+                dataSource?.draw(scene, with: context)
             }
         }
         

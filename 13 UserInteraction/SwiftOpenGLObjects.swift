@@ -208,7 +208,7 @@ struct Shader: OpenGLObject {
     }
 }
 
-struct Light {
+struct Light: Asset {
     private enum Parameter: String {
         case color = "light.color"
         case position = "light.position"
@@ -217,6 +217,7 @@ struct Light {
         case specularHardness = "light.specHardness"
     }
     
+    var name: String = ""
     var color: [GLfloat] = [1.0, 1.0, 1.0] {
         didSet {
             parametersToUpdate.append(.color)
@@ -242,9 +243,13 @@ struct Light {
             parametersToUpdate.append(.specularHardness)
         }
     }
-    
     private var shaderParameterLocations = [GLuint : [Parameter : Int32]]()
     private var parametersToUpdate: [Parameter] = [.color, .position, .ambientStrength, .specularStrength, .specularHardness]
+    
+    private init() {}
+    init(named name: String) {
+        self.name = name
+    }
     
     mutating func attach(toShader shader: Shader) {
         let shader = shader.id
@@ -294,7 +299,7 @@ struct Camera: Asset {
         case projection = "projection"
     }
     
-    var name: String = "Camera"
+    var name: String = ""
     var position = FloatMatrix4() {
         didSet {
             parametersToUpdate.insert(.position)
@@ -305,9 +310,13 @@ struct Camera: Asset {
             parametersToUpdate.insert(.projection)
         }
     }
-    
     private var shaderParameterLocations = [GLuint : [Parameter : Int32]]()
     private var parametersToUpdate: Set<Parameter> = [.position, .projection]
+    
+    private init() {}
+    init(named name: String) {
+        self.name = name
+    }
     
     mutating func attach(toShader shader: Shader) {
         let shader = shader.id
@@ -343,8 +352,8 @@ struct Scene {
     var vao = VertexArrayObject()
     var vbo =  VertexBufferObject()
     var tbo = TextureBufferObject()
-    var light = Light()
-    var camera = Camera()
+    var light = Light(named: "Light")
+    var camera = Camera(named: "Global Camera")
     let data: [Vertex] = [
         Vertex(position: Float3(x: -1.0, y: -1.0, z: 1.0),  /* Front face 1 */
             normal: Float3(x: 0.0, y: 0.0, z: 1.0),

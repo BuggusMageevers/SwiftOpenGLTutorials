@@ -12,28 +12,14 @@
 import Cocoa
 
 
-class SwiftOpenGLViewController: NSViewController, RenderDelegate {
+class SwiftOpenGLViewController: NSViewController {
     @IBOutlet weak var interactiveView: SwiftOpenGLView!
-    var scenes = [String : Scene]()
     var assetManager = AssetManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        scenes["Scene"] = Scene(named: "Scene")
-        interactiveView.renderDelegate = self
-    }
-    
-    func loadScene() {
-        scenes["Scene"]?.load(into: interactiveView)
-    }
-    
-    func prepareToRender(_ scene: SceneName, for time: Double) {
-        scenes[scene]!.update(with: Float(time))
-    }
-    
-    func render(_ scene: SceneName, with renderer: Renderer) {
-        scenes[scene]!.draw(with: renderer)
+        interactiveView.dataSource = assetManager
     }
     
     override func keyDown(with event: NSEvent) {
