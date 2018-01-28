@@ -19,9 +19,9 @@ protocol RenderDelegate {
 }
 
 enum RenderElementType: UInt32 {
-    case triangles = 4
-    case lines = 1
     case points = 0
+    case lines = 1
+    case triangles = 4
 }
 protocol Renderer {
     func render(_ elementCount: Int32, as elementType: RenderElementType)
@@ -82,13 +82,13 @@ final class GraphicView: NSOpenGLView {
     }
     
     override func draw(_ dirtyRect: NSRect) {
-        drawView()
+        _ = drawView()
     }
     
-    func drawView() {
+    func drawView() -> CVReturn {
         guard let context = self.openGLContext?.cglContextObj else {
-            Swift.print("oops")
-            return
+            print("Could not acquire an OpenGL context")
+            return kCVReturnError
         }
         
         CGLSetCurrentContext(context)
@@ -108,6 +108,8 @@ final class GraphicView: NSOpenGLView {
         
         CGLFlushDrawable(context)
         CGLUnlockContext(context)
+        
+        return kCVReturnSuccess
     }
     
     deinit {

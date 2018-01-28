@@ -14,69 +14,26 @@
 import Cocoa
 
 
-class SwiftOpenGLViewController: NSViewController, NSWindowDelegate {
-    
+class SwiftOpenGLViewController: NSViewController, RenderDelegate {
     @IBOutlet weak var interactiveView: SwiftOpenGLView!
+    var scenes = [String : Scene]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
-        //  Use a notification so our controller knows when the window
-        //  is closing.  Then we can stop the CVDisplayLink
-        //    observer: the object receing the message
-        //    selector:  function to be called when the notification 
-        //        occurs
-        //    name:  The name of the Notifcation.  Swift 3 now uses
-        //        an enum: Notification.Name."NameOfNotification"
-        //    object:  If specified, the object decides if the 
-        //        notification should be sent.
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(windowWillClose(_:)),
-                                               name: NSWindow.willCloseNotification,
-                                               object: nil)
+        scenes["Scene"] = Scene(named: "Scene")
+        interactiveView.renderDelegate = self
     }
     
-    // MARK: - User Interaction
-    override func keyDown(with theEvent: NSEvent) {
-        
-        if let keyName = SwiftOpenGLView.KeyCodeName(rawValue: theEvent.keyCode) {
-            
-            if interactiveView.directionKeys[keyName] != true {
-                
-                interactiveView.directionKeys[keyName] = true
-                
-            }
-            
-        } else { super.keyDown(with: theEvent) }
-        
+    func loadScene() {
+        scenes["Scene"]?.load(into: interactiveView)
     }
     
-    override func keyUp(with theEvent: NSEvent) {
-        
-        if let keyName = SwiftOpenGLView.KeyCodeName(rawValue: theEvent.keyCode) {
-            
-            interactiveView.directionKeys[keyName] = false
-            
-        } else { super.keyUp(with: theEvent) }
-        
+    func prepareToRender(_ scene: SceneName, for time: Double) {
+        scenes[scene]!.update(with: Float(time))
     }
     
-    override func mouseDragged(with theEvent: NSEvent) {
-        
-        interactiveView.rotateCamera(pitch: Float(theEvent.deltaY), yaw: Float(theEvent.deltaX))
-        
+    func render(_ scene: SceneName, with renderer: Renderer) {
+        scenes[scene]!.draw(with: renderer)
     }
-    
-    //  A more Cocoa way of stopping our CVDisplayLink.
-    func windowWillClose(_ notification: Notification) {
-        
-        interactiveView.stopDrawing()
-        
-        NotificationCenter.default.removeObserver(self,
-                                                  name: NSWindow.willCloseNotification,
-                                                  object: nil)
-    
-    }
-    
 }
