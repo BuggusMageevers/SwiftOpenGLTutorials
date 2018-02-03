@@ -598,7 +598,7 @@ struct Scene {
             "{                                                                 \n" +
             "    gl_Position = projection * view * vec4(position, 1.0);        \n" +
             "    passPosition = position;                                      \n" +
-            "    passNormal = normal;                                          \n" +
+            "    passNormal = vec4(view * vec4(normal, 1.0)).xyz;              \n" +
             "    passTexturePosition = texturePosition;                        \n" +
             "    passColor = color;                                            \n" +
             "}                                                                 \n"
