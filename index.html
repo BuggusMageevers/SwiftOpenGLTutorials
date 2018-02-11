@@ -1,84 +1,31 @@
-<!-- Declare the document type, we are using html -->
 <!DOCTYPE html>
-<!-- The <html> tag holds all the html data inside it.
- There are two main tags that follow: <head> and <body>.
- Specify the language of the website for accessibility -->
-<html lang="en">
-    <!-- The head tag is where information about style
-     and the site are declared. -->
-    <head>
-        <!-- The <title> tag is used for the window title
-         or tab title -->
-        <title>Swift OpenGL Tutorials</title>
-        <!-- Use a <meta> tag to declare the charset to be
-         used on the site: we'll use UTF-8 -->
-        <meta name="charset" content="utf8">
-        <!-- Describe the website and declare keywords to
-        be used by search engines -->
-        <meta name="description" content="Sequential app targets for learning OpenGL with Swift">
-        <meta name="keywords" content="Swift, OpenGL, tutorial, macOS, OS X, Apple, Xcode, app development">
-        <!-- Internal style sheet for holding CSS code.
-        If using more than one page, an external style
-        sheet should be used.  The address of the css
-        document must be declared to be accessed. -->
-        <link rel="stylesheet" href="GitHubPage/main.css">
-        <!-- The font to be use in the site. -->
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen:400,700">
-    </head>
-    <!-- The layout and content of the webpage is held
-     within the <body> tag. -->
-    <body>
-        <!-- The header tag is where introductory elements
-         for the side are placed such as a site icon and
-         the naviaction bar.-->
-        <header id="header_container">
-            <div class="top_buffer"></div>
-            <div id="nav_container">
-                <div class="nav_side_buffer"></div>
-                <div id="main_nav">
-                    <img src="GitHubPage/SwiftOpenGL Logo.png" alt="SwiftOpenGLTutorials Logo"/>
-                    <div style="flex:1 1 0;"></div>
-                    <!-- Navigation through the site -->
-                    <ul id="nav_items">
-                        <li class="nav_item"><a href="GitHubPage/tutorials.html">Tutorials</a></li>
-                        <li class="nav_item"><a href="https://github.com/00buggy00/SwiftOpenGLTutorials">GitHub Repository</a></li>
-                    </ul>
-                </div>
-                <div class="nav_side_buffer"></div>
-            </div>
-            <div class="top_buffer"></div>
-        </header>
-        <!-- This div contains the area of the site that
-         will expand and scroll depending upon the content -->
-        <div id="scroll_container">
-            <!-- Pushses the content to below the header -->
-            <div class="offset_y"></div>
-            <!-- Contains the section portion of the
-             scrollable content. -->
-            <section id="section_container">
-                <!-- The articles of the page are placed here
-                 and surrounded by buffers to push them away
-                 from one another a bit. -->
-                <div id="main_content">
-
-                    <div class="bottom_buffer"></div>
-                </div>
-            </section>
-            <!-- Contains links, copyright, etc. pertinent to
-             the site. -->
-             <footer id="footer_container">
-               <div class="side_buffer"></div>
-               <div id="footer_sitemap">
-                 <div id="footer_links"></div>
-                 <div style="display:flex;height:17px;">
-                   <div class="side_buffer"></div>
-                   <span>&copy; 2016 00buggy00 on GitHub</span>
-                   <div class="side_buffer"></div>
-                 </div>
-                 <div style="height:10px;"></div>
-               </div>
-               <div class="side_buffer"></div>
-             </footer>
-        </div>
-    </body>
+<html>
+<head>
+  <link rel="stylesheet" href="main.css"></link>
+</head>
+<body>
+  <header>
+    <label id="title">Swift OpenGL Tutorials</label>
+  </header>
+  <main>
+    <div id="entry">
+      <h3>Welcome to Swift OpenGL Tutorials</h3>
+      <p>The purpose of these turtorials is to provide a starting point for implementing OpenGL using Swift.  OpenGL is an application programming interface (API) that allows for communication with your computer's GPU(s).  OpenGL had, for a long time, been used on Mac OS X to drive graphics processing of operating system and user created elements.  However, since MacOS, <a href="https://developer.apple.com/metal/">Metal</a> has become the main GPU language of choice.  Why learn OpenGL then?  OpenGL is a cross-platform language while Metal is not:  meaning that OpenGL code on MacOS also works on Windows or Linux platforms.  If you plan on writing an a cross-platform app, and reduce the amount of code that you need to write from one system to another, then OpenGL would be more ideal.  That brings us to Swift.  Work on bring Apple's new programming language to other platforms such as Ubuntu.  As the language matures and interest grows, Swift may make it's way to many other platforms as well.  Additionaly, while new computers running MacOS have the capability to run Metal through MacOS, there are many older computers processing Mac OS X or MacOS graphical elements through OpenGL.  To see if your Mac is capable of running Metal, check out this <a href="https://support.apple.com/en-us/HT205073">site</a> for a list of Macs with Metal capable GPU's.  Generally, Macs older than 2012 are OpenGL capable only.</p>
+      <h5>A Little History</h5>
+      <p>OpenGL has been around for some time (version 1.0 was released in <a href="https://www.khronos.org/opengl/wiki/History_of_OpenGL#OpenGL_1.0_.281992.29">1992</a>, and you can see the API specification <a href="https://www.khronos.org/registry/OpenGL/specs/gl/glspec10.pdf">here</a>).  The most recent version, as you may have seen on <a href="https://www.khronos.org/opengl/wiki/History_of_OpenGL#OpenGL_1.0_.281992.29">that site</a>, is 4.6 as of 2017.  With each version, they have made of number of improvements and modernizations.  The most notable, arguably, from version 1.0 to version 2.0 is the addition of the "programmable pipeline":  the beginnings of what is thought of today as the modern approach.  The pipeline is merely the various steps involved in producing a graphic element by the GPU.  Originally this pipeline was "fixed":  there was a default implementation which as programmer could pass hints, or data to, but there was little customization compared to what is available now.  The programmable pipeline requires the programmer to provide portions of this pipeline (i.e. shaders) in order to produce a result.  While this requires more effort from the progammer, it also enables the programmer with greater flexibility and potential for interesting graphic effects.  This modernization of OpenGL in 2004 was a little late as Direct3D (Windows proprietary graphics API) had already implemented their programmable pipeline in <a href="https://en.wikipedia.org/wiki/Direct3D">2000</a>).  Metal is the proprietary API for graphics programming on Apple products and also utilizes a programmable pipeline--though there have been a <a href="https://developer.apple.com/videos/play/wwdc2017/601/">number of revitalizations</a> in order to reduce the overhead of graphics processing.  Though OpenGL has been receiving updates over the years, it's API is showing it's age.  In order to keep up with competing graphics languages, DirectX and Metal, Khronos has created Vulkan (OpenGL's <a href="https://www.khronos.org/vulkan/">cross-platform successor</a>).</p>
+      <h5>Closing Remarks</h5>
+      <p>DirectX (Windows only), Vulkan (Windows, Linux, indirect MacOS support through 3rd party API), and Metal (Apple only) all require modern graphics cards.  However, OpenGL can run on "older" GPU's <i>and</i> new GPU's, and all major operating systems (Windows, Linux, and MacOS).  Portable platforms (Android, and iOS) may harness the capabilities of OpenGL through a lighter weight specification called OpenGLES.  OpenGL is still relevent and is also a great place to start learning to work with graphics API's because of it's breadth of accessibility.  With all of this in mind, I hope you find these tutorials helpful and enjoyable.</p>
+    </div>
+  </main>
+  <footer>
+    <div id="links">
+      <ul>
+        <li><a href="http://www.khronos.org/">Khronos</a></li>
+        <li><a href="https://www.khronos.org/registry/OpenGL/specs/gl/glspec33.core.pdf">OpenGL 3.3 Core Specification</a></li>
+        <li><a href="https://www.khronos.org/registry/OpenGL/specs/gl/GLSLangSpec.3.30.pdf">GLSL 330 Core Specification</a></li>
+      </ul>
+    </div>
+    <label id="copyright">&copy 2018 00buggy00 on GitHub</label>
+  </footer>
+</body>
 </html>
