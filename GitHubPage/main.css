@@ -61,13 +61,13 @@ ul {
   position: relative;
   padding: 1em;
   margin: auto;
-  max-width: 600px;
+  max-width: 800px;
 }
 #links {
   position: relative;
   padding: 1em 0 2em;
   margin: auto;
-  max-width: 600px;
+  max-width: 800px;
 }
 #copyright {
   position: absolute;
