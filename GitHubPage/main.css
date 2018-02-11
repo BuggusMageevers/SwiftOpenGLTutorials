@@ -1,244 +1,77 @@
-html {
-    font-family: 'Oxygen', sans-serif;
-    color: #4f4f4f;
-    font-size: 14px;
+@font-face {
+  font-family: 'Oxygen';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Oxygen Regular'), local('Oxygen-Regular'), url(https://fonts.gstatic.com/s/oxygen/v7/LC4u_jU27qpsdszDEgeU_3-_kf6ByYO6CLYdB4HQE-Y.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
 }
-h1 {
-    font-size: 36px;
-    margin: 0px;
+html{
+  font-family: 'Oxygen', sans-serif;
+  color: #ececf3;
+  font-size: 14px;
 }
-h2 {
-    font-size: 24px;
-    margin: 0px;
+html, body {
+  /* Ensure the page covers the entire view thus giving these parents
+  an inherent size.  This enables children that do not have content
+  fill empty space */
+  height: 100%;
+  width: 100%;
 }
-/*  pre, code, and code:before are for
-styling code blocks.
-*/
-pre {
-  margin: 0;
-  border-radius: 4px;
-  counter-reset: line;
-  overflow: auto;
-  background: #1e2028;
-  color: #ffffff;
-}
-.comment {
-  color: #008400;
-}
-.keyword {
-  color: #ce0098;
-}
-.Proj_Type {
-  color: #85d06b;
-}
-.Other_Type {
-  color: #00b1cd;
-}
-.string {
-  color: #db2c38;
-}
-.number {
-  color: #786dc4;
-}
-.line {
-  counter-increment: line;
-  line-height: 1.3em;
-  padding-right: 0.8em;
-}
-.line:before {
-  display: inline-block;
-  background-color: #252530;
-  color: #ececec;
-  padding-left: 3.8em;
-  padding-right: 0.8em;
-  margin-right: 0.5em;
-  border-right: 2px solid #6f6f6f;
-  text-align: right;
-  content: counter(line);
-}
-/* An image element to be placed in the
-main content of the article. */
-#article_img {
-  display: block;
-  margin: auto;
-  max-width: 100%;
-  height: auto;
-  border-radius: 5px;
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
-}
-/* The main flexbox.  Uses vertical distribution.
- The min-height should be at least the height of
- the screen, but must also stretch to accommodate
- content used for display.  100vh MUST be used to
- accomplish this as 100% only accounts the content
- and not the screen. */
 body {
-    margin: 0px;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background:#4f4f4f;
+  min-height: 100%;
+  margin: 0;
+  background: #4f4f56;
 }
-/* The header is to remain at the top at all times,
- but it is also a flex item.  The width and height
- must be specified as using flex with position
- eliminates the effects of flex.  position must be
- used to keep the header at the top. */
-#header_container {
-    width: 100%;
-    height: 80px;
-    background: #004bff;
-    position: fixed;
-    display: flex;
-    flex-direction: column;
+header {
+  position: relative;
+  min-height: 10%;
+  background: linear-gradient(10deg, #004bff, #4f4f56);
 }
-#nav_container {
-    flex: 7 7 0;
-    display: flex;
+main {
+  position: relative;
+  min-height: 82%;
+  background: #1b1b22;
 }
-.nav_side_buffer {
-    flex: 1 1 0;
+footer {
+  position: relative;
+  min-height: 8%;
+  background-color: #4f4f56;
 }
-#main_nav {
-    flex: 7 7 0;
-    display: flex;
-}
-#nav_items {
-    display: flex;
-    justify-content: flex-start;
-}
-.nav_item {
-    flex: auto;
-    display: flex;
-    align-items: center;
-    padding: 5px;
-}
-li a {
-    text-decoration: none;
-    color: #ececec;
-    font-size: 18px;
-}
-/* holds the section and footer and allows these
- tags to scroll under the header. */
-#scroll_container {
-    flex: auto;
-    display: flex;
-    flex-direction: column;
-    overflow-y: scroll;
-}
-/* pushes the section down from the header to keep
- content visible.  Unlike the header, this item
- may use flex because it does not use position. */
-.offset_y {
-    flex: 0 0 80px;
-    background: #ececec;
-}
-/* May contain any number of articles or other
- content. */
-#section_container {
-    flex: auto;
-    display: flex;
-    flex-direction: column;
-}
-/* Contains all the articeles on the page. */
-#main_content {
-    flex: auto;
-    display: flex;
-    flex-direction: column;
-    background: #ececec;
-}
-/* Ensures that each article is spaced from what
- is above it.  This helps account for some of the
- shadow effect use.  Every article_container must
- be preceeded by a top_buffer to layout appropriately
- for this site's style (Not a flexbox requirement). */
-.top_buffer {
-    flex: 0 0 20px;
-}
-/* An article may contain prose, but may also
- contain it's own header or footer.  All articles
- are placed here. */
-#article_container {
-    flex: 0 0 auto;
-    display: flex;
-}
-/* The bottom_buffer and side_buffers add to the
- appearence of making the articale a card once shadow
- is applied. */
-.bottom_buffer {
-    flex: 1 1 15px;
-}
-.side_buffer {
-    flex: 1 1 auto;
-}
-/* An article item - border-radius gives item
- slightly rounded corners.  The box shadow brings
- definition to the card:  two shadows are used,
- separated by a comma.  Padding pushes the text from
- the border to clean up the appearence. */
-#article {
-    flex: 7 7 0;
-    /*  Weird CSS3 behavior makes every Flexbox container's
-    min-width ambiguous.  When we put pre tags in them,
-    we have to specify the min-width as 0 in order for
-    the tag's content to overflow correctly and not
-    stretch the parent tag to the size of the pre tag's
-    content. */
-    min-width: 0;
-    min-height: 20px;
-    display: flex;
-    flex-direction: column;
-    border-radius: 4px;
-    /* shadow: x-position | y-position | blur-distance | spread | color (commas separate multiple shadows) */
-    box-shadow: -6px 8px 20px rgba(0, 0, 0, 0.2), 6px 8px 20px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    background: #ececec;
-}
-/* Based upon the article and to be used for the
-tutorial links on the tutorial page. */
-a#tutorial_link {
-  flex: 7 7 0;
-  min-height: 20px;
-  display: flex;
-  flex-direction: column;
-  border-radius: 4px;
-  box-shadow: -6px 8px 20px rgba(0, 0, 0, 0.2), 6px 8px 20px rgba(0, 0, 0, 0.2);
-  padding: 10px;
-  background: #ececec;
-  color: #4f4f4f;
+a {
+  color: #639dff;
   text-decoration: none;
 }
-/* When the mouse hovers over one of the links, it
-will turn blue and the text a light grey. */
-a#tutorial_link:hover {
-  color: #ececec;
-  background: #004bff;
+ul {
+  padding: 0;
+  line-height: 20px;
+  list-style-position: inside;
+  list-style-type: none;
 }
-#code_block {
-  /* Even though this is the parent tage of the pre
-  tag that holds overflowing content, we don't have
-  specify the min-width as 0 here.  The reason being
-  that this element is a flex item, the pre tag
-  is not because this class is not a flex container.
-  It is the flex container that must have the min-width
-  specified, not the flex item. */
-  flex: 1 1 0;
-  min-height: 20px;
-  border-radius: 4px;
-  box-shadow: 0 5px 15px 8px rgba(0, 0, 0, 0.2);
+#title {
+  position: absolute;
+  /* Places the bottom half (i.e. 50%) down into the parent div from
+  the top */
+  top: 50%;
+  /* Translate the element 50% of the way down into the parent div */
+  transform: translateY(-50%);
+  left: 10%;
+  font-size: 24px;
 }
-/* The footer holds FAQ data or relevent links. */
-#footer_container {
-  display: flex;
-  height: 200px;
-  background: #4f4f4f;
-  color:#afafaf;
+#entry {
+  position: relative;
+  padding: 1em;
+  margin: auto;
+  max-width: 600px;
 }
-#footer_sitemap {
-  flex: auto;
-  display: flex;
-  flex-direction: column;
+#links {
+  position: relative;
+  padding: 1em 0 2em;
+  margin: auto;
+  max-width: 600px;
 }
-#footer_links {
-  height: 173px;
+#copyright {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 8px;
 }
