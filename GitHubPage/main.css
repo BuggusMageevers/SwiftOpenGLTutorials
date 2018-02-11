@@ -8,7 +8,7 @@
 html{
   font-family: 'Oxygen', sans-serif;
   color: #ececf3;
-  font-size: 14px;
+  font-size: 16px;
 }
 html, body {
   /* Ensure the page covers the entire view thus giving these parents
@@ -43,35 +43,34 @@ a {
 }
 ul {
   padding: 0;
-  line-height: 25px;
+  line-height: 32px;
   list-style-position: inside;
   list-style-type: none;
 }
 #title {
-  position: absolute;
-  /* Places the bottom half (i.e. 50%) down into the parent div from
-  the top */
-  top: 50%;
-  /* Translate the element 50% of the way down into the parent div */
-  transform: translateY(-50%);
-  left: 10%;
-  font-size: 24px;
+  position: relative;
+
+  padding: 4% 8%;
+  font-size: 42px;
 }
 #entry {
-  position: relative;
-  padding: 1em;
-  margin: auto;
-  max-width: 800px;
-}
-#links {
   position: relative;
   padding: 1em 1em 5em;
   margin: auto;
   max-width: 800px;
 }
+#links {
+  position: relative;
+  padding: 1em 1em 2em;
+  margin: auto;
+  max-width: 800px;
+  font-size: 20px;
+}
 #copyright {
   position: absolute;
+  padding: 1em 0;
   left: 50%;
+  width: 162px;
   transform: translateX(-50%);
-  bottom: 10px;
+  font-size: 12px;
 }
