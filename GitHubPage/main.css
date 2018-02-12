@@ -1,180 +1,81 @@
-html {
+@font-face {
+    font-family: 'Oxygen';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Oxygen Regular'), local('Oxygen-Regular'), url(https://fonts.gstatic.com/s/oxygen/v7/LC4u_jU27qpsdszDEgeU_3-_kf6ByYO6CLYdB4HQE-Y.woff2) format('woff2');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+html, body {
+    /* Ensure the page covers the entire view thus giving these parents
+     an inherent size.  This enables children that do not have content
+     fill empty space */
+    height: 100%;
+    width: 100%;
+    background: #4f4f56;
+}
+body {
+    min-height: 100%;
+    margin: 0;
     font-family: 'Oxygen', sans-serif;
-    color: #4f4f4f;
+    color: #ececf3;
     font-size: 14px;
 }
-h1 {
-    font-size: 36px;
-    margin: 0px;
+header {
+    position: relative;
+    min-height: 10%;
+    background: linear-gradient(10deg, #004bff, #4f4f56);
 }
-h2 {
+main {
+    position: relative;
+    min-height: 82%;
+    padding: 1em;
+    background: #1b1b22;
+}
+footer {
+    position: relative;
+    min-height: 8%;
+    background-color: #4f4f56;
+    text-align: center;
+}
+#title {
+    position: absolute;
+    /* Places the bottom half (i.e. 50%) down into the parent div from
+     the top */
+    top: 50%;
+    /* Translate the element 50% of the way down into the parent div */
+    transform: translateY(-50%);
+    left: 10%;
     font-size: 24px;
-    margin: 0px;
+}
+#entry {
+    padding: 1em;
+    background: #4f4f56;
+    position: relative;
+}
+p {
+    margin: 0;
+}
+#copyright {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 5px;
 }
 /*
-*/
-#article_img {
-  display: block;
-  margin: auto;
-  max-width: 100%;
-  height: auto;
-  border-radius: 5px;
-  box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.2);
-}
-/* The main flexbox.  Uses vertical distribution.
- The min-height should be at least the height of
- the screen, but must also stretch to accommodate
- content used for display.  100vh MUST be used to
- accomplish this as 100% only accounts the content
- and not the screen. */
-body {
-    margin: 0px;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background:#4f4f4f;
-}
-/* The header is to remain at the top at all times,
- but it is also a flex item.  The width and height
- must be specified as using flex with position
- eliminates the effects of flex.  position must be
- used to keep the header at the top. */
-#header_container {
-    width: 100%;
-    height: 80px;
-    background: #004bff;
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    /* shadow: x-position | y-position | blur-distance | spread | color */
-    box-shadow: 2px 0 8px 10px rgba(0, 0, 0, 0.2);
-}
-#nav_container {
-    flex: 7 7 0;
-    display: flex;
-}
-.nav_side_buffer {
-    flex: 1 1 0;
-}
-#main_nav {
-    flex: 7 7 0;
-    display: flex;
-}
-#nav_items {
-    display: flex;
-    justify-content: flex-start;
-}
-.nav_item {
-    flex: auto;
-    display: flex;
-    align-items: center;
-    padding: 5px;
-}
-li a {
-    text-decoration: none;
-    color: #ececec;
-    font-size: 18px;
-}
-/* holds the section and footer and allows these
- tags to scroll under the header. */
-#scroll_container {
-    flex: auto;
-    display: flex;
-    flex-direction: column;
-    overflow-y: scroll;
-}
-/* pushes the section down from the header to keep
- content visible.  Unlike the header, this item
- may use flex because it does not use position. */
-.offset_y {
-    flex: 0 0 80px;
-    background: #ececec;
-}
-/* May contain any number of articles or other
- content. */
-#section_container {
-    flex: auto;
-    display: flex;
-    flex-direction: column;
-}
-/* Contains all the articeles on the page. */
-#main_content {
-    flex: auto;
-    display: flex;
-    flex-direction: column;
-    background: #ececec;
-}
-/* Ensures that each article is spaced from what
- is above it.  This helps account for some of the
- shadow effect use.  Every article_container must
- be preceeded by a top_buffer to layout appropriately
- for this site's style (Not a flexbox requirement). */
-.top_buffer {
-    flex: 0 0 20px;
-}
-/* An article may contain prose, but may also
- contain it's own header or footer.  All articles
- are placed here. */
-#article_container {
-    flex: 0 0 auto;
-    display: flex;
-}
-/* The bottom_buffer and side_buffers add to the
- appearence of making the articale a card once shadow
- is applied. */
-.bottom_buffer {
-    flex: 1 1 15px;
-}
-.side_buffer {
-    flex: 1 1 auto;
-}
-/* An article item - border-radius gives item
- slightly rounded corners.  The box shadow brings
- definition to the card:  two shadows are used,
- separated by a comma.  Padding pushes the text from
- the border to clean up the appearence. */
-#article {
-    flex: 7 7 0;
-    min-height: 20px;
-    display: flex;
-    flex-direction: column;
-    border-radius: 4px;
-    box-shadow: -6px 8px 20px rgba(0, 0, 0, 0.2), 6px 8px 20px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    background: #ececec;
-}
-/* Based upon the article and to be used for the
-tutorial links on the tutorial page. */
-a#tutorial_link {
-  flex: 7 7 0;
-  min-height: 20px;
-  display: flex;
-  flex-direction: column;
-  border-radius: 4px;
-  box-shadow: -6px 8px 20px rgba(0, 0, 0, 0.2), 6px 8px 20px rgba(0, 0, 0, 0.2);
-  padding: 10px;
-  background: #ececec;
-  color: #4f4f4f;
-  text-decoration: none;
-}
-/* When the mouse hovers over one of the links, it
-will turn blue and the text a light grey. */
-a#tutorial_link:hover {
-  color: #ececec;
-  background: #004bff;
-}
-/* The footer holds FAQ data or relevent links. */
-#footer_container {
-  display: flex;
-  height: 200px;
-  background: #4f4f4f;
-  color:#afafaf;
-}
-#footer_sitemap {
-  flex: 7 7 0;
-  display: flex;
-  flex-direction: column;
-}
-#footer_links {
-  height: 173px;
-}
+ @supports (display: grid) {
+ @media (min-width: 1000px) {
+ body {
+ min-height: 100vh;
+ display: grid;
+ grid-template-columns: 1fr 1fr 3fr 1fr;
+ grid-template-rows: 1fr 4fr 2fr;
+ grid-column-gap: 20px;
+ grid-template-areas:
+ "header header header header"
+ ". aside main ."
+ "footer footer footer footer";
+ margin: 0px;
+ }
+ }
+ }
+ */
