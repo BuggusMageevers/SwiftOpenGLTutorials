@@ -16,15 +16,22 @@ enum RenderElementType: UInt32 {
     case triangles = 4
 }
 protocol Renderer {
+    func setPointOfView(position: FloatMatrix4)
+    
     func render(_ elementCount: Int32, as elementType: RenderElementType)
 }
 extension NSOpenGLContext: Renderer {
+    func setPointOfView(position: FloatMatrix4) {
+        
+    }
+    
     func render(_ elementCount: Int32, as elementType: RenderElementType) {
         glDrawArrays(elementType.rawValue, 0, elementCount)
     }
 }
+
+
 final class SwiftOpenGLView: NSOpenGLView {
-    var scene: SceneName?
     var displayLink: DisplayLink?
     var dataSource: GraphicViewDataSource?
     
@@ -64,7 +71,6 @@ final class SwiftOpenGLView: NSOpenGLView {
         
         glClearColor(0.5, 0.5, 0.5, 1.0)
         
-        dataSource?.load(sceneNamed: "Scene", into: self)
         displayLink?.start()
     }
     
@@ -85,11 +91,7 @@ final class SwiftOpenGLView: NSOpenGLView {
             glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
             glEnable(GLenum(GL_CULL_FACE))
             
-            if let scene = scene {
-                dataSource?.prepareToRender(scene, for: Float(time))
-                
-                dataSource?.draw(scene, with: context)
-            }
+            dataSource?.requestingScene(for: Float(time))?.draw(with: context)
         }
         
         context.flushBuffer()

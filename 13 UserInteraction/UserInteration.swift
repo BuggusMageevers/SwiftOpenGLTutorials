@@ -9,27 +9,41 @@
 import Foundation
 
 
-enum UserInput: Hashable, Equatable {
-    case key(Keyboard)
+typealias InstructionList = [UserInput : Instruction]
+final class UserInteraction {
+    private static var editInstructions: InstructionList = [:]
     
-    enum Keyboard: UInt16 {
+    private init() {}
+    
+    public static func instructionList(for mode: InstructionMode) -> (UserInput) -> Instruction? {
+        switch mode {
+        case .edit:
+            return {(input: UserInput) -> Instruction? in
+                return editInstructions[input]
+            }
+        }
+    }
+}
+
+enum UserInput: Hashable {
+    case keyboard(Key)
+    
+    var hashValue: Int {
+        switch self {
+        case .keyboard(let key):
+            return (0 &+ key.hashValue) &* 65_567
+        }
+    }
+    
+    static func ==(lhs: UserInput, rhs: UserInput) -> Bool {
+        return lhs.hashValue == rhs.hashValue
+    }
+    
+    enum Key: UInt16 {
         case a = 0
         case s = 1
         case d = 2
         case w = 13
-    }
-    
-    var hashValue: Int {
-        switch self {
-        case .key(let key):
-            return key.hashValue &* 65_537
-        }
-    }
-    static func ==(lhs: UserInput, rhs: UserInput) -> Bool {
-        return lhs.hashValue == rhs.hashValue
-    }
-    static func !=(lhs: UserInput, rhs: UserInput) -> Bool {
-        return lhs.hashValue != rhs.hashValue
     }
 }
 enum Instruction {
@@ -38,6 +52,9 @@ enum Instruction {
 struct InstructionSet {
     let target: String
     let instruction: Instruction
+}
+enum InstructionMode {
+    case edit
 }
 protocol Respondable {
     var instructions: [ UserInput : InstructionSet ] { get set }

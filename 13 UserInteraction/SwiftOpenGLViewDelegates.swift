@@ -54,8 +54,15 @@ struct DisplayLink {
     }
 }
 
+struct FrameRequest {
+    let scene: SceneName
+    let timeStamp: Float
+}
+struct Frame {
+    let sceneName: SceneName
+    let timeStamp: Float
+    let scene: Scene?
+}
 protocol GraphicViewDataSource {
-    mutating func load(sceneNamed name: SceneName, into view: SwiftOpenGLView)
-    mutating func prepareToRender(_ scene: SceneName, for time: Float)
-    mutating func draw(_ scene: SceneName, with renderer: Renderer)
+    func requestingScene(for time: Float) -> Scene?
 }
