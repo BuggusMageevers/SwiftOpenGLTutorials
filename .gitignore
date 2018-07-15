@@ -14,6 +14,7 @@ CodeIdeas*
 *.xcodeproj
 Base.lproj/
 *.plist
+*.entitlements
 *.xcassets
 Supporting\ Files/
 
