@@ -110,8 +110,11 @@ struct Float3: Hashable, Equatable {
     }
 }
 extension Float3 {
-    func move(_ direction: Float3, over time: Float) -> Float3 {
-        return self + (direction * time)
+    mutating func move(_ direction: Float3, over time: Float, at speed: Float) {
+        self = self + (direction * time * speed)
+    }
+    func formTranlation() -> FloatMatrix4 {
+        return FloatMatrix4().translate(x: self.x, y: self.y, z: self.z)
     }
 }
 
@@ -424,6 +427,12 @@ struct FloatMatrix4: Hashable, Equatable {
                                    vector3: Float4(x: 0.0, y: 0.0, z: 1.0, w: z),
                                    vector4: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0))
     }
+    static func translate(to position: Float3) -> FloatMatrix4 {
+        return FloatMatrix4(vector1: Float4(x: 1.0, y: 0.0, z: 0.0, w: position.x),
+                            vector2: Float4(x: 0.0, y: 1.0, z: 0.0, w: position.y),
+                            vector3: Float4(x: 0.0, y: 0.0, z: 1.0, w: position.z),
+                            vector4: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0))
+    }
     
     func rotateXAxis(_ radians: Float) -> FloatMatrix4 {
         return self * FloatMatrix4(vector1: Float4(x: 1.0, y: 0.0, z: 0.0, w: 0.0),
@@ -463,4 +472,3 @@ struct FloatMatrix4: Hashable, Equatable {
         return self.scale(x: value, y: value, z: value)
     }
 }
-
