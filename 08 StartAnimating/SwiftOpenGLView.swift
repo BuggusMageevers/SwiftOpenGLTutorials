@@ -26,18 +26,18 @@ final class SwiftOpenGLView: NSOpenGLView {
         super.init(coder: coder)
         
         let attrs: [NSOpenGLPixelFormatAttribute] = [
-            UInt32(NSOpenGLPFAAccelerated),
-            UInt32(NSOpenGLPFAColorSize), UInt32(32),
-            UInt32(NSOpenGLPFAOpenGLProfile), UInt32(NSOpenGLProfileVersion3_2Core),
-            UInt32(0)
+            NSOpenGLPixelFormatAttribute(NSOpenGLPFAAccelerated),
+            NSOpenGLPixelFormatAttribute(NSOpenGLPFAColorSize), 32,
+            NSOpenGLPixelFormatAttribute(NSOpenGLPFAOpenGLProfile), NSOpenGLPixelFormatAttribute(NSOpenGLProfileVersion3_2Core),
+            0
         ]
         guard let pixelFormat = NSOpenGLPixelFormat(attributes: attrs) else {
-            Swift.print("pixelFormat could not be constructed")
+            print("pixelFormat could not be constructed")
             return
         }
         self.pixelFormat = pixelFormat
         guard let context = NSOpenGLContext(format: pixelFormat, share: nil) else {
-            Swift.print("context could not be constructed")
+            print("context could not be constructed")
             return
         }
         self.openGLContext = context
@@ -62,7 +62,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         let dataProvider = CGDataProvider(url: fileURL! as CFURL)
         let image = CGImage(pngDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: false, intent: CGColorRenderingIntent.defaultIntent)
         
-        let textureData = UnsafeMutableRawPointer.allocate(bytes: 256 * 4 * 256, alignedTo: MemoryLayout<GLint>.alignment)
+        let textureData = UnsafeMutableRawPointer.allocate(byteCount: 256 * 4 * 256, alignment: MemoryLayout<GLint>.alignment)
         
         let context = CGContext(data: textureData, width: 256, height: 256, bitsPerComponent: 8, bytesPerRow: 4 * 256, space: CGColorSpace(name: CGColorSpace.genericRGBLinear)!,  bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
         
@@ -126,14 +126,14 @@ final class SwiftOpenGLView: NSOpenGLView {
         var compiled: GLint = 0
         glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled)
         if compiled <= 0 {
-            Swift.print("Could not compile vertex, getting log")
+            print("Could not compile vertex, getting log")
             var logLength: GLint = 0
             glGetShaderiv(vs, GLenum(GL_INFO_LOG_LENGTH), &logLength)
-            Swift.print(" logLength = \(logLength)")
+            print(" logLength = \(logLength)")
             if logLength > 0 {
                 let cLog = UnsafeMutablePointer<GLchar>.allocate(capacity: Int(logLength))
                 glGetShaderInfoLog(vs, GLsizei(logLength), &logLength, cLog)
-                Swift.print(" log = \n\t\(String.init(cString: cLog))")
+                print(" log = \n\t\(String.init(cString: cLog))")
                 free(cLog)
             }
         }
@@ -186,14 +186,14 @@ final class SwiftOpenGLView: NSOpenGLView {
         compiled = 0
         glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled)
         if compiled <= 0 {
-            Swift.print("Could not compile fragement, getting log")
+            print("Could not compile fragement, getting log")
             var logLength: GLint = 0
             glGetShaderiv(fs, GLbitfield(GL_INFO_LOG_LENGTH), &logLength)
-            Swift.print(" logLength = \(logLength)")
+            print(" logLength = \(logLength)")
             if logLength > 0 {
                 let cLog = UnsafeMutablePointer<GLchar>.allocate(capacity: Int(logLength))
                 glGetShaderInfoLog(fs, GLsizei(logLength), &logLength, cLog)
-                Swift.print(" log = \n\t\(String.init(cString: cLog))")
+                print(" log = \n\t\(String.init(cString: cLog))")
                 free(cLog)
             }
         }
@@ -204,14 +204,14 @@ final class SwiftOpenGLView: NSOpenGLView {
         var linked: GLint = 0
         glGetProgramiv(programID, UInt32(GL_LINK_STATUS), &linked)
         if linked <= 0 {
-            Swift.print("Could not link, getting log")
+            print("Could not link, getting log")
             var logLength: GLint = 0
             glGetProgramiv(programID, UInt32(GL_INFO_LOG_LENGTH), &logLength)
-            Swift.print(" logLength = \(logLength)")
+            print(" logLength = \(logLength)")
             if logLength > 0 {
                 let cLog = UnsafeMutablePointer<GLchar>.allocate(capacity: Int(logLength))
                 glGetProgramInfoLog(programID, GLsizei(logLength), &logLength, cLog)
-                Swift.print(" log: \n\t\(String.init(cString: cLog))")
+                print(" log: \n\t\(String.init(cString: cLog))")
                 free(cLog)
             }
         }
