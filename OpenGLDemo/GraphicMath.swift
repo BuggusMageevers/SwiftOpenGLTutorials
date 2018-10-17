@@ -1,6 +1,6 @@
 //
 //  GraphicMath.swift
-//  SwiftOpenGLRefactor
+//  OpenGLDemo
 //
 //  Created by Myles Schultz on 1/17/18.
 //  Copyright © 2018 MyKo. All rights reserved.
@@ -106,6 +106,10 @@ struct Float3: Hashable, Equatable {
     
     func lenght() -> Float {
         return sqrtf((x * x) + (y * y) + (z * z))
+    }
+    func normalize() -> Float3 {
+        let length = self.lenght()
+        return Float3(x: x / length, y: y / length, z: z / length)
     }
 }
 extension Float3 {
