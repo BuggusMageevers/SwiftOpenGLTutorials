@@ -403,7 +403,7 @@ struct FloatMatrix4: Hashable, Equatable {
                 vector1.w, vector2.w, vector3.w, vector4.w]
     }
     
-    func projection(angeOfView theta: Float = 35, aspect: Float, distanceToNearClippingPlane nearZ: Float = 0.1, distanceToFarClippingPlane farZ: Float = 1000) -> FloatMatrix4 {
+    func perspective(angeOfView theta: Float = 120, aspect: Float, distanceToNearClippingPlane nearZ: Float = 0.1, distanceToFarClippingPlane farZ: Float = 1000) -> FloatMatrix4 {
         let scale = 1 / tanf(theta * 0.5 * Float.pi / 180)
         return FloatMatrix4(vector1: Float4(x: scale / aspect, y: 0.0, z: 0.0, w: 0.0),
                             vector2: Float4(x: 0.0, y: scale, z: 0.0, w: 0.0),

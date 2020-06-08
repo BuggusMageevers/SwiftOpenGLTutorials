@@ -27,56 +27,6 @@ struct TexVertex {
     let normal: Float3
     let coordinate: Float2
 }
-/// 3D space direction definitions:
-/// X: Left => negative, Right => positive
-/// Y: Down => negative, Up => positive
-/// Z: Into screen => negative, Out of screen => positive
-let triangle = [
-    /*Front*/
-    Vertex(position: Float3(x: -0.5, y: -0.5, z:  0.5), normal: (Float3(x: -0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y: -0.5, z:  0.5)).crossProduct(Float3(x: -0.5, y: -0.5, z:  0.5) - Float3(x: -0.5, y:  0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x:  0.5, y: -0.5, z:  0.5), normal: (Float3(x: -0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y: -0.5, z:  0.5)).crossProduct(Float3(x: -0.5, y: -0.5, z:  0.5) - Float3(x: -0.5, y:  0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x: -0.5, y:  0.5, z:  0.5), normal: (Float3(x: -0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y: -0.5, z:  0.5)).crossProduct(Float3(x: -0.5, y: -0.5, z:  0.5) - Float3(x: -0.5, y:  0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    /*FAngle*/
-    Vertex(position: Float3(x:  0.5, y: -0.5, z:  0.5), normal: (Float3(x:  0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y:  0.5, z: -0.5)).crossProduct(Float3(x:  0.5, y: -0.5, z:  0.5) - Float3(x: -0.5, y:  0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x:  0.5, y:  0.5, z: -0.5), normal: (Float3(x:  0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y:  0.5, z: -0.5)).crossProduct(Float3(x:  0.5, y: -0.5, z:  0.5) - Float3(x: -0.5, y:  0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x: -0.5, y:  0.5, z:  0.5), normal: (Float3(x:  0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y:  0.5, z: -0.5)).crossProduct(Float3(x:  0.5, y: -0.5, z:  0.5) - Float3(x: -0.5, y:  0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    /*Top*/
-    Vertex(position: Float3(x:  0.5, y:  0.5, z: -0.5), normal: (Float3(x:  0.5, y:  0.5, z: -0.5) - Float3(x: -0.5, y:  0.5, z: -0.5)).crossProduct(Float3(x:  0.5, y:  0.5, z: -0.5) - Float3(x: -0.5, y:  0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x: -0.5, y:  0.5, z: -0.5), normal: (Float3(x:  0.5, y:  0.5, z: -0.5) - Float3(x: -0.5, y:  0.5, z: -0.5)).crossProduct(Float3(x:  0.5, y:  0.5, z: -0.5) - Float3(x: -0.5, y:  0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x: -0.5, y:  0.5, z:  0.5), normal: (Float3(x:  0.5, y:  0.5, z: -0.5) - Float3(x: -0.5, y:  0.5, z: -0.5)).crossProduct(Float3(x:  0.5, y:  0.5, z: -0.5) - Float3(x: -0.5, y:  0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    /*Left*/
-    Vertex(position: Float3(x: -0.5, y:  0.5, z: -0.5), normal: (Float3(x: -0.5, y:  0.5, z: -0.5) - Float3(x: -0.5, y: -0.5, z:  0.5)).crossProduct(Float3(x: -0.5, y:  0.5, z: -0.5) - Float3(x: -0.5, y:  0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x: -0.5, y: -0.5, z:  0.5), normal: (Float3(x: -0.5, y:  0.5, z: -0.5) - Float3(x: -0.5, y: -0.5, z:  0.5)).crossProduct(Float3(x: -0.5, y:  0.5, z: -0.5) - Float3(x: -0.5, y:  0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x: -0.5, y:  0.5, z:  0.5), normal: (Float3(x: -0.5, y:  0.5, z: -0.5) - Float3(x: -0.5, y: -0.5, z:  0.5)).crossProduct(Float3(x: -0.5, y:  0.5, z: -0.5) - Float3(x: -0.5, y:  0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    /*BAngle*/
-    Vertex(position: Float3(x: -0.5, y: -0.5, z:  0.5), normal: (Float3(x: -0.5, y: -0.5, z:  0.5) - Float3(x: -0.5, y:  0.5, z: -0.5)).crossProduct(Float3(x: -0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y: -0.5, z: -0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x: -0.5, y:  0.5, z: -0.5), normal: (Float3(x: -0.5, y: -0.5, z:  0.5) - Float3(x: -0.5, y:  0.5, z: -0.5)).crossProduct(Float3(x: -0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y: -0.5, z: -0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x:  0.5, y: -0.5, z: -0.5), normal: (Float3(x: -0.5, y: -0.5, z:  0.5) - Float3(x: -0.5, y:  0.5, z: -0.5)).crossProduct(Float3(x: -0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y: -0.5, z: -0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    /*Bottom*/
-    Vertex(position: Float3(x:  0.5, y: -0.5, z: -0.5), normal: (Float3(x:  0.5, y: -0.5, z: -0.5) - Float3(x:  0.5, y: -0.5, z:  0.5)).crossProduct(Float3(x:  0.5, y: -0.5, z: -0.5) - Float3(x: -0.5, y: -0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x:  0.5, y: -0.5, z:  0.5), normal: (Float3(x:  0.5, y: -0.5, z: -0.5) - Float3(x:  0.5, y: -0.5, z:  0.5)).crossProduct(Float3(x:  0.5, y: -0.5, z: -0.5) - Float3(x: -0.5, y: -0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x: -0.5, y: -0.5, z:  0.5), normal: (Float3(x:  0.5, y: -0.5, z: -0.5) - Float3(x:  0.5, y: -0.5, z:  0.5)).crossProduct(Float3(x:  0.5, y: -0.5, z: -0.5) - Float3(x: -0.5, y: -0.5, z:  0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    /*Right*/
-    Vertex(position: Float3(x:  0.5, y: -0.5, z:  0.5), normal: (Float3(x:  0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y: -0.5, z: -0.5)).crossProduct(Float3(x:  0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y:  0.5, z: -0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x:  0.5, y: -0.5, z: -0.5), normal: (Float3(x:  0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y: -0.5, z: -0.5)).crossProduct(Float3(x:  0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y:  0.5, z: -0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x:  0.5, y:  0.5, z: -0.5), normal: (Float3(x:  0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y: -0.5, z: -0.5)).crossProduct(Float3(x:  0.5, y: -0.5, z:  0.5) - Float3(x:  0.5, y:  0.5, z: -0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    /*Back*/
-    Vertex(position: Float3(x:  0.5, y: -0.5, z: -0.5), normal: (Float3(x:  0.5, y: -0.5, z: -0.5) - Float3(x: -0.5, y:  0.5, z: -0.5)).crossProduct(Float3(x:  0.5, y: -0.5, z: -0.5) - Float3(x:  0.5, y:  0.5, z: -0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x: -0.5, y:  0.5, z: -0.5), normal: (Float3(x:  0.5, y: -0.5, z: -0.5) - Float3(x: -0.5, y:  0.5, z: -0.5)).crossProduct(Float3(x:  0.5, y: -0.5, z: -0.5) - Float3(x:  0.5, y:  0.5, z: -0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
-    Vertex(position: Float3(x:  0.5, y:  0.5, z: -0.5), normal: (Float3(x:  0.5, y: -0.5, z: -0.5) - Float3(x: -0.5, y:  0.5, z: -0.5)).crossProduct(Float3(x:  0.5, y: -0.5, z: -0.5) - Float3(x:  0.5, y:  0.5, z: -0.5)), color: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0))
-]
-let origins: [Float3] = [
-    Float3(x: light.position[0], y: light.position[1], z: light.position[2])
-]
-let floor = [
-    TexVertex(position: Float3(x: -1.0, y:  0.0, z: -1.0), normal: Float3( x:  0.0,  y:  1.0,  z:  0.0), coordinate: Float2(x: 0.0, y: 1.0)),
-    TexVertex(position: Float3(x: -1.0, y:  0.0, z:  1.0), normal: Float3( x:  0.0,  y:  1.0,  z:  0.0), coordinate: Float2(x: 0.0, y: 0.0)),
-    TexVertex(position: Float3(x:  1.0, y:  0.0, z:  1.0), normal: Float3( x:  0.0,  y:  1.0,  z:  0.0), coordinate: Float2(x: 1.0, y: 0.0)),
-    
-    TexVertex(position: Float3(x:  1.0, y:  0.0, z: -1.0), normal: Float3( x:  0.0,  y:  1.0,  z:  0.0), coordinate: Float2(x: 1.0, y: 1.0)),
-    TexVertex(position: Float3(x: -1.0, y:  0.0, z: -1.0), normal: Float3( x:  0.0,  y:  1.0,  z:  0.0), coordinate: Float2(x: 0.0, y: 1.0)),
-    TexVertex(position: Float3(x:  1.0, y:  0.0, z:  1.0), normal: Float3( x:  0.0,  y:  1.0,  z:  0.0), coordinate: Float2(x: 1.0, y: 0.0))
-]
 //  Draw a "circular" floor to roate for showcasing different objects and lighting schemes
 extension Float3 {
     func unitVector() -> Float3 {
@@ -289,8 +239,36 @@ func sphereMesh(withRadius radius: Float, longitudinalCuts longCuts: Int, latitu
         return sphereMesh(withRadius: radius, longitudinalCuts: 3, latitudinalCuts: 1)
     }
 }
+
+/// 3D space direction definitions:
+/// X: Left => negative, Right => positive
+/// Y: Down => negative, Up => positive
+/// Z: Into screen => negative, Out of screen => positive
+let triangle: [Float3] = [
+    Float3(x: -0.5, y: -0.5, z: 0.0), Float3(x: 0.5, y: -0.5, z: 0.0), Float3(x: 0.0, y: 0.5, z: 0.0)
+]
+let texturedCube: (indices: [GLuint], vertices: [TexVertex]) = (
+    indices: [
+        0, 1, 2, 0, 2, 3,
+        3, 2, 6, 3, 6, 5,
+        4, 5, 6, 4, 6, 7,
+        7, 6, 1, 7, 1, 0,
+        7, 0, 3, 7, 3, 4,
+        1, 6, 5, 1, 5, 2
+    ],
+    vertices: [
+        TexVertex(position: Float3(x: -0.5, y:  0.5, z:  0.5), normal: Float3(x: -0.5, y:  0.5, z:  0.5), coordinate: Float2(x: 0.0, y: 1.0)),
+        TexVertex(position: Float3(x: -0.5, y: -0.5, z:  0.5), normal: Float3(x: -0.5, y: -0.5, z:  0.5), coordinate: Float2(x: 0.0, y: 0.0)),
+        TexVertex(position: Float3(x:  0.5, y: -0.5, z:  0.5), normal: Float3(x:  0.5, y: -0.5, z:  0.5), coordinate: Float2(x: 1.0, y: 0.0)),
+        TexVertex(position: Float3(x:  0.5, y:  0.5, z:  0.5), normal: Float3(x:  0.5, y:  0.5, z:  0.5), coordinate: Float2(x: 1.0, y: 1.0)),
+        
+        TexVertex(position: Float3(x:  0.5, y:  0.5, z: -0.5), normal: Float3(x:  0.5, y:  0.5, z: -0.5), coordinate: Float2(x: 1.0, y: 1.0)),
+        TexVertex(position: Float3(x:  0.5, y: -0.5, z: -0.5), normal: Float3(x:  0.5, y: -0.5, z: -0.5), coordinate: Float2(x: 1.0, y: 0.0)),
+        TexVertex(position: Float3(x: -0.5, y: -0.5, z: -0.5), normal: Float3(x: -0.5, y: -0.5, z: -0.5), coordinate: Float2(x: 0.0, y: 0.0)),
+        TexVertex(position: Float3(x: -0.5, y:  0.5, z: -0.5), normal: Float3(x: -0.5, y:  0.5, z: -0.5), coordinate: Float2(x: 0.0, y: 1.0))
+    ]
+)
 let sphere = sphereMesh(withRadius: 0.5, longitudinalCuts: 20, latitudinalCuts: 20)
-let showcaseFloor = planarMesh(withSides: 8, radius: 3, thickness: 1.5)
 let light: (color: [Float], position: [Float], ambient: Float, specStrength: Float, specHardness: Float) = (
     color: [1.0, 1.0, 1.0],
     position: [-2, 0.85, 0.0],
@@ -335,23 +313,76 @@ func glCall<T>(_ function: @autoclosure () -> T, file: String = #file, line: Int
     return result
 }
 
+struct viewOrganizer {
+    private var numberOfPanels: Int = 0
+    private var spaces: [[(UInt, UInt)]] = [[]]
+    private var viewBounds: (width: UInt, height: UInt) = (0, 0)
+    
+    mutating func addPanel() { numberOfPanels += 1 }
+    private mutating func generateSpacesPanel() {
+        var remaining = numberOfPanels
+        var columnCount: Int = 0
+        var rowCount: Int = 0
+        var rawDimensions: ((UInt, UInt), (UInt, UInt), (UInt, UInt), UInt, UInt, UInt, UInt)!
+        repeat {
+            //  add a column
+            columnCount += 1
+            //  add a row to square the panel field
+            rowCount += 1
+            //  calculate spaces that need to be filled in the working column and row
+            let fill = columnCount + (rowCount - 1)
+            //  check if there are remaining panels to fill the spaces
+            if remaining <= fill {
+                //  spread remaining panels evenly across the last column and row
+                let columnFill = remaining / 2 > 1 ? remaining / 2 : 1
+                let rowFill = remaining - columnFill
+                
+                //  calculate view dimensions
+                let width = viewBounds.width / UInt(columnCount)
+                let height = viewBounds.height / UInt(rowCount)
+                //  find left over pixels
+                let nudgeWidth = viewBounds.width % UInt(columnCount)
+                let nudgeHeight = viewBounds.height % UInt(rowCount)
+                //  calculate the bounds for the spread panels (width or height will be different)
+                let stretchWidth = viewBounds.width / UInt(columnFill)
+                let stretchHeight = viewBounds.height / UInt(rowFill)
+                //  find left over pixels
+                let nudgeStretchWidth = viewBounds.width % UInt(columnFill)
+                let nudgeStretchHeight = viewBounds.height % UInt(rowFill)
+                
+                //  calculate base space bounds
+                let basicSpaceBounds = (width, height)
+                //  calculate column stretched space bounds
+                let columnStretchedSpaceBounds = (width, stretchHeight)
+                //  calculate row stretched space bounds
+                let rowStretchedSpaceBounds = (stretchWidth, height)
+                
+                rawDimensions = (basicSpaceBounds, columnStretchedSpaceBounds, rowStretchedSpaceBounds, nudgeWidth, nudgeHeight, nudgeStretchWidth, nudgeStretchHeight)
+            } else {
+                remaining -= fill
+            }
+        } while remaining > 0
+        
+        for column in 0..<(columnCount - 1) {
+            for row in 0..<(rowCount - 1) {
+                spaces[column][row] = (rawDimensions.0.0, rawDimensions.0.1)
+            }
+        }
+    }
+}
+
 class GraphicView: NSOpenGLView {
-    var vbo1: GLuint = 0
-    var vao1: GLuint = 0
-    var vbo2: GLuint = 0
-    var vao2: GLuint = 0
-    var vbo3: GLuint = 0
-    var vao3: GLuint = 0
-    var vbo4: GLuint = 0
-    var vao4: GLuint = 0
-    var vbo4indices: GLuint = 0
-    var vbo5: GLuint = 0
-    var vao5: GLuint = 0
-    var vbo5indices: GLuint = 0
-    var tbo: GLuint = 0
-    var phongID: GLuint = 0
-    var originID: GLuint = 0
-    var textureID: GLuint = 0
+    var triangleVBO: GLuint = 0
+    var triangleVAO: GLuint = 0
+    var texturedCubeVBO: [GLuint] = [0, 0]
+    var texturedCubeVAO: GLuint = 0
+    var cubeTexture: GLuint = 0
+    var texturedCubeTBO: GLuint = 0
+    var sphereVBO: [GLuint] = [0, 0]
+    var sphereVAO: GLuint = 0
+    var basicProgram: GLuint = 0
+    var phongProgram: GLuint = 0
+    var textureProgram: GLuint = 0
     var textureInverseBilinearInterpolationID: GLuint = 0
     var fbo: GLuint = 0
     var colorRBO: GLuint = 0
@@ -359,9 +390,40 @@ class GraphicView: NSOpenGLView {
     
     var displayLink: CVDisplayLink?
     
-    var uniformMatrices = [
-        "view" : FloatMatrix4().translate(x: 0.0, y: 0.0, z: -25.0).rotateXAxis(0.5),
-        "projection" : FloatMatrix4()
+    var modelMatrices = [
+        FloatMatrix4().translate(x: -4, y:  4, z: 0),
+        FloatMatrix4().translate(x: -2, y:  4, z: 0),
+        FloatMatrix4().translate(x: -0, y:  4, z: 0),
+        FloatMatrix4().translate(x:  2, y:  4, z: 0),
+        FloatMatrix4().translate(x:  4, y:  4, z: 0),
+        FloatMatrix4().translate(x: -4, y:  2, z: 0),
+        FloatMatrix4().translate(x: -2, y:  2, z: 0),
+        FloatMatrix4().translate(x: -0, y:  2, z: 0),
+        FloatMatrix4().translate(x:  2, y:  2, z: 0),
+        FloatMatrix4().translate(x:  4, y:  2, z: 0),
+        FloatMatrix4().translate(x: -4, y:  0, z: 0),
+        FloatMatrix4().translate(x: -2, y:  0, z: 0),
+        FloatMatrix4().translate(x: -0, y:  0, z: 0),
+        FloatMatrix4().translate(x:  2, y:  0, z: 0),
+        FloatMatrix4().translate(x:  4, y:  0, z: 0),
+        FloatMatrix4().translate(x: -4, y: -2, z: 0),
+        FloatMatrix4().translate(x: -2, y: -2, z: 0),
+        FloatMatrix4().translate(x: -0, y: -2, z: 0),
+        FloatMatrix4().translate(x:  2, y: -2, z: 0),
+        FloatMatrix4().translate(x:  4, y: -2, z: 0),
+        FloatMatrix4().translate(x: -4, y: -4, z: 0),
+        FloatMatrix4().translate(x: -2, y: -4, z: 0),
+        FloatMatrix4().translate(x: -0, y: -4, z: 0),
+        FloatMatrix4().translate(x:  2, y: -4, z: 0),
+        FloatMatrix4().translate(x:  4, y: -4, z: 0)
+    ]
+    
+    lazy var uniformMatrices = [
+        "view" : FloatMatrix4().translate(x: 0.0, y: 0.0, z: -5.0).rotateXAxis(0.5),
+        "projection" : FloatMatrix4().perspective(angeOfView: 120,
+                                                  aspect: Float(bounds.width / bounds.height),
+                                                  distanceToNearClippingPlane: 0.01,
+                                                  distanceToFarClippingPlane: 100)
     ]
     var viewSize: NSRect!
     
@@ -393,152 +455,116 @@ class GraphicView: NSOpenGLView {
         context.setValues([1], for: .swapInterval)
         self.openGLContext = context
         
-        //  self.bounds is now available, initialize the projection matrix with the current aspect ratio.
-        uniformMatrices["projection"] = uniformMatrices["projection"]?.projection(angeOfView: 6.4,
-                                                                                  aspect: Float(bounds.width / bounds.height),
-                                                                                  distanceToNearClippingPlane: 0.01,
-                                                                                  distanceToFarClippingPlane: 100)
     }
     
     override func prepareOpenGL() {
         //  Set the clear color for the buffers.
         glCall(glClearColor(0.0, 0.0, 0.0, 1.0))
         
-        //  //  //  //  //  //  //
-        //                      //
-        //  Create a Mesh from  //
-        //   `triangle` data    //
-        //                      //
-        //  //  //  //  //  //  //
-        /// Setup buffer to hold data (Array Buffers hold arrays of vertex data usually).
-        glCall(glGenBuffers(1, &vbo1))
-        glCall(glBindBuffer(GLenum(GL_ARRAY_BUFFER), vbo1))
-        glCall(glBufferData(GLenum(GL_ARRAY_BUFFER), MemoryLayout<Vertex>.size * triangle.count, triangle, GLenum(GL_STATIC_DRAW)))
-        /// Setup data layout.  When this layout is bound, glDraw* will utilize the data buffer above as it was bound during setup.
-        glCall(glGenVertexArrays(1, &vao1))
-        glCall(glBindVertexArray(vao1))
-        glCall(glEnableVertexAttribArray(0))
-        glCall(glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 40, UnsafeRawPointer(bitPattern: 0)))
-        glCall(glEnableVertexAttribArray(1))
-        glCall(glVertexAttribPointer(1, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 40, UnsafePointer(bitPattern: 12)))
-        glCall(glEnableVertexAttribArray(2))
-        glCall(glVertexAttribPointer(2, 4, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 40, UnsafeRawPointer(bitPattern: 24)))
+        //  //  //  //  //  //  //  //  //  //  //  //
+        //                                          //
+        //   Load triangle data into OpenGL Object  //
+        //                                          //
+        //  //  //  //  //  //  //  //  //  //  //  //
+        glCall(glGenBuffers(1, &triangleVBO))
+        glCall(glBindBuffer(GLenum(GL_ARRAY_BUFFER), triangleVBO))
+        glCall(glBufferData(GLenum(GL_ARRAY_BUFFER), MemoryLayout<Float3>.size * triangle.count, triangle, GLenum(GL_STATIC_DRAW)))
         
-        //  //  //  //  //  //  //
-        //                      //
-        //  Create Light origin //
-        //   and Other Origins  //
-        //                      //
-        //  //  //  //  //  //  //
-        /// Setup buffers for data
-        glCall(glGenBuffers(1, &vbo2))
-        glCall(glBindBuffer(GLenum(GL_ARRAY_BUFFER), vbo2))
-        glCall(glBufferData(GLenum(GL_ARRAY_BUFFER), MemoryLayout<Float3>.size * origins.count, origins, GLenum(GL_STATIC_DRAW)))
-        /// Setup data layout
-        glCall(glGenVertexArrays(1, &vao2))
-        glCall(glBindVertexArray(vao2))
-        glCall(glEnableVertexAttribArray(0))
+        glCall(glGenVertexArrays(1, &triangleVAO))
+        glCall(glBindVertexArray(triangleVAO))
         glCall(glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 12, UnsafeRawPointer(bitPattern: 0)))
-        
-        //  //  //  //  //  //  //  //
-        //                          //
-        //   Create Square Floor    //
-        //                          //
-        //  //  //  //  //  //  //  //
-        /// Setup buffers for data
-        glCall(glGenBuffers(1, &vbo3))
-        glCall(glBindBuffer(GLenum(GL_ARRAY_BUFFER), vbo3))
-        glCall(glBufferData(GLenum(GL_ARRAY_BUFFER), MemoryLayout<TexVertex>.size * floor.count, floor, GLenum(GL_STATIC_DRAW)))
-        /// Setup data layout
-        glCall(glGenVertexArrays(1, &vao3))
-        glCall(glBindVertexArray(vao3))
         glCall(glEnableVertexAttribArray(0))
-        glCall(glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 32, UnsafeRawPointer(bitPattern: 0)))
-        glCall(glEnableVertexAttribArray(1))
-        glCall(glVertexAttribPointer(1, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 32, UnsafeRawPointer(bitPattern: 12)))
-        glCall(glEnableVertexAttribArray(2))
-        glCall(glVertexAttribPointer(2, 2, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 32, UnsafeRawPointer(bitPattern: 24)))
-        
-        //  //  //  //  //  //  //
-        //                      //
-        //   Create a Texture   //
-        //                      //
-        //  //  //  //  //  //  //
-        guard let texture = NSImage(named: NSImage.Name(rawValue: "Texture"))?.tiffRepresentation else {
-            print("Texture file could not be found or converted to a TIFF.")
-            return
+        //  //  //  //  //  //  //  //  //  //  //  //  //
+        //                                              //
+        //  Load textured cube data into OpenGL Object  //
+        //                                              //
+        //  //  //  //  //  //  //  //  //  //  //  //  //
+        /// Request two VBO's:  returned as an array of VBO ID's.  Then fill the index and vertex buffers.
+        withUnsafeMutablePointer(to: &texturedCubeVBO[0]) { texturedCubeVBOPointer in
+            glCall(glGenBuffers(2, texturedCubeVBOPointer))
+            glCall(glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), texturedCubeVBOPointer[0]))
+            glCall(glBufferData(GLenum(GL_ELEMENT_ARRAY_BUFFER), MemoryLayout<GLuint>.size * texturedCube.indices.count, texturedCube.indices, GLenum(GL_STATIC_DRAW)))
+            glCall(glBindBuffer(GLenum(GL_ARRAY_BUFFER), texturedCubeVBOPointer[1]))
+            glCall(glBufferData(GLenum(GL_ARRAY_BUFFER), MemoryLayout<TexVertex>.size * texturedCube.vertices.count, texturedCube.vertices, GLenum(GL_STATIC_DRAW)))
         }
-        glCall(glGenTextures(1, &tbo))
-        glCall(glActiveTexture(GLenum(GL_TEXTURE0)))
-        glCall(glBindTexture(GLenum(GL_TEXTURE_2D), tbo))
-        glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_LINEAR))
-        glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_LINEAR))
-        glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GL_REPEAT))
-        glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GL_REPEAT))
-        glCall(glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_RGBA, 256, 256, 0, GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE), (texture as NSData).bytes))
-        
-        //  //  //  //  //  //  //  //  //
-        //                              //
-        //  Showcase Floor to be Drawn  //
-        //      With drawElements       //
-        //                              //
-        //  //  //  //  //  //  //  //  //
-        glCall(glGenBuffers(1, &vbo4))
-        glCall(glBindBuffer(GLenum(GL_ARRAY_BUFFER), vbo4))
-        glCall(glBufferData(GLenum(GL_ARRAY_BUFFER), MemoryLayout<TexVertex>.size * showcaseFloor.1.count, showcaseFloor.1, GLenum(GL_STATIC_DRAW)))
-        glCall(glGenBuffers(1, &vbo4indices))
-        glCall(glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), vbo4indices))
-        glCall(glBufferData(GLenum(GL_ELEMENT_ARRAY_BUFFER), MemoryLayout<UInt32>.size * showcaseFloor.0.count, showcaseFloor.0, GLenum(GL_STATIC_DRAW)))
-        //  Set up a VAO to later bind when we want to draw what is in the buffer above.
-        glCall(glGenVertexArrays(1, &vao4))
-        glCall(glBindVertexArray(vao4))
-        glCall(glEnableVertexAttribArray(0))
-        glCall(glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 32, UnsafeRawPointer(bitPattern: 0)))
-        glCall(glEnableVertexAttribArray(1))
-        glCall(glVertexAttribPointer(1, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 32, UnsafePointer(bitPattern: 12)))
-        glCall(glEnableVertexAttribArray(2))
-        glCall(glVertexAttribPointer(2, 2, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 32, UnsafeRawPointer(bitPattern: 24)))
-        
-        //  //  //  //  //  //  //  //  //
-        //                              //
-        //  Create Sphere to be Drawn   //
-        //      With drawInstance       //
-        //                              //
-        //  //  //  //  //  //  //  //  //
-        glCall(glGenBuffers(1, &vbo5))
-        glCall(glBindBuffer(GLenum(GL_ARRAY_BUFFER), vbo5))
-        glCall(glBufferData(GLenum(GL_ARRAY_BUFFER), MemoryLayout<Vertex>.size * sphere.1.count, sphere.1, GLenum(GL_STATIC_DRAW)))
-        glCall(glGenBuffers(1, &vbo5indices))
-        glCall(glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), vbo5indices))
-        glCall(glBufferData(GLenum(GL_ELEMENT_ARRAY_BUFFER), MemoryLayout<UInt32>.size * sphere.0.count, sphere.0, GLenum(GL_STATIC_DRAW)))
-        glCall(glGenVertexArrays(1, &vao5))
-        glCall(glBindVertexArray(vao5))
-        glCall(glEnableVertexAttribArray(0))
-        glCall(glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 40, UnsafeRawPointer(bitPattern: 0)))
-        glCall(glEnableVertexAttribArray(1))
-        glCall(glVertexAttribPointer(1, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 40, UnsafePointer(bitPattern: 12)))
-        glCall(glEnableVertexAttribArray(2))
-        glCall(glVertexAttribPointer(2, 4, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 40, UnsafeRawPointer(bitPattern: 24)))
+        withUnsafeMutablePointer(to: &texturedCubeVAO) { texturedCubeVAOPointer in
+            /// Setup the VAO to assign segments of the buffer as inputs for a shader.
+            glCall(glGenVertexArrays(1, texturedCubeVAOPointer))
+            glCall(glBindVertexArray(texturedCubeVAOPointer.pointee))
+            glCall(glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 32, UnsafeRawPointer(bitPattern: 0)))
+            glCall(glEnableVertexAttribArray(0))
+            glCall(glVertexAttribPointer(1, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 32, UnsafeRawPointer(bitPattern: 12)))
+            glCall(glEnableVertexAttribArray(1))
+            glCall(glVertexAttribPointer(2, 2, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 32, UnsafeRawPointer(bitPattern: 24)))
+            glCall(glEnableVertexAttribArray(2))
+        }
+        withUnsafeMutablePointer(to: &texturedCubeTBO) { texturedCubeTBOPointer in
+            glCall(glGenTextures(1, texturedCubeTBOPointer))
+            glCall(glActiveTexture(GLenum(GL_TEXTURE0)))
+            glCall(glBindTexture(GLenum(GL_TEXTURE_2D), texturedCubeTBOPointer.pointee))
+            glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_LINEAR))
+            glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_LINEAR))
+            glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GL_REPEAT))
+            glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GL_REPEAT))
+            /// Setup the texture by loading the image from the XCAsset catalog, then loading it into the TBO.
+            guard let texture = NSImage(named: NSImage.Name(rawValue: "Texture"))?.tiffRepresentation else {
+                print("Texture file could not be found or converted to a TIFF.")
+                return
+            }
+            glCall(glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_RGBA, 256, 256, 0, GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE), (texture as NSData).bytes))
+        }
+
+        //  //  //  //  //  //  //  //  //  //  //  //
+        //                                          //
+        //   Load sphere data into OpenGL Object    //
+        //                                          //
+        //  //  //  //  //  //  //  //  //  //  //  //
+        /// Setup buffer to hold data (Array Buffers hold arrays of vertex data usually).
+        withUnsafeMutablePointer(to: &sphereVBO[0]) { sphereVBOPointer in
+            glCall(glGenBuffers(2, sphereVBOPointer))
+            glCall((glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), sphereVBOPointer[0])))
+            glCall(glBufferData(GLenum(GL_ELEMENT_ARRAY_BUFFER), MemoryLayout<UInt32>.size * sphere.1.count, sphere.0, GLenum(GL_STATIC_DRAW)))
+            glCall(glBindBuffer(GLenum(GL_ARRAY_BUFFER), sphereVBOPointer[1]))
+            glCall(glBufferData(GLenum(GL_ARRAY_BUFFER), MemoryLayout<Vertex>.size * sphere.1.count, sphere.1, GLenum(GL_STATIC_DRAW)))
+        }
+        withUnsafeMutablePointer(to: &sphereVAO) { sphereVAOPointer in
+            /// Setup data layout.  When this layout is bound, glDraw* will utilize the data buffer above as it was bound during setup.
+            glCall(glGenVertexArrays(1, sphereVAOPointer))
+            glCall(glBindVertexArray(sphereVAOPointer.pointee))
+            glCall(glEnableVertexAttribArray(0))
+            glCall(glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 40, UnsafeRawPointer(bitPattern: 0)))
+            glCall(glEnableVertexAttribArray(1))
+            glCall(glVertexAttribPointer(1, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 40, UnsafePointer(bitPattern: 12)))
+            glCall(glEnableVertexAttribArray(2))
+            glCall(glVertexAttribPointer(2, 4, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 40, UnsafeRawPointer(bitPattern: 24)))
+        }
         
         //  //  //  //  //  //
         //                  //
         //  Program setup   //
         //                  //
         //  //  //  //  //  //
-        originID = glCall(glCreateProgram())
+        basicProgram = glCall(glCreateProgram())
         /// Origin Vertex ///
         var vs = glCall(glCreateShader(GLenum(GL_VERTEX_SHADER)))
-        var source = "#version 330 core                                 \n" +
-            "uniform vec4 color;                                        \n" +
-            "uniform mat4 view;                                         \n" +
-            "uniform mat4 projection;                                   \n" +
-            "layout (location = 0) in vec3 position;                    \n" +
-            "out vec4 passColor;                                        \n" +
-            "void main()                                                \n" +
-            "{                                                          \n" +
-            "    gl_Position = projection * view * vec4(position, 1.0); \n" +
-            "    passColor = color;                                     \n" +
-            "}                                                          \n"
+        var source = """
+        #version 330 core
+
+        uniform vec4 color;
+        uniform mat4 model;
+        uniform mat4 view;
+        uniform mat4 projection;
+        
+        layout (location = 0) in vec3 position;
+
+        out vec4 passColor;
+
+        void main() {
+            gl_Position = projection * view * model * vec4(position, 1.0);
+
+            passColor = vec4(0, 0, 0, 1);
+        }
+        """
         var vss = source.cString(using: String.Encoding.ascii)
         var vssptr = UnsafePointer<GLchar>(vss)
         glCall(glShaderSource(vs, 1, &vssptr, nil))
@@ -559,13 +585,17 @@ class GraphicView: NSOpenGLView {
         }
         /// Origin Fragment ///
         var fs = glCall(glCreateShader(GLenum(GL_FRAGMENT_SHADER)))
-        source = "#version 330 core     \n" +
-            "in vec4 passColor;         \n" +
-            "out vec4 outColor;         \n" +
-            "void main()                \n" +
-            "{                          \n" +
-            "    outColor = passColor;  \n" +
-            "}                          \n"
+        source = """
+        #version 330 core
+        
+        in vec4 passColor;
+        
+        out vec4 outColor;
+        
+        void main() {
+            outColor = passColor;
+        }
+        """
         var fss = source.cString(using: String.Encoding.ascii)
         var fssptr = UnsafePointer<GLchar>(fss)
         glCall(glShaderSource(fs, 1, &fssptr, nil))
@@ -585,19 +615,19 @@ class GraphicView: NSOpenGLView {
             }
         }
         /// Attach and link shaders to the program.
-        glCall(glAttachShader(originID, vs))
-        glCall(glAttachShader(originID, fs))
-        glCall(glLinkProgram(originID))
+        glCall(glAttachShader(basicProgram, vs))
+        glCall(glAttachShader(basicProgram, fs))
+        glCall(glLinkProgram(basicProgram))
         var linked: GLint = 0
-        glCall(glGetProgramiv(originID, UInt32(GL_LINK_STATUS), &linked))
+        glCall(glGetProgramiv(basicProgram, UInt32(GL_LINK_STATUS), &linked))
         if linked <= 0 {
             Swift.print("Could not link, getting log")
             var logLength: GLint = 0
-            glCall(glGetProgramiv(originID, UInt32(GL_INFO_LOG_LENGTH), &logLength))
+            glCall(glGetProgramiv(basicProgram, UInt32(GL_INFO_LOG_LENGTH), &logLength))
             Swift.print(" logLength = \(logLength)")
             if logLength > 0 {
                 let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
-                glCall(glGetProgramInfoLog(originID, GLsizei(logLength), &logLength, cLog))
+                glCall(glGetProgramInfoLog(basicProgram, GLsizei(logLength), &logLength, cLog))
                 Swift.print("log: \(String.init(cString:cLog))")
                 free(cLog)
             }
@@ -606,32 +636,38 @@ class GraphicView: NSOpenGLView {
         glCall(glDeleteShader(vs))
         glCall(glDeleteShader(fs))
         
-        //  //  //  //  //  //
-        //                  //
-        //   Phong Shader   //
-        //                  //
-        //  //  //  //  //  //
-        phongID = glCall(glCreateProgram())
+        //  //  //  //  //  //  //
+        //                      //
+        //    Phong Program     //
+        //                      //
+        //  //  //  //  //  //  //
+        phongProgram = glCall(glCreateProgram())
         /// Phong Vertex Shader ///
         vs = glCall(glCreateShader(GLenum(GL_VERTEX_SHADER)))
-        source = "#version 330 core                                     \n" +
-            "layout (location = 0) in vec3 position;                    \n" +
-            "layout (location = 1) in vec3 normal;                      \n" +
-            "layout (location = 2) in vec4 color;                       \n" +
-            "out vec3 passPosition;                                     \n" +
-            "out vec3 passNormal;                                       \n" +
-            "out vec4 passColor;                                        \n" +
-            "out vec3 passCameraPosition;                               \n" +
-            "uniform mat4 view;                                         \n" +
-            "uniform mat4 projection;                                   \n" +
-            "void main()                                                \n" +
-            "{                                                          \n" +
-            "    gl_Position = projection * view * vec4(position, 1.0); \n" +
-            "    passPosition = position;                               \n" +
-            "    passNormal = normalize(normal);                        \n" +
-            "    passColor = color;                                     \n" +
-            "    passCameraPosition = view[3].xyz;                      \n" +
-            "}                                                          \n"
+        source = """
+        #version 330 core
+        
+        uniform mat4 model;
+        uniform mat4 view;
+        uniform mat4 projection;
+        
+        layout (location = 0) in vec3 position;
+        layout (location = 1) in vec3 normal;
+        layout (location = 2) in vec4 color;
+        
+        out vec3 passPosition;
+        out vec3 passNormal;
+        out vec4 passColor;
+        out vec3 passCameraPosition;
+        
+        void main() {
+            gl_Position = projection * view * model * vec4(position, 1.0);
+            passPosition = position;
+            passNormal = normalize(normal);
+            passColor = color;
+            passCameraPosition = view[3].xyz;
+        }
+        """
         vss = source.cString(using: String.Encoding.ascii)
         vssptr = UnsafePointer<GLchar>(vss)
         glCall(glShaderSource(vs, 1, &vssptr, nil))
@@ -652,30 +688,35 @@ class GraphicView: NSOpenGLView {
         }
         /// Phong Fragment Shader ///
         fs = glCall(glCreateShader(GLenum(GL_FRAGMENT_SHADER)))
-        source = "#version 330 core                                                                                         \n" +
-            "uniform struct Light {                                                                                         \n" +
-            "   vec3 color;                                                                                                 \n" +
-            "   vec3 position;                                                                                              \n" +
-            "   float ambient;                                                                                              \n" +
-            "   float specStrength;                                                                                         \n" +
-            "   float specHardness;                                                                                         \n" +
-            "} light;                                                                                                       \n" +
-            "in vec3 passPosition;                                                                                          \n" +
-            "in vec3 passNormal;                                                                                            \n" +
-            "in vec4 passColor;                                                                                             \n" +
-            "in vec3 passCameraPosition;                                                                                    \n" +
-            "out vec4 outColor;                                                                                             \n" +
-            "void main()                                                                                                    \n" +
-            "{                                                                                                              \n" +
-            "    vec3 normal = passNormal;                                                                                  \n" +
-            "    vec3 lightRay = normalize(light.position - passPosition);                                                  \n" +
-            "    float intensity = clamp(dot(normal, lightRay), 0, 1);                                                      \n" +
-            "    vec3 viewer = normalize(passCameraPosition - passPosition);                                                \n" +
-            "    vec3 reflection = reflect(lightRay, normal);                                                               \n" +
-            "    float specular = pow(max(dot(viewer, reflection), 0.0), light.specHardness);                               \n" +
-            "    outColor.rgb = passColor.rgb + light.ambient + light.color * intensity + light.specStrength * specular;    \n" +
-            "    outColor.a = passColor.a;                                                                                  \n" +
-            "}                                                                                                              \n"
+        source = """
+        #version 330 core
+        
+        uniform struct Light {
+           vec3 color;
+           vec3 position;
+           float ambient;
+           float specStrength;
+           float specHardness;
+        } light;
+        
+        in vec3 passPosition;
+        in vec3 passNormal;
+        in vec4 passColor;
+        in vec3 passCameraPosition;
+        
+        out vec4 outColor;
+        
+        void main() {
+            vec3 normal = passNormal;
+            vec3 lightRay = normalize(light.position - passPosition);
+            float intensity = clamp(dot(normal, lightRay), 0, 1);
+            vec3 viewer = normalize(passCameraPosition - passPosition);
+            vec3 reflection = reflect(lightRay, normal);
+            float specular = pow(max(dot(viewer, reflection), 0.0), light.specHardness);
+            outColor.rgb = passColor.rgb + light.ambient + light.color * intensity + light.specStrength * specular;
+            outColor.a = passColor.a;
+        }
+        """
         fss = source.cString(using: String.Encoding.ascii)
         fssptr = UnsafePointer<GLchar>(fss)
         glCall(glShaderSource(fs, 1, &fssptr, nil))
@@ -695,19 +736,19 @@ class GraphicView: NSOpenGLView {
             }
         }
         /// Attach and link shaders to program
-        glCall(glAttachShader(phongID, vs))
-        glCall(glAttachShader(phongID, fs))
-        glCall(glLinkProgram(phongID))
+        glCall(glAttachShader(phongProgram, vs))
+        glCall(glAttachShader(phongProgram, fs))
+        glCall(glLinkProgram(phongProgram))
         linked = 0
-        glCall(glGetProgramiv(phongID, UInt32(GL_LINK_STATUS), &linked))
+        glCall(glGetProgramiv(phongProgram, UInt32(GL_LINK_STATUS), &linked))
         if linked <= 0 {
             print("Could not link, getting log")
             var logLength: GLint = 0
-            glCall(glGetProgramiv(phongID, UInt32(GL_INFO_LOG_LENGTH), &logLength))
+            glCall(glGetProgramiv(phongProgram, UInt32(GL_INFO_LOG_LENGTH), &logLength))
             print(" logLength = \(logLength)")
             if logLength > 0 {
                 let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
-                glCall(glGetProgramInfoLog(phongID, GLsizei(logLength), &logLength, cLog))
+                glCall(glGetProgramInfoLog(phongProgram, GLsizei(logLength), &logLength, cLog))
                 print("log: \(String.init(cString:cLog))")
                 free(cLog)
             }
@@ -716,37 +757,43 @@ class GraphicView: NSOpenGLView {
         glCall(glDeleteShader(vs))
         glCall(glDeleteShader(fs))
         /// Set up Uniforms (only required prior to making a call to a glDraw* call--this is an example).
-        glCall(glUseProgram(phongID))
+        glCall(glUseProgram(phongProgram))
         //  Not necessary to do right now, but we can set a program's uniform values
         //  at this time.  More useful, would be to capture the "Locations" of the
         //  Uniform's for later use--fewer OpenGL calls a render time.
-        glCall(glUniform1i(glCall(glGetUniformLocation(phongID, "sample")), GL_TEXTURE0))
-        glCall(glUniform3fv(glCall(glGetUniformLocation(phongID, "light.color")), 1, light.color))
-        glCall(glUniform3fv(glCall(glGetUniformLocation(phongID, "light.position")), 1, light.position))
-        glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.ambient")), light.ambient))
-        glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.specStrength")), light.specStrength))
-        glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.specHardness")), light.specHardness))
+        glCall(glUniform1i(glCall(glGetUniformLocation(phongProgram, "sample")), GL_TEXTURE0))
+        glCall(glUniform3fv(glCall(glGetUniformLocation(phongProgram, "light.color")), 1, light.color))
+        glCall(glUniform3fv(glCall(glGetUniformLocation(phongProgram, "light.position")), 1, light.position))
+        glCall(glUniform1f(glCall(glGetUniformLocation(phongProgram, "light.ambient")), light.ambient))
+        glCall(glUniform1f(glCall(glGetUniformLocation(phongProgram, "light.specStrength")), light.specStrength))
+        glCall(glUniform1f(glCall(glGetUniformLocation(phongProgram, "light.specHardness")), light.specHardness))
         
         //  //  //  //  //  //  //
         //                      //
         //  Textured Triangles  //
         //                      //
         //  //  //  //  //  //  //
-        textureID = glCall(glCreateProgram())
+        textureProgram = glCall(glCreateProgram())
         /// Texture Vertex Shader ///
         vs = glCall(glCreateShader(GLenum(GL_VERTEX_SHADER)))
-        source = "#version 330 core                                     \n" +
-            "layout (location = 0) in vec3 position;                    \n" +
-            "layout (location = 1) in vec3 normal;                      \n" +
-            "layout (location = 2) in vec2 coordinate;                  \n" +
-            "uniform mat4 view;                                         \n" +
-            "uniform mat4 projection;                                   \n" +
-            "out vec2 uv;                                               \n" +
-            "void main()                                                \n" +
-            "{                                                          \n" +
-            "    gl_Position = projection * view * vec4(position, 1.0); \n" +
-            "    uv = coordinate;                                       \n" +
-            "}                                                          \n"
+        source = """
+        #version 330 core
+        
+        layout (location = 0) in vec3 position;
+        layout (location = 1) in vec3 normal;
+        layout (location = 2) in vec2 coordinate;
+        
+        uniform mat4 model;
+        uniform mat4 view;
+        uniform mat4 projection;
+        
+        out vec2 uv;
+        
+        void main() {
+            gl_Position = projection * view * model * vec4(position, 1.0);
+            uv = coordinate;
+        }
+        """
         vss = source.cString(using: String.Encoding.ascii)
         vssptr = UnsafePointer<GLchar>(vss)
         glCall(glShaderSource(vs, 1, &vssptr, nil))
@@ -767,14 +814,19 @@ class GraphicView: NSOpenGLView {
         }
         /// Texture Framgent Shader ///
         fs = glCall(glCreateShader(GLenum(GL_FRAGMENT_SHADER)))
-        source = "#version 330 core                 \n" +
-            "uniform sampler2D sample;              \n" +
-            "in vec2 uv;                            \n" +
-            "out vec4 outColor;                     \n" +
-            "void main()                            \n" +
-            "{                                      \n" +
-            "    outColor = texture(sample, uv);    \n" +
-            "}                                      \n"
+        source = """
+        #version 330 core
+        
+        uniform sampler2D sample;
+        
+        in vec2 uv;
+        
+        out vec4 outColor;
+        
+        void main() {
+            outColor = texture(sample, uv);
+        }
+        """
         fss = source.cString(using: String.Encoding.ascii)
         fssptr = UnsafePointer<GLchar>(fss)
         glCall(glShaderSource(fs, 1, &fssptr, nil))
@@ -794,19 +846,19 @@ class GraphicView: NSOpenGLView {
             }
         }
         //  Attach shaders to program and link
-        glCall(glAttachShader(textureID, vs))
-        glCall(glAttachShader(textureID, fs))
-        glCall(glLinkProgram(textureID))
+        glCall(glAttachShader(textureProgram, vs))
+        glCall(glAttachShader(textureProgram, fs))
+        glCall(glLinkProgram(textureProgram))
         linked = 0
-        glCall(glGetProgramiv(textureID, UInt32(GL_LINK_STATUS), &linked))
+        glCall(glGetProgramiv(textureProgram, UInt32(GL_LINK_STATUS), &linked))
         if linked <= 0 {
             Swift.print("Could not link, getting log")
             var logLength: GLint = 0
-            glCall(glGetProgramiv(textureID, UInt32(GL_INFO_LOG_LENGTH), &logLength))
+            glCall(glGetProgramiv(textureProgram, UInt32(GL_INFO_LOG_LENGTH), &logLength))
             Swift.print(" logLength = \(logLength)")
             if logLength > 0 {
                 let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
-                glCall(glGetProgramInfoLog(textureID, GLsizei(logLength), &logLength, cLog))
+                glCall(glGetProgramInfoLog(textureProgram, GLsizei(logLength), &logLength, cLog))
                 Swift.print("log: \(String.init(cString:cLog))")
                 free(cLog)
             }
@@ -1020,7 +1072,7 @@ class GraphicView: NSOpenGLView {
                 free(cLog)
             }
         }
-        //  Mark shaers for deletion.
+        //  Mark shaders for deletion.
         glCall(glDeleteShader(vs))
         glCall(glDeleteShader(gs))
         glCall(glDeleteShader(fs))
@@ -1056,6 +1108,12 @@ class GraphicView: NSOpenGLView {
         glCall(glEnable(GLenum(GL_CULL_FACE)))
         
         let displayLinkOutputCallback: CVDisplayLinkOutputCallback = {(displayLink: CVDisplayLink, inNow: UnsafePointer<CVTimeStamp>, inOutputTime: UnsafePointer<CVTimeStamp>, flagsIn: CVOptionFlags, flagsOut: UnsafeMutablePointer<CVOptionFlags>, displayLinkContext: UnsafeMutableRawPointer?) -> CVReturn in
+            //  Not sure why, but when trying to work with the UnsafeMutableRawPointer
+            //  directly through the instance methods bindMemory(_:_:) and assumingMemoryBound(_:)
+            //  an EXC_I386_GPFLT is generated.  By the documentation, it would seem
+            //  preferable to use either of these methods instead of unsafeBitCast(_:_:).
+//            displayLinkContext?.bindMemory(to: GraphicView.self, capacity: MemoryLayout<GraphicView>.size).pointee.drawView()
+//            displayLinkContext?.assumingMemoryBound(to: GraphicView.self).pointee.drawView()
             unsafeBitCast(displayLinkContext, to: GraphicView.self).drawView()
 
             return kCVReturnSuccess
@@ -1075,152 +1133,33 @@ class GraphicView: NSOpenGLView {
             glCall(glClearColor(1.0, 1.0, 1.0, 1.0))
             glCall(glClear(GLbitfield(GL_COLOR_BUFFER_BIT) | GLbitfield(GL_DEPTH_BUFFER_BIT)))
             
-            //  Prepare the view matrix, add animation
-            uniformMatrices["view"] = FloatMatrix4().translate(x: 0.0, y: 0.0, z: -25.0) * FloatMatrix4().rotateXAxis(0.5) * FloatMatrix4().rotateYAxis(0.008) * FloatMatrix4().rotateXAxis(-0.5) * FloatMatrix4().translate(x: 0.0, y: 0.0, z: 25.0) * uniformMatrices["view"]!
+            //  Draw triangle
+            glCall(glUseProgram(basicProgram))
+            glCall(glBindVertexArray(triangleVAO))
+
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(basicProgram, "model")), 1, GLboolean(GL_FALSE), modelMatrices[0].columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(basicProgram, "view")), 1, GLboolean(GL_FALSE), uniformMatrices["view"]!.columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(basicProgram, "projection")), 1, GLboolean(GL_FALSE), uniformMatrices["projection"]!.columnMajorArray()))
             
-            //  Draw triangle polygons
-            glCall(glUseProgram(phongID))
-            glCall(glBindVertexArray(vao1))
-
-            glCall(glUniform3fv(glCall(glGetUniformLocation(phongID, "light.color")), 1, light.color))
-            glCall(glUniform3fv(glCall(glGetUniformLocation(phongID, "light.position")), 1, light.position))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.ambient")), light.ambient))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.specStrength")), light.specStrength))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.specHardness")), light.specHardness))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongID, "view")), 1, GLboolean(GL_FALSE), uniformMatrices["view"]!.columnMajorArray()))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongID, "projection")), 1, GLboolean(GL_FALSE), uniformMatrices["projection"]!.columnMajorArray()))
-
             glCall(glDrawArrays(GLenum(GL_TRIANGLES), 0, Int32(triangle.count)))
             
-            //  Draw triangle outline
-            glCall(glUseProgram(originID))
+            //  Draw Cube
+            glCall(glUseProgram(textureProgram))
+            glCall(glBindVertexArray(texturedCubeVAO))
 
-            glCall(glUniform4f(glCall(glGetUniformLocation(originID, "color")), 0.3, 0.3, 0.3, 1.0))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(originID, "view")), 1, GLboolean(GL_FALSE), uniformMatrices["view"]!.columnMajorArray()))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(originID, "projection")), 1, GLboolean(GL_FALSE), uniformMatrices["projection"]!.columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(textureProgram, "model")), 1, GLboolean(GL_FALSE), modelMatrices[1].columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(textureProgram, "view")), 1, GLboolean(GL_FALSE), uniformMatrices["view"]!.columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(textureProgram, "projection")), 1, GLboolean(GL_FALSE), uniformMatrices["projection"]!.columnMajorArray()))
 
-            glCall(glDrawArrays(GLenum(GL_LINE_STRIP), 0, Int32(triangle.count)))
+            glCall(glDrawElements(GLenum(GL_TRIANGLES), Int32(texturedCube.indices.count), GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: 0)))
             
-            //  Draw light origin
-            glCall(glBindVertexArray(vao2))
-            
-            glCall(glUniform4f(glCall(glGetUniformLocation(originID, "color")), 0.9, 0.9, 0.2, 1.0))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(originID, "view")), 1, GLboolean(GL_FALSE), uniformMatrices["view"]!.columnMajorArray()))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(originID, "projection")), 1, GLboolean(GL_FALSE), uniformMatrices["projection"]!.columnMajorArray()))
-            
-            glCall(glPointSize(5))
-            glCall(glDrawArrays(GLenum(GL_POINTS), 0, Int32(origins.count)))
-            
-            ////////////
-            /// TEST ///
-            glCall(glUseProgram(phongID))
-            glCall(glBindVertexArray(vao5))
-            glCall(glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), vbo5indices))
-            glCall(glUniform3fv(glCall(glGetUniformLocation(phongID, "light.color")), 1, light.color))
-            glCall(glUniform3fv(glCall(glGetUniformLocation(phongID, "light.position")), 1, light.position))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.ambient")), light.ambient))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.specStrength")), light.specStrength))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.specHardness")), light.specHardness))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongID, "view")), 1, GLboolean(GL_FALSE), uniformMatrices["view"]!.translate(x: 0.0, y: 1.0, z: 0.0).scale(x: 0.5, y: 0.5, z: 0.5).columnMajorArray()))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongID, "projection")), 1, GLboolean(GL_FALSE), uniformMatrices["projection"]!.columnMajorArray()))
-            glCall(glDrawElements(GLenum(GL_TRIANGLES), Int32(sphere.0.count), GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: 0)))
-            /// TEST ///
-            ////////////
-            
-            //  Draw the floor
-            glCall(glUseProgram(textureID))
-            glCall(glBindVertexArray(vao3))
+            glCall(glUseProgram(phongProgram))
+            glCall(glBindVertexArray(texturedCubeVAO))
 
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(textureID, "view")), 1, GLboolean(GL_FALSE), uniformMatrices["view"]!.columnMajorArray()))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(textureID, "projection")), 1, GLboolean(GL_FALSE), uniformMatrices["projection"]!.columnMajorArray()))
-            
-            //  Drawing with Texture Program requires Lines Adjacency due to Geometry shader input
-            glCall(glDrawArrays(GLenum(GL_TRIANGLES), 0, Int32(floor.count)))
-            
-            glCall(glUseProgram(textureInverseBilinearInterpolationID))
-            glCall(glBindVertexArray(vbo4))
-            glCall(glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), vbo4indices))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongProgram, "view")), 1, GLboolean(GL_FALSE), uniformMatrices["view"]?.columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongProgram, "projection")), 1, GLboolean(GL_FALSE), uniformMatrices["projection"]?.columnMajorArray()))
 
-            glCall(glUniform3fv(glCall(glGetUniformLocation(textureInverseBilinearInterpolationID, "light.color")), 1, light.color))
-            glCall(glUniform3fv(glCall(glGetUniformLocation(textureInverseBilinearInterpolationID, "light.position")), 1, light.position))
-            glCall(glUniform1f(glCall(glGetUniformLocation(textureInverseBilinearInterpolationID, "light.ambient")), light.ambient))
-            glCall(glUniform1f(glCall(glGetUniformLocation(textureInverseBilinearInterpolationID, "light.specStrength")), light.specStrength))
-            glCall(glUniform1f(glCall(glGetUniformLocation(textureInverseBilinearInterpolationID, "light.specHardness")), light.specHardness))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(textureInverseBilinearInterpolationID, "view")), 1, GLboolean(GL_FALSE), uniformMatrices["view"]!.columnMajorArray()))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(textureInverseBilinearInterpolationID, "projection")), 1, GLboolean(GL_FALSE), uniformMatrices["projection"]!.columnMajorArray()))
-
-            //  Drawing with Texture Program requires Lines Adjacency due to Geometry shader input
-            glCall(glDrawElements(GLenum(GL_LINES_ADJACENCY), Int32(showcaseFloor.0.count), GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: 0)))
-            
-            /// Draw the showcase floor models
-            glCall(glUseProgram(phongID))
-            glCall(glBindVertexArray(vao5))
-            glCall(glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), vbo5indices))
-
-            glCall(glUniform3fv(glCall(glGetUniformLocation(phongID, "light.color")), 1, light.color))
-            glCall(glUniform3fv(glCall(glGetUniformLocation(phongID, "light.position")), 1, light.position))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.ambient")), light.ambient))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.specStrength")), light.specStrength))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.specHardness")), light.specHardness))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongID, "view")), 1, GLboolean(GL_FALSE), uniformMatrices["view"]!.rotateYAxis(2 * Float.pi / 8 + 0.5 * (2 * Float.pi / 8)).translate(x: 0.0, y: 0.5, z: 3 - 0.75).scale(x: 0.4, y: 0.4, z: 0.4).columnMajorArray()))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongID, "projection")), 1, GLboolean(GL_FALSE), uniformMatrices["projection"]!.columnMajorArray()))
-
-//            glCall(glDrawElements(GLenum(GL_TRIANGLES), Int32(sphere.0.count), GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: 0)))
-            glCall(glDrawElementsInstanced(GLenum(GL_TRIANGLES), Int32(sphere.0.count), GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: 0), Int32(showcaseFloor.0.count / 6)))
-            //  Draw into offline framebuffer
-            glCall(glBindFramebuffer(GLenum(GL_FRAMEBUFFER), fbo))
-
-            glCall(glClearColor(1.0, 1.0, 1.0, 1.0))
-            glCall(glClear(GLbitfield(GL_COLOR_BUFFER_BIT) | GLbitfield(GL_DEPTH_BUFFER_BIT)))
-
-            //  Draw with top-down viewpoint
-            let topDown = FloatMatrix4().translate(x: 0.0, y: 0.0, z: -5.0) * FloatMatrix4().rotateXAxis(Float.pi / 2) * FloatMatrix4().rotateYAxis(0.008) * FloatMatrix4().translate(x: 0.0, y: 0.0, z: 25.0) * uniformMatrices["view"]!
-
-            //  Draw triangle polygons
-            glCall(glUseProgram(phongID))
-            glCall(glBindVertexArray(vao1))
-
-            glCall(glUniform3fv(glCall(glGetUniformLocation(phongID, "light.color")), 1, light.color))
-            glCall(glUniform3fv(glCall(glGetUniformLocation(phongID, "light.position")), 1, light.position))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.ambient")), light.ambient))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.specStrength")), light.specStrength))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongID, "light.specHardness")), light.specHardness))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongID, "view")), 1, GLboolean(GL_FALSE), topDown.columnMajorArray()))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongID, "projection")), 1, GLboolean(GL_FALSE), FloatMatrix4().projection(aspect: 1.0).columnMajorArray()))
-
-            glCall(glDrawArrays(GLenum(GL_TRIANGLES), 0, Int32(triangle.count)))
-
-            //  Draw the floor
-            glCall(glUseProgram(textureID))
-            glCall(glBindVertexArray(vao3))
-
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(textureID, "view")), 1, GLboolean(GL_FALSE), topDown.columnMajorArray()))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(textureID, "projection")), 1, GLboolean(GL_FALSE), FloatMatrix4().projection(angeOfView: 35, aspect: 1.0, distanceToNearClippingPlane: 0.01, distanceToFarClippingPlane: 100).columnMajorArray()))
-
-            //  Drawing with Texture Program requires Lines Adjacency due to Geometry shader input
-            glCall(glDrawArrays(GLenum(GL_TRIANGLES), 0, Int32(floor.count)))
-
-            glCall(glUseProgram(textureInverseBilinearInterpolationID))
-            glCall(glBindVertexArray(vbo4))
-            glCall(glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), vbo4indices))
-
-            glCall(glUniform3fv(glCall(glGetUniformLocation(textureInverseBilinearInterpolationID, "light.color")), 1, light.color))
-            glCall(glUniform3fv(glCall(glGetUniformLocation(textureInverseBilinearInterpolationID, "light.position")), 1, light.position))
-            glCall(glUniform1f(glCall(glGetUniformLocation(textureInverseBilinearInterpolationID, "light.ambient")), light.ambient))
-            glCall(glUniform1f(glCall(glGetUniformLocation(textureInverseBilinearInterpolationID, "light.specStrength")), light.specStrength))
-            glCall(glUniform1f(glCall(glGetUniformLocation(textureInverseBilinearInterpolationID, "light.specHardness")), light.specHardness))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(textureInverseBilinearInterpolationID, "view")), 1, GLboolean(GL_FALSE), topDown.columnMajorArray()))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(textureInverseBilinearInterpolationID, "projection")), 1, GLboolean(GL_FALSE), FloatMatrix4().projection(angeOfView: 35, aspect: 1.0, distanceToNearClippingPlane: 0.01, distanceToFarClippingPlane: 100).columnMajorArray()))
-
-            //  Drawing with Texture Program requires Lines Adjacency due to Geometry shader input
-            glCall(glDrawElements(GLenum(GL_LINES_ADJACENCY), Int32(showcaseFloor.0.count), GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: 0)))
-
-            // Prepare frame transfer from offline framebuffer to default for display to the screen
-            glCall(glBindFramebuffer(GLenum(GL_READ_FRAMEBUFFER), fbo))
-            glCall(glBindFramebuffer(GLenum(GL_DRAW_FRAMEBUFFER), 0))
-
-            //  Copy the information over
-            glCall(glBlitFramebuffer(0, 0, Int32(viewSize.width), Int32(viewSize.height), 5, 5, 80, 80, GLbitfield(GL_COLOR_BUFFER_BIT), GLenum(GL_NEAREST)))
+            glCall(glDrawElementsInstanced(GLenum(GL_TRIANGLES), Int32(texturedCube.indices.count), GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: 0), 23))
             
             glCall(glBindVertexArray(0))
             glCall(glUseProgram(0))
@@ -1237,25 +1176,20 @@ class GraphicView: NSOpenGLView {
 
     deinit {
         CVDisplayLinkStop(displayLink!)
-        glCall(glDeleteTextures(1, &tbo))
-        glCall(glDeleteBuffers(1, &vbo1))
-        glCall(glDeleteVertexArrays(1, &vao1))
-        glCall(glDeleteBuffers(1, &vbo2))
-        glCall(glDeleteVertexArrays(1, &vao2))
-        glCall(glDeleteBuffers(1, &vbo3))
-        glCall(glDeleteVertexArrays(1, &vao3))
-        glCall(glDeleteBuffers(1, &vbo4))
-        glCall(glDeleteBuffers(1, &vbo4indices))
-        glCall(glDeleteVertexArrays(1, &vao4))
-        glCall(glDeleteBuffers(1, &vbo5))
-        glCall(glDeleteBuffers(1, &vbo5indices))
-        glCall(glDeleteVertexArrays(1, &vao5))
-        glCall(glDeleteProgram(phongID))
-        glCall(glDeleteProgram(originID))
-        glCall(glDeleteProgram(textureID))
+        glCall(glDeleteBuffers(1, &triangleVBO))
+        glCall(glDeleteVertexArrays(1, &triangleVAO))
+        glCall(glDeleteBuffers(2, texturedCubeVBO))
+        glCall(glDeleteVertexArrays(1, &texturedCubeVAO))
+        glCall(glDeleteTextures(1, &texturedCubeTBO))
+        glCall(glDeleteBuffers(2, &sphereVBO))
+        glCall(glDeleteVertexArrays(1, &sphereVAO))
+        glCall(glDeleteProgram(basicProgram))
+        glCall(glDeleteProgram(phongProgram))
+        glCall(glDeleteProgram(textureProgram))
         glCall(glDeleteProgram(textureInverseBilinearInterpolationID))
         glCall(glDeleteRenderbuffers(1, &colorRBO))
         glCall(glDeleteRenderbuffers(1, &depthRBO))
         glCall(glDeleteFramebuffers(1, &fbo))
     }
 }
+
