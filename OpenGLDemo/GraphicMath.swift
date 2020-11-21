@@ -49,7 +49,7 @@ struct Float2: Hashable, Equatable {
         return (x * vector.x) + (y * vector.y)
     }
     
-    func lenght() -> Float {
+    func length() -> Float {
         return sqrtf((x * x) + (y * y))
     }
 }
@@ -390,19 +390,6 @@ struct FloatMatrix4: Hashable, Equatable {
         return lhs * rhs.inverse()
     }
     
-    func rowMajorArray() -> [Float] {
-        return [vector1.x, vector1.y, vector1.z, vector1.w,
-                vector2.x, vector2.y, vector2.z, vector2.w,
-                vector3.x, vector3.y, vector3.z, vector3.w,
-                vector4.x, vector4.y, vector4.z, vector4.w]
-    }
-    func columnMajorArray() -> [Float] {
-        return [vector1.x, vector2.x, vector3.x, vector4.x,
-                vector1.y, vector2.y, vector3.y, vector4.y,
-                vector1.z, vector2.z, vector3.z, vector4.z,
-                vector1.w, vector2.w, vector3.w, vector4.w]
-    }
-    
     func perspective(angeOfView theta: Float = 120, aspect: Float, distanceToNearClippingPlane nearZ: Float = 0.1, distanceToFarClippingPlane farZ: Float = 1000) -> FloatMatrix4 {
         let scale = 1 / tanf(theta * 0.5 * Float.pi / 180)
         return FloatMatrix4(vector1: Float4(x: scale / aspect, y: 0.0, z: 0.0, w: 0.0),
@@ -464,5 +451,133 @@ struct FloatMatrix4: Hashable, Equatable {
     }
     func uniformScale(by value: Float) -> FloatMatrix4 {
         return self.scale(x: value, y: value, z: value)
+    }
+}
+
+//
+//  SIMD implementation of graphic math
+//
+import simd
+
+extension simd_float4x4 {
+    func perspective(angeOfView theta: Float = 120, aspect: Float, distanceToNearClippingPlane nearZ: Float = 0.001, distanceToFarClippingPlane farZ: Float = 1000) -> simd_float4x4 {
+        let scale = 1 / tanf(theta * 0.5 * Float.pi / 180)
+        return simd_float4x4(rows: [
+            simd_float4(scale / aspect, 0,     0,                               0),
+            simd_float4(0,              scale, 0,                               0),
+            simd_float4(0,              0,     (farZ + nearZ) / (nearZ - farZ), (2 * farZ * nearZ) / (nearZ - farZ)),
+            simd_float4(0,              0,     -1,                              0)
+            ])
+    }
+    func orthographic(width: Float, height: Float, nearZ: Float = 0.001, farZ: Float = 1000) -> simd_float4x4 {
+        let right = width * 0.5
+        let left = -right
+        let top = height * 0.5
+        let bottom = -top
+        return simd_float4x4(rows: [
+            simd_float4(2 / (right - left), 0,                  0,                   -((right + left) / (right - left))),
+            simd_float4(0,                  2 / (top - bottom), 0,                   -((top + bottom) / (top - bottom))),
+            simd_float4(0,                  0,                  -2 / (farZ - nearZ), -(farZ + nearZ) / (farZ - nearZ)),
+            simd_float4(0,                  0,                  0,                   1)
+            ])
+    }
+    
+    func translate(x: Float, y: Float, z: Float) -> simd_float4x4 {
+        let matrix = simd_float4x4(rows: [
+            simd_float4(1, 0, 0, x),
+            simd_float4(0, 1, 0, y),
+            simd_float4(0, 0, 1, z),
+            simd_float4(0, 0, 0, 1)
+            ])
+        
+        return self * matrix
+    }
+    
+    func rotateAroundX(_ radians: Float) -> simd_float4x4 {
+        let matrix = simd_float4x4(rows: [
+            simd_float4(1, 0,            0,             0),
+            simd_float4(0, cos(radians), -sin(radians), 0),
+            simd_float4(0, sin(radians), cos(radians),  0),
+            simd_float4(0, 0,            0,             1)
+            ])
+        
+        return self * matrix
+    }
+    func rotateAroundY(_ radians: Float) -> simd_float4x4 {
+        let matrix = simd_float4x4(rows: [
+            simd_float4(cos(radians),  0, sin(radians), 0),
+            simd_float4(0,             1, 0,            0),
+            simd_float4(-sin(radians), 0, cos(radians), 0),
+            simd_float4(0,             0, 0,            1)
+            ])
+        
+        return self * matrix
+    }
+    func rotateAroundZ(_ radians: Float) -> simd_float4x4 {
+        let matrix = simd_float4x4(rows: [
+            simd_float4(cos(radians), -sin(radians), 0, 0),
+            simd_float4(sin(radians), cos(radians),  0, 0),
+            simd_float4(0,            0,             1, 0),
+            simd_float4(0,            0,             0, 1)
+            ])
+        
+        return self * matrix
+    }
+    func rotate(_ radians: Float, around axis: simd_float3) -> simd_float4x4 {
+        let cosine = cos(radians)
+        let inverseCosine = 1.0 - cosine
+        let sine = sin(radians)
+        
+        let matrix = simd_float4x4(rows: [
+            simd_float4(cosine + inverseCosine * axis.x * axis.x,        inverseCosine * axis.x * axis.y + axis.z * sine, inverseCosine * axis.x * axis.z - axis.y * sine, 0),
+            simd_float4(inverseCosine * axis.x * axis.y - axis.z * sine, cosine + inverseCosine * axis.y * axis.y,        inverseCosine * axis.y * axis.z + axis.x * sine, 0),
+            simd_float4(inverseCosine * axis.x * axis.z + axis.y * sine, inverseCosine * axis.y * axis.z - axis.x * sine, cosine + inverseCosine * axis.z * axis.z,        0),
+            simd_float4(0,                                               0,                                               0,                                               1)
+            ])
+        
+        return self * matrix
+    }
+    func scale(x: Float, y: Float, z: Float) -> simd_float4x4 {
+        let matrix = simd_float4x4(rows: [
+            simd_float4(x, 0, 0, 0),
+            simd_float4(0, y, 0, 0),
+            simd_float4(0, 0, z, 0),
+            simd_float4(0, 0, 0, 1)
+            ])
+        
+        return self * matrix
+    }
+    func uniformScale(by value: Float) -> simd_float4x4 {
+        return self.scale(x: value, y: value, z: value)
+    }
+}
+
+//
+//  Graphic View Protocol for getting matrix data into OpenGL format
+protocol OpenGLMatrixFormat {
+    func columnMajorArray() -> [Float]
+}
+extension FloatMatrix4: OpenGLMatrixFormat {
+    func rowMajorArray() -> [Float] {
+        return [vector1.x, vector1.y, vector1.z, vector1.w,
+                vector2.x, vector2.y, vector2.z, vector2.w,
+                vector3.x, vector3.y, vector3.z, vector3.w,
+                vector4.x, vector4.y, vector4.z, vector4.w]
+    }
+    func columnMajorArray() -> [Float] {
+        return [vector1.x, vector2.x, vector3.x, vector4.x,
+                vector1.y, vector2.y, vector3.y, vector4.y,
+                vector1.z, vector2.z, vector3.z, vector4.z,
+                vector1.w, vector2.w, vector3.w, vector4.w]
+    }
+}
+extension simd_float4x4: OpenGLMatrixFormat {
+    func columnMajorArray() -> [Float] {
+        return [
+            self.columns.0.x, self.columns.0.y, self.columns.0.z, self.columns.0.w,
+            self.columns.1.x, self.columns.1.y, self.columns.1.z, self.columns.1.w,
+            self.columns.2.x, self.columns.2.y, self.columns.2.z, self.columns.2.w,
+            self.columns.3.x, self.columns.3.y, self.columns.3.z, self.columns.3.w
+        ]
     }
 }

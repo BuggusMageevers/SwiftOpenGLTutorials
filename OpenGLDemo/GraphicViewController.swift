@@ -9,7 +9,8 @@
 import Cocoa
 
 class GraphicViewController: NSViewController {
-
+    @IBOutlet weak var graphicView: GraphicView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -21,7 +22,5 @@ class GraphicViewController: NSViewController {
         // Update the view, if already loaded.
         }
     }
-
-
 }
 
