@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -620,7 +620,7 @@
                                         <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                             <connections>
-                                                <action selector="toggleSourceList:" target="Ady-hI-5gd" id="iwa-gc-5KM"/>
+                                                <action selector="toggleSidebar:" target="Ady-hI-5gd" id="iwa-gc-5KM"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Enter Full Screen" keyEquivalent="f" id="4J7-dP-txa">
@@ -735,22 +735,22 @@
                         <rect key="frame" x="0.0" y="0.0" width="255" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kxg-7c-jTW">
-                                <rect key="frame" x="36" y="263" width="199" height="15"/>
+                            <slider verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kxg-7c-jTW">
+                                <rect key="frame" x="34" y="263" width="203" height="15"/>
                                 <sliderCell key="cell" controlSize="small" continuous="YES" state="on" alignment="left" minValue="-1" maxValue="1" tickMarkPosition="above" sliderType="linear" id="f0n-iv-XjM"/>
                                 <connections>
                                     <action selector="translateXSlider:" target="SrQ-dA-OGG" id="e4t-mY-Sdo"/>
                                 </connections>
                             </slider>
-                            <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4V7-Wa-fVu">
-                                <rect key="frame" x="36" y="211" width="199" height="15"/>
+                            <slider verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4V7-Wa-fVu">
+                                <rect key="frame" x="34" y="211" width="203" height="15"/>
                                 <sliderCell key="cell" controlSize="small" continuous="YES" state="on" alignment="left" minValue="-1" maxValue="1" tickMarkPosition="above" sliderType="linear" id="fLc-9z-lNP"/>
                                 <connections>
                                     <action selector="translateZSlider:" target="SrQ-dA-OGG" id="Mja-OP-VsG"/>
                                 </connections>
                             </slider>
-                            <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vaZ-He-Ztr">
-                                <rect key="frame" x="36" y="237" width="199" height="15"/>
+                            <slider verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vaZ-He-Ztr">
+                                <rect key="frame" x="34" y="237" width="203" height="15"/>
                                 <sliderCell key="cell" controlSize="small" continuous="YES" state="on" alignment="left" minValue="-1" maxValue="1" tickMarkPosition="above" sliderType="linear" id="9tc-dF-H6b"/>
                                 <connections>
                                     <action selector="translateYSlider:" target="SrQ-dA-OGG" id="qBO-P9-dQq"/>
@@ -780,22 +780,22 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uJ7-RP-Kvi">
-                                <rect key="frame" x="36" y="185" width="199" height="15"/>
+                            <slider verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uJ7-RP-Kvi">
+                                <rect key="frame" x="34" y="185" width="203" height="15"/>
                                 <sliderCell key="cell" controlSize="small" continuous="YES" state="on" alignment="left" minValue="-3" maxValue="3" tickMarkPosition="above" sliderType="linear" id="vnd-8L-oJJ"/>
                                 <connections>
                                     <action selector="rotateXSlider:" target="SrQ-dA-OGG" id="pjD-db-mPi"/>
                                 </connections>
                             </slider>
-                            <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LEi-Wg-SEc">
-                                <rect key="frame" x="36" y="133" width="199" height="15"/>
+                            <slider verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LEi-Wg-SEc">
+                                <rect key="frame" x="34" y="133" width="203" height="15"/>
                                 <sliderCell key="cell" controlSize="small" continuous="YES" state="on" alignment="left" minValue="-3" maxValue="3" tickMarkPosition="above" sliderType="linear" id="px5-0d-th1"/>
                                 <connections>
                                     <action selector="rotateZSlider:" target="SrQ-dA-OGG" id="xGO-fB-ZQc"/>
                                 </connections>
                             </slider>
-                            <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PXc-jw-Jns">
-                                <rect key="frame" x="36" y="159" width="199" height="15"/>
+                            <slider verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PXc-jw-Jns">
+                                <rect key="frame" x="34" y="159" width="203" height="15"/>
                                 <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-3" maxValue="3" tickMarkPosition="above" sliderType="linear" id="gRZ-8P-77V"/>
                                 <connections>
                                     <action selector="rotateYSlider:" target="SrQ-dA-OGG" id="Da9-QU-m1s"/>
@@ -847,7 +847,7 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SWV-nb-oHc">
+                            <textField verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SWV-nb-oHc">
                                 <rect key="frame" x="139" y="85" width="96" height="19"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="96" id="Efh-cd-F2t"/>
@@ -861,7 +861,7 @@
                                     <action selector="setCurrentTriangle:" target="SrQ-dA-OGG" id="Y0f-Rj-DFd"/>
                                 </connections>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Dft-50-20f">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dft-50-20f">
                                 <rect key="frame" x="137" y="112" width="89" height="14"/>
                                 <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="Current Triangle" id="ABz-rP-uO5">
                                     <font key="font" metaFont="smallSystem"/>
@@ -932,7 +932,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <openGLView useAuxiliaryDepthBufferStencil="NO" allowOffline="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pkm-0E-anW" customClass="GraphicView" customModule="OpenGLDemo" customModuleProvider="target">
+                            <openGLView wantsLayer="YES" useAuxiliaryDepthBufferStencil="NO" allowOffline="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pkm-0E-anW" customClass="GraphicView" customModule="OpenGLDemo" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                             </openGLView>
                         </subviews>

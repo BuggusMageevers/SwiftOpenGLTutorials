@@ -29,7 +29,7 @@ struct TexVertex {
     let normal: Float3
     let coordinate: Float2
 }
-//  Draw a "circular" floor to roate for showcasing different objects and lighting schemes
+///  Draw a "circular" floor to roate for showcasing different objects and lighting schemes
 extension Float3 {
     func unitVector() -> Float3 {
         let magnitude = self.lenght()
@@ -474,12 +474,12 @@ extension ViewOrganizer: CustomStringConvertible {
 }
 
 class GraphicView: NSOpenGLView {
-    //  ViewOrganizer was created for this demo to tile multiple glDraw* calls
-    /// into one OpenGL view.  By tiling individual draw calls, or sets of
-    //  draw calls together, a progression of the complexity of OpenGL
-    //  procedures may be displayed simultaneously in a similar way that this
-    //  block of code has each OpenGL procedure defined one after the other
-    //  with relatively increasing complexity.
+    ///  ViewOrganizer was created for this demo to tile multiple glDraw* calls
+    ///  into one OpenGL view.  By tiling individual draw calls, or sets of
+    ///  draw calls together, a progression of the complexity of OpenGL
+    ///  procedures may be displayed simultaneously in a similar way that this
+    ///  block of code has each OpenGL procedure defined one after the other
+    ///  with relatively increasing complexity.
     var organizer: ViewOrganizer!
     
     var pointVAO: GLuint = 0
@@ -645,51 +645,434 @@ class GraphicView: NSOpenGLView {
         glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GL_REPEAT))
         glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_LINEAR))
         glCall(glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_LINEAR))
+        
         /// Setup the texture by loading the image from the XCAsset catalog, then loading it into the TBO.
-        guard let texture = NSImage(named: NSImage.Name(rawValue: "Texture"))?.tiffRepresentation else {
-            print("Texture file could not be found or converted to a TIFF.")
-            return
+        /// Procedurally generated rainbow cross checker board
+        let width = 512
+        let height = 512
+        let componentsPerPoint = 4
+
+        let bitmap = UnsafeMutableRawPointer.allocate(byteCount: width * componentsPerPoint * height, alignment: 1)
+        bitmap.initializeMemory(as: UInt32.self, repeating: 0xFFFF_FFFF, count: width * componentsPerPoint * height)
+        
+        if let context = CGContext(data: bitmap,
+                                   width: width,
+                                   height: height,
+                                   bitsPerComponent: 8,
+                                   bytesPerRow: width * componentsPerPoint,
+                                   space: CGColorSpace(name: CGColorSpace.sRGB)!,
+                                   bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) {
+            
+            /// 1. Write a call callback
+            /// 2. Set up colored pattern color space
+            /// 3. Set up anatomy of colored pattern
+            /// 4. Specify colored pattern as fill or stroke pattern
+            /// 5. Draw with colored pattern
+            ///
+            /// 1. Create the callback function which holds the draw pattern that is to be repeated.
+            let drawCheckerCallback: CGPatternDrawPatternCallback = { (info: UnsafeMutableRawPointer?, context: CGContext) in
+                let patternSize = 96
+                let squareSize = 48
+                
+                context.setFillColor(CGColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1))
+                context.fill(CGRect(x: 0, y: 0, width: patternSize, height: patternSize))
+                
+                context.setFillColor(CGColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1))
+                context.fill(CGRect(x: 0, y: 0, width: squareSize, height: squareSize))
+                context.setFillColor(CGColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1))
+                context.fill(CGRect(x: squareSize, y: squareSize, width: squareSize, height: squareSize))
+            }
+            if let patternSpace = CGColorSpace(patternBaseSpace: nil) {
+                context.setFillColorSpace(patternSpace)
+            }
+            var checkerCallbacks = CGPatternCallbacks(version: 0,
+                                                      drawPattern: drawCheckerCallback,
+                                                      releaseInfo: nil)
+            if let pattern = CGPattern(info: nil,
+                                    bounds: CGRect(x: 0, y: 0, width: 96, height: 96),
+                                    matrix: CGAffineTransform.identity,
+                                    xStep: 96,
+                                    yStep: 96,
+                                    tiling: .constantSpacing,
+                                    isColored: true,
+                                    callbacks: &checkerCallbacks) {
+                var alpha: CGFloat = 1
+                context.setFillPattern(pattern,
+                                   colorComponents: &alpha)
+                context.fill(CGRect(x: 0, y: 0, width: 512, height: 512))
+            }
+            
+            let drawRainbowCallback: CGPatternDrawPatternCallback = { (info: UnsafeMutableRawPointer?, context: CGContext) in
+                let thickness = 8
+                let length = 32
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 48 + 20, y: 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 48 + 8, y: 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 3 * 48 + 20, y: 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 3 * 48 + 8, y: 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 5 * 48 + 20, y: 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 5 * 48 + 8, y: 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 7 * 48 + 20, y: 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 7 * 48 + 8, y: 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 9 * 48 + 20, y: 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 9 * 48 + 8, y: 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 11 * 48 + 20, y: 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 11 * 48 + 8, y: 20, width: length, height: thickness))
+                
+                
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 20, y: 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 8, y: 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 2 * 48 + 20, y: 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 2 * 48 + 8, y: 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 4 * 48 + 20, y: 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 4 * 48 + 8, y: 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 6 * 48 + 20, y: 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 6 * 48 + 8, y: 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 8 * 48 + 20, y: 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 8 * 48 + 8, y: 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 10 * 48 + 20, y: 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 10 * 48 + 8, y: 48 + 20, width: length, height: thickness))
+                
+                
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 48 + 20, y: 2 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 48 + 8, y: 2 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 3 * 48 + 20, y: 2 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 3 * 48 + 8, y: 2 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 5 * 48 + 20, y: 2 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 5 * 48 + 8, y: 2 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 7 * 48 + 20, y: 2 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 7 * 48 + 8, y: 2 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 9 * 48 + 20, y: 2 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 9 * 48 + 8, y: 2 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 11 * 48 + 20, y: 2 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 11 * 48 + 8, y: 2 * 48 + 20, width: length, height: thickness))
+                
+                
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 20, y: 3 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 8, y: 3 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 2 * 48 + 20, y: 3 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 2 * 48 + 8, y: 3 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 4 * 48 + 20, y: 3 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 4 * 48 + 8, y: 3 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 6 * 48 + 20, y: 3 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 6 * 48 + 8, y: 3 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 8 * 48 + 20, y: 3 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 8 * 48 + 8, y: 3 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 10 * 48 + 20, y: 3 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 10 * 48 + 8, y: 3 * 48 + 20, width: length, height: thickness))
+                
+                
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 48 + 20, y: 4 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 48 + 8, y: 4 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 3 * 48 + 20, y: 4 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 3 * 48 + 8, y: 4 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 5 * 48 + 20, y: 4 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 5 * 48 + 8, y: 4 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 7 * 48 + 20, y: 4 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 7 * 48 + 8, y: 4 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 9 * 48 + 20, y: 4 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 9 * 48 + 8, y: 4 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.5, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 11 * 48 + 20, y: 4 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.5, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 11 * 48 + 8, y: 4 * 48 + 20, width: length, height: thickness))
+                
+                
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 20, y: 5 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 8, y: 5 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 2 * 48 + 20, y: 5 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 2 * 48 + 8, y: 5 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 4 * 48 + 20, y: 5 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 4 * 48 + 8, y: 5 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 6 * 48 + 20, y: 5 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 6 * 48 + 8, y: 5 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 8 * 48 + 20, y: 5 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 8 * 48 + 8, y: 5 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 10 * 48 + 20, y: 5 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 10 * 48 + 8, y: 5 * 48 + 20, width: length, height: thickness))
+                
+                
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 48 + 20, y: 6 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 48 + 8, y: 6 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 3 * 48 + 20, y: 6 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 3 * 48 + 8, y: 6 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 5 * 48 + 20, y: 6 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 5 * 48 + 8, y: 6 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 7 * 48 + 20, y: 6 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 7 * 48 + 8, y: 6 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 9 * 48 + 20, y: 6 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 9 * 48 + 8, y: 6 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 11 * 48 + 20, y: 6 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 11 * 48 + 8, y: 6 * 48 + 20, width: length, height: thickness))
+                
+                
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 20, y: 7 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 8, y: 7 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 2 * 48 + 20, y: 7 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 2 * 48 + 8, y: 7 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 4 * 48 + 20, y: 7 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 4 * 48 + 8, y: 7 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 6 * 48 + 20, y: 7 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 6 * 48 + 8, y: 7 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 8 * 48 + 20, y: 7 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 8 * 48 + 8, y: 7 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 10 * 48 + 20, y: 7 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 10 * 48 + 8, y: 7 * 48 + 20, width: length, height: thickness))
+                
+                
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 48 + 20, y: 8 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 48 + 8, y: 8 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 3 * 48 + 20, y: 8 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 3 * 48 + 8, y: 8 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 5 * 48 + 20, y: 8 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 5 * 48 + 8, y: 8 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 7 * 48 + 20, y: 8 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 7 * 48 + 8, y: 8 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 9 * 48 + 20, y: 8 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 9 * 48 + 8, y: 8 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 11 * 48 + 20, y: 8 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 11 * 48 + 8, y: 8 * 48 + 20, width: length, height: thickness))
+                
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 20, y: 9 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 8, y: 9 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 2 * 48 + 20, y: 9 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 2 * 48 + 8, y: 9 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 4 * 48 + 20, y: 9 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 4 * 48 + 8, y: 9 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 6 * 48 + 20, y: 9 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 6 * 48 + 8, y: 9 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 8 * 48 + 20, y: 9 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 8 * 48 + 8, y: 9 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 10 * 48 + 20, y: 9 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 10 * 48 + 8, y: 9 * 48 + 20, width: length, height: thickness))
+                
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 48 + 20, y: 10 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 48 + 8, y: 10 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 3 * 48 + 20, y: 10 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 3 * 48 + 8, y: 10 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 5 * 48 + 20, y: 10 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 5 * 48 + 8, y: 10 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 7 * 48 + 20, y: 10 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 7 * 48 + 8, y: 10 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 9 * 48 + 20, y: 10 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1))
+                context.fill(CGRect(x: 9 * 48 + 8, y: 10 * 48 + 20, width: length, height: thickness))
+                
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 11 * 48 + 20, y: 10 * 48 + 8, width: thickness, height: length))
+                context.setFillColor(CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1))
+                context.fill(CGRect(x: 11 * 48 + 8, y: 10 * 48 + 20, width: length, height: thickness))
+            }
+            var colorCallbacks = CGPatternCallbacks(version: 0,
+                                                    drawPattern: drawRainbowCallback,
+                                                    releaseInfo: nil)
+            if let pattern = CGPattern(info: nil,
+                                       bounds: CGRect(x: 0, y: 0, width: 576, height: 576),
+                                       matrix: CGAffineTransform.identity,
+                                       xStep: 576,
+                                       yStep: 576,
+                                       tiling: .constantSpacing,
+                                       isColored: true,
+                                       callbacks: &colorCallbacks) {
+                var alpha: CGFloat = 1
+                context.setFillPattern(pattern,
+                                       colorComponents: &alpha)
+                context.fill(CGRect(x: 0, y: 0, width: 512, height: 512))
+            }
+            glCall(glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_RGBA, 512, 512, 0, GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE), context.data))
         }
-        print("""
-            data:
-              \((texture as NSData).bytes.assumingMemoryBound(to: Int32.self))
-            """)
-        glCall(glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_RGBA, 256, 256, 0, GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE), (texture as NSData).bytes))
-        
-//        let width = 256
-//        let height = 256
-//        let componentsPerPoint = 4
-//
-//        let bitmap = UnsafeMutableRawPointer.allocate(byteCount: width * componentsPerPoint * height, alignment: 1)
-//        bitmap.initializeMemory(as: UInt8.self, repeating: 0x00, count: width * componentsPerPoint * height)
-//
-//        if let context = CGContext(data: bitmap,
-//                                width: width,
-//                                height: height,
-//                                bitsPerComponent: 8,
-//                                bytesPerRow: width * componentsPerPoint,
-//                                space: CGColorSpace(name: CGColorSpace.sRGB)!,
-//                                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) {
-//
-//            context.setFillColor(CGColor(red: 0, green: 0, blue: 1, alpha: 1))
-//            context.fill(CGRect(x: 0, y: 0, width: 100, height: 150))
-//            context.setFillColor(CGColor(red: 0, green: 1, blue: 0, alpha: 1))
-//            context.fill(CGRect(x: 0, y: 50, width: 100, height: 50))
-//
-//            if let image = context.makeImage() {
-//                context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
-//                glCall(glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_RGBA, 256, 256, 0, GLenum(GL_RGBA), GLenum(GL_UNSIGNED_INT), bitmap))
-//            }
-//        }
-//
-//        bitmap.deallocate()
-        
+
+        bitmap.deallocate()
+
         //  //  //  //  //  //  //  //  //  //  //  //  //
         //                                              //
         //  Load textured cube data into OpenGL Object  //
         //                                              //
         //  //  //  //  //  //  //  //  //  //  //  //  //
-        /// Request two VBO's:  returned as an array of VBO ID's.  Then fill the index and vertex buffers.
+        /// Request two VBO's:   indices and vertices.  Then fill the index and vertex buffers.
         glCall(glGenVertexArrays(1, &texturedCubeVAO))
         glCall(glBindVertexArray(texturedCubeVAO))
         
@@ -762,6 +1145,8 @@ class GraphicView: NSOpenGLView {
         //  //  //  //  //  //
         // MARK: - OpenGL Demo Programs
         
+        
+        
         //  MARK: Hardcoded Point
         /// hardecodedPointProgram
         ///   - draws a single vertex to the center of the screen.
@@ -774,9 +1159,10 @@ class GraphicView: NSOpenGLView {
             gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
         }
         """
-        var sourcePtr = source.cString(using: String.Encoding.ascii)
-        var sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(vs, 1, &sourcePtrPtr, nil))
+        var sourcePtr: [CChar]? = source.cString(using: String.Encoding.ascii)
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(vs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(vs))
         var compiled: GLint = 0
         glCall(glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -803,8 +1189,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(fs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(fs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(fs))
         compiled = 0
         glCall(glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -857,8 +1244,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(vs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(vs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(vs))
         compiled = 0
         glCall(glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -885,8 +1273,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(fs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(fs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(fs))
         compiled = 0
         glCall(glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -924,8 +1313,8 @@ class GraphicView: NSOpenGLView {
         glCall(glDeleteShader(vs))
         glCall(glDeleteShader(fs))
         
-        //  MARK: Input Position and Color
-        /// colorProgram
+        //  MARK: colorProgram
+        /// Input Position and Color
         ///   - allows position and color input into the program
         colorProgram = glCall(glCreateProgram())
         vs = glCall(glCreateShader(GLenum(GL_VERTEX_SHADER)))
@@ -944,8 +1333,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(vs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(vs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(vs))
         compiled = 0
         glCall(glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -974,8 +1364,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(fs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(fs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(fs))
         compiled = 0
         glCall(glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -1013,8 +1404,8 @@ class GraphicView: NSOpenGLView {
         glCall(glDeleteShader(vs))
         glCall(glDeleteShader(fs))
 
-        //  MARK: Input Position and Texture
-        /// textureProgram
+        //  MARK: textureProgram
+        /// Input Position and Texture
         ///   - allows input of position and texture in the program
         textureProgram = glCall(glCreateProgram())
         vs = glCall(glCreateShader(GLenum(GL_VERTEX_SHADER)))
@@ -1033,8 +1424,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(vs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(vs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(vs))
         compiled = 0
         glCall(glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -1065,8 +1457,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(fs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(fs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(fs))
         compiled = 0
         glCall(glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -1104,7 +1497,7 @@ class GraphicView: NSOpenGLView {
         glCall(glDeleteShader(vs))
         glCall(glDeleteShader(fs))
         
-        //  MARK: Three Dimensional Program
+        //  MARK: threeDimensionalProgram
         /// threeDimensionalProgram
         ///   - draws a three dimensional shape
         threeDimensionalProgram = glCall(glCreateProgram())
@@ -1129,8 +1522,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(vs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(vs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(vs))
         compiled = 0
         glCall(glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -1162,8 +1556,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(fs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(fs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(fs))
         compiled = 0
         glCall(glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -1201,7 +1596,7 @@ class GraphicView: NSOpenGLView {
         glCall(glDeleteShader(vs))
         glCall(glDeleteShader(fs))
         
-        //  MARK: Three Dimensional With Viewer Program
+        //  MARK: threeDimensionalWithViewerProgram
         /// threeDimensionalWithViewerProgram
         ///   - draws a three dimensional shape
         threeDimensionalWithViewerProgram = glCall(glCreateProgram())
@@ -1227,8 +1622,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(vs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(vs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(vs))
         compiled = 0
         glCall(glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -1260,8 +1656,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(fs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(fs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(fs))
         compiled = 0
         glCall(glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -1299,7 +1696,7 @@ class GraphicView: NSOpenGLView {
         glCall(glDeleteShader(vs))
         glCall(glDeleteShader(fs))
         
-        //  MARK: Phong Program
+        //  MARK: phongProgram
         /// phongProgram
         ///   - draws a three dimensional shape with a light source
         phongProgram = glCall(glCreateProgram())
@@ -1329,8 +1726,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(vs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(vs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(vs))
         compiled = 0
         glCall(glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -1378,8 +1776,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(fs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(fs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(fs))
         compiled = 0
         glCall(glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -1448,8 +1847,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(vs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(vs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(vs))
         compiled = 0
         glCall(glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -1529,8 +1929,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(gs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(gs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(gs))
         compiled = 0
         glCall(glGetShaderiv(gs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -1589,8 +1990,9 @@ class GraphicView: NSOpenGLView {
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
-        sourcePtrPtr = UnsafePointer(sourcePtr)
-        glCall(glShaderSource(fs, 1, &sourcePtrPtr, nil))
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(fs, 1, sourcePtrPtr, nil))
+        }
         glCall(glCompileShader(fs))
         compiled = 0
         glCall(glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled))
@@ -1625,14 +2027,12 @@ class GraphicView: NSOpenGLView {
                 free(cLog)
             }
         }
-        //  Mark shaders for deletion.
+        ///  Mark shaders for deletion.
         glCall(glDeleteShader(vs))
         glCall(glDeleteShader(gs))
         glCall(glDeleteShader(fs))
         
-        sourcePtrPtr = nil
-        
-        //  Unbind all objects to avoid unexpected changes in state.
+        ///  Unbind the program
         glCall(glUseProgram(0))
 
         //  //  //  //  //  //  //  //  //  //
@@ -1648,23 +2048,23 @@ class GraphicView: NSOpenGLView {
         glCall(glBindRenderbuffer(GLenum(GL_RENDERBUFFER), depthRBO))
         glCall(glRenderbufferStorage(GLenum(GL_RENDERBUFFER), GLenum(GL_DEPTH_COMPONENT24), Int32(bounds.width), Int32(bounds.height)))
 
-        //  Attach the colorand depth renderbuffers to the framebuffer.
+        ///  Attach the colorand depth renderbuffers to the framebuffer.
         glCall(glGenFramebuffers(1, &fbo))
         glCall(glBindFramebuffer(GLenum(GL_FRAMEBUFFER), fbo))
         glCall(glFramebufferRenderbuffer(GLenum(GL_FRAMEBUFFER), GLenum(GL_COLOR_ATTACHMENT0), GLenum(GL_RENDERBUFFER), colorRBO))
         glCall(glFramebufferRenderbuffer(GLenum(GL_FRAMEBUFFER), GLenum(GL_DEPTH_ATTACHMENT), GLenum(GL_RENDERBUFFER), depthRBO))
         glCall(glBindFramebuffer(GLenum(GL_FRAMEBUFFER), 0))
         
-        //  Set general enables:  will require being turned off and then back on during
-        //  drawing in some instances.
+        ///  Set general enables:  will require being turned off and then back on during
+        ///  drawing in some instances.
         glCall(glEnable(GLenum(GL_DEPTH_TEST)))
         glCall(glEnable(GLenum(GL_CULL_FACE)))
         
         let displayLinkOutputCallback: CVDisplayLinkOutputCallback = {(displayLink: CVDisplayLink, inNow: UnsafePointer<CVTimeStamp>, inOutputTime: UnsafePointer<CVTimeStamp>, flagsIn: CVOptionFlags, flagsOut: UnsafeMutablePointer<CVOptionFlags>, displayLinkContext: UnsafeMutableRawPointer?) -> CVReturn in
-            //  Not sure why, but when trying to work with the UnsafeMutableRawPointer
-            //  directly through the instance methods bindMemory(_:_:) and assumingMemoryBound(_:)
-            //  an EXC_I386_GPFLT is generated.  By the documentation, it would seem
-            //  preferable to use either of these methods instead of unsafeBitCast(_:_:).
+            ///  Not sure why, but when trying to work with the UnsafeMutableRawPointer
+            ///  directly through the instance methods bindMemory(_:_:) and assumingMemoryBound(_:)
+            ///  an EXC_I386_GPFLT is generated.  By the documentation, it would seem
+            ///  preferable to use either of these methods instead of unsafeBitCast(_:_:).
 //            displayLinkContext?.bindMemory(to: GraphicView.self, capacity: MemoryLayout<GraphicView>.size).pointee.drawView()
 //            displayLinkContext?.assumingMemoryBound(to: GraphicView.self).pointee.drawView()
             unsafeBitCast(displayLinkContext, to: GraphicView.self).drawView()
@@ -1787,30 +2187,30 @@ class GraphicView: NSOpenGLView {
             glCall(glDrawElements(GLenum(GL_TRIANGLES), Int32(numberOfTrianglesToDraw) * 3, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: startTriangle * 12)))
             
             //  View Space 6
-//            currentDrawSpace = organizer.getNextSpace()
-//            glCall(glClearColor(currentDrawSpace.backgroundColor.x, currentDrawSpace.backgroundColor.y, currentDrawSpace.backgroundColor.z, 1.0))
-//            glCall(glScissor(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
-//            glCall(glClear(GLbitfield(GL_COLOR_BUFFER_BIT)))
-//            glCall(glViewport(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
-//            //  Draw textured Cube
-//            glCall(glUseProgram(phongProgram))
-//            glCall(glBindVertexArray(litCubeVAO))
-//            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongProgram, "projection")), 1, GLboolean(GL_FALSE), simd_float4x4().orthographic(width: Float(currentDrawSpace.width), height: Float(currentDrawSpace.height), nearZ: -Float(currentDrawSpace.width) * 2, farZ: Float(currentDrawSpace.width) * 2).scale(x: Float(currentDrawSpace.height) * 0.45, y: Float(currentDrawSpace.height) * 0.45, z: Float(currentDrawSpace.height) * 0.45).columnMajorArray()))
-//            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongProgram, "view")), 1, GLboolean(GL_FALSE), simd_float4x4(columns: (simd_float4(1.0, 0.0, 0.0, 0.0), simd_float4(x: 0.0, y: 1.0, z: 0.0, w: 0.0), simd_float4(x: 0.0, y: 0.0, z: 1.0, w: 0.0), simd_float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0))).translate(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z).rotateAroundX(cameraRotation.x).rotateAroundY(cameraRotation.y).rotateAroundZ(cameraRotation.z).columnMajorArray()))
-//            glCall(glUniform3fv(glCall(glGetUniformLocation(phongProgram, "light.color")), 1, light.color))
-//            glCall(glUniform3fv(glCall(glGetUniformLocation(phongProgram, "light.position")), 1, light.position))
-//            glCall(glUniform1f(glCall(glGetUniformLocation(phongProgram, "light.ambient")), light.ambient))
-//            glCall(glUniform1f(glCall(glGetUniformLocation(phongProgram, "light.specStrength")), light.specStrength))
-//            glCall(glUniform1f(glCall(glGetUniformLocation(phongProgram, "light.specHardness")), light.specHardness))
-//
-//            glCall(glDisable(GLenum(GL_CULL_FACE)))
-//            glCall(glDrawElements(GLenum(GL_TRIANGLES), Int32(numberOfTrianglesToDraw) * 3, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: startTriangle * 12)))
-//            glCall(glEnable(GLenum(GL_CULL_FACE)))
-//
-//            glCall(glBindVertexArray(0))
-//            glCall(glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), 0))
-//            glCall(glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0))
-//
+            currentDrawSpace = organizer.getNextSpace()
+            glCall(glClearColor(currentDrawSpace.backgroundColor.x, currentDrawSpace.backgroundColor.y, currentDrawSpace.backgroundColor.z, 1.0))
+            glCall(glScissor(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
+            glCall(glClear(GLbitfield(GL_COLOR_BUFFER_BIT)))
+            glCall(glViewport(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
+            //  Draw textured Cube
+            glCall(glUseProgram(phongProgram))
+            glCall(glBindVertexArray(litCubeVAO))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongProgram, "projection")), 1, GLboolean(GL_FALSE), simd_float4x4().orthographic(width: Float(currentDrawSpace.width), height: Float(currentDrawSpace.height), nearZ: -Float(currentDrawSpace.width) * 2, farZ: Float(currentDrawSpace.width) * 2).scale(x: Float(currentDrawSpace.height) * 0.45, y: Float(currentDrawSpace.height) * 0.45, z: Float(currentDrawSpace.height) * 0.45).columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongProgram, "view")), 1, GLboolean(GL_FALSE), simd_float4x4(columns: (simd_float4(1.0, 0.0, 0.0, 0.0), simd_float4(x: 0.0, y: 1.0, z: 0.0, w: 0.0), simd_float4(x: 0.0, y: 0.0, z: 1.0, w: 0.0), simd_float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0))).translate(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z).rotateAroundX(cameraRotation.x).rotateAroundY(cameraRotation.y).rotateAroundZ(cameraRotation.z).columnMajorArray()))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(phongProgram, "light.color")), 1, light.color))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(phongProgram, "light.position")), 1, light.position))
+            glCall(glUniform1f(glCall(glGetUniformLocation(phongProgram, "light.ambient")), light.ambient))
+            glCall(glUniform1f(glCall(glGetUniformLocation(phongProgram, "light.specStrength")), light.specStrength))
+            glCall(glUniform1f(glCall(glGetUniformLocation(phongProgram, "light.specHardness")), light.specHardness))
+
+            glCall(glDisable(GLenum(GL_CULL_FACE)))
+            glCall(glDrawElements(GLenum(GL_TRIANGLES), Int32(numberOfTrianglesToDraw) * 3, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: startTriangle * 12)))
+            glCall(glEnable(GLenum(GL_CULL_FACE)))
+
+            glCall(glBindVertexArray(0))
+            glCall(glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), 0))
+            glCall(glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0))
+
 //            glCall(glUseProgram(threeDimensionalWithViewerProgram))
 //            glCall(glVertexAttrib3fv(0, light.position))
 //            glCall(glVertexAttrib4fv(1, light.color))
