@@ -22,10 +22,6 @@ struct Float2: Hashable, Equatable {
         self.y = y
     }
     
-    var hashValue: Int {
-        return (x.hashValue ^ y.hashValue) &* 65_537
-    }
-    
     static func ==(lhs: Float2, rhs: Float2) -> Bool {
         return lhs.hashValue == rhs.hashValue
     }
@@ -73,10 +69,6 @@ struct Float3: Hashable, Equatable {
         self.x = x
         self.y = y
         self.z = z
-    }
-    
-    var hashValue: Int {
-        return (x.hashValue ^ y.hashValue ^ z.hashValue) &* 65_537
     }
     
     static func ==(lhs: Float3, rhs: Float3) -> Bool {
@@ -137,10 +129,6 @@ struct Float4: Hashable, Equatable {
         self.w = w
     }
     
-    var hashValue: Int {
-        return (x.hashValue ^ y.hashValue ^ z.hashValue ^ w.hashValue) &* 65_537
-    }
-    
     static func ==(lhs: Float4, rhs: Float4) -> Bool {
         return lhs.hashValue == rhs.hashValue
     }
@@ -175,10 +163,6 @@ struct Float4: Hashable, Equatable {
 struct FloatMatrix2: Hashable, Equatable {
     let vector1: Float2
     let vector2: Float2
-    
-    var hashValue: Int {
-        return (vector1.hashValue ^ vector2.hashValue) &* 65_537
-    }
     
     init() {
         vector1 = Float2(x: 1.0, y: 0.0)
@@ -231,10 +215,6 @@ struct FloatMatrix3: Hashable, Equatable {
     let vector1: Float3
     let vector2: Float3
     let vector3: Float3
-    
-    var hashValue: Int {
-        return (vector1.hashValue ^ vector2.hashValue ^ vector3.hashValue) &* 65_537
-    }
     
     init() {
         vector1 = Float3(x: 1.0, y: 0.0, z: 0.0)
@@ -301,10 +281,6 @@ struct FloatMatrix4: Hashable, Equatable {
     let vector2: Float4
     let vector3: Float4
     let vector4: Float4
-    
-    var hashValue: Int {
-        return (vector1.hashValue ^ vector2.hashValue ^ vector3.hashValue ^ vector4.hashValue) &* 65_537
-    }
     
     init() {
         vector1 = Float4(x: 1.0, y: 0.0, z: 0.0, w: 0.0)
@@ -460,6 +436,13 @@ struct FloatMatrix4: Hashable, Equatable {
 import simd
 
 extension simd_float4x4 {
+    static func identity() -> simd_float4x4 {
+        return simd_float4x4([simd_float4(x: 1, y: 0, z: 0, w: 0),
+                              simd_float4(x: 0, y: 1, z: 0, w: 0),
+                              simd_float4(x: 0, y: 0, z: 1, w: 0),
+                              simd_float4(x: 0, y: 0, z: 0, w: 1)])
+    }
+    
     func perspective(angeOfView theta: Float = 120, aspect: Float, distanceToNearClippingPlane nearZ: Float = 0.001, distanceToFarClippingPlane farZ: Float = 1000) -> simd_float4x4 {
         let scale = 1 / tanf(theta * 0.5 * Float.pi / 180)
         return simd_float4x4(rows: [

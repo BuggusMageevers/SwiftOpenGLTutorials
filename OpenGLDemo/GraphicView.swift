@@ -242,6 +242,7 @@ func sphereMesh(withRadius radius: Float, longitudinalCuts longCuts: Int, latitu
     }
 }
 
+//  MARK: Primitives
 /// 3D space direction definitions:
 /// X: Left => negative, Right => positive
 /// Y: Down => negative, Up => positive
@@ -290,27 +291,72 @@ let litCube: (indices: [GLuint], vertices: [(Float3, Float3, Float4)]) = (
         6, 5, 2, 6, 2, 1
     ],
     vertices: [
-        (Float3(x: -0.5, y:  0.5, z:  0.5), Float3(x: -0.5, y:  0.5, z:  0.5), Float4(x: 1.0, y: 0.0, z: 0.0, w: 1.0)),
-        (Float3(x: -0.5, y: -0.5, z:  0.5), Float3(x: -0.5, y: -0.5, z:  0.5), Float4(x: 0.0, y: 1.0, z: 0.0, w: 1.0)),
-        (Float3(x:  0.5, y: -0.5, z:  0.5), Float3(x:  0.5, y: -0.5, z:  0.5), Float4(x: 0.0, y: 0.0, z: 1.0, w: 1.0)),
-        (Float3(x:  0.5, y:  0.5, z:  0.5), Float3(x:  0.5, y:  0.5, z:  0.5), Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)),
+        (Float3(x: -0.5, y:  0.5, z:  0.5), Float3(x: -0.5, y:  0.5, z:  0.5), Float4(x: 0.8, y: 0.8, z: 0.85, w: 1.0)),
+        (Float3(x: -0.5, y: -0.5, z:  0.5), Float3(x: -0.5, y: -0.5, z:  0.5), Float4(x: 0.8, y: 0.8, z: 0.85, w: 1.0)),
+        (Float3(x:  0.5, y: -0.5, z:  0.5), Float3(x:  0.5, y: -0.5, z:  0.5), Float4(x: 0.8, y: 0.8, z: 0.85, w: 1.0)),
+        (Float3(x:  0.5, y:  0.5, z:  0.5), Float3(x:  0.5, y:  0.5, z:  0.5), Float4(x: 0.8, y: 0.8, z: 0.85, w: 1.0)),
 
-        (Float3(x:  0.5, y:  0.5, z: -0.5), Float3(x:  0.5, y:  0.5, z: -0.5), Float4(x: 1.0, y: 1.0, z: 0.0, w: 1.0)),
-        (Float3(x:  0.5, y: -0.5, z: -0.5), Float3(x:  0.5, y: -0.5, z: -0.5), Float4(x: 0.0, y: 1.0, z: 1.0, w: 1.0)),
-        (Float3(x: -0.5, y: -0.5, z: -0.5), Float3(x: -0.5, y: -0.5, z: -0.5), Float4(x: 1.0, y: 0.0, z: 1.0, w: 1.0)),
-        (Float3(x: -0.5, y:  0.5, z: -0.5), Float3(x: -0.5, y:  0.5, z: -0.5), Float4(x: 1.0, y: 1.0, z: 1.0, w: 1.0))
+        (Float3(x:  0.5, y:  0.5, z: -0.5), Float3(x:  0.5, y:  0.5, z: -0.5), Float4(x: 0.8, y: 0.8, z: 0.85, w: 1.0)),
+        (Float3(x:  0.5, y: -0.5, z: -0.5), Float3(x:  0.5, y: -0.5, z: -0.5), Float4(x: 0.8, y: 0.8, z: 0.85, w: 1.0)),
+        (Float3(x: -0.5, y: -0.5, z: -0.5), Float3(x: -0.5, y: -0.5, z: -0.5), Float4(x: 0.8, y: 0.8, z: 0.85, w: 1.0)),
+        (Float3(x: -0.5, y:  0.5, z: -0.5), Float3(x: -0.5, y:  0.5, z: -0.5), Float4(x: 0.8, y: 0.8, z: 0.85, w: 1.0))
+    ]
+)
+let litTextureCube: (indices: [GLuint], vertices: [(Float3, Float3, Float2)]) = (
+    indices: [
+        1, 2, 3, 1, 3, 0,
+        2, 5, 4, 2, 4, 3,
+        5, 6, 7, 5, 7, 4,
+        6, 1, 0, 6, 0, 7,
+        0, 3, 4, 0, 4, 7,
+        6, 5, 2, 6, 2, 1
+    ],
+    vertices: [
+        (Float3(x: -0.5, y:  0.5, z:  0.5), Float3(x: -0.5, y:  0.5, z:  0.5), Float2(x: 0.0, y: 1.0)),
+        (Float3(x: -0.5, y: -0.5, z:  0.5), Float3(x: -0.5, y: -0.5, z:  0.5), Float2(x: 0.0, y: 0.0)),
+        (Float3(x:  0.5, y: -0.5, z:  0.5), Float3(x:  0.5, y: -0.5, z:  0.5), Float2(x: 1.0, y: 0.0)),
+        (Float3(x:  0.5, y:  0.5, z:  0.5), Float3(x:  0.5, y:  0.5, z:  0.5), Float2(x: 1.0, y: 1.0)),
+
+        (Float3(x:  0.5, y:  0.5, z: -0.5), Float3(x:  0.5, y:  0.5, z: -0.5), Float2(x: 0.0, y: 1.0)),
+        (Float3(x:  0.5, y: -0.5, z: -0.5), Float3(x:  0.5, y: -0.5, z: -0.5), Float2(x: 0.0, y: 0.0)),
+        (Float3(x: -0.5, y: -0.5, z: -0.5), Float3(x: -0.5, y: -0.5, z: -0.5), Float2(x: 1.0, y: 0.0)),
+        (Float3(x: -0.5, y:  0.5, z: -0.5), Float3(x: -0.5, y:  0.5, z: -0.5), Float2(x: 1.0, y: 1.0))
     ]
 )
 
 let sphere = sphereMesh(withRadius: 0.5, longitudinalCuts: 20, latitudinalCuts: 20)
-let light: (color: [Float], position: [Float], ambient: Float, specStrength: Float, specHardness: Float) = (
-    color: [1.0, 1.0, 1.0],
-    position: [-1, 0.85, 0.0],
-    ambient: 0.01,
-    specStrength: 0.02,
-    specHardness: 80
+let directionLight: (ambient: [Float], color: [Float], direction: [Float], halfVector: [Float], shininess: Float, strength: Float) = (
+    ambient: [0.0, 0.5, 0.7],
+    color: [0.0, 0.5, 1.0],
+    direction: [-1, 0.85, 2.0],
+    halfVector: [-1, 0.85, 2.0],
+    shininess: 1.0,
+    strength: 0.15
+)
+let pointLight: (ambient: [Float], color: [Float], position: [Float], shininess: Float, strength: Float) = (
+    ambient: [0.0, 0.5, 0.7],
+    color: [0.0, 0.5, 1.0],
+    position: [-1, 0.85, 1.0],
+    shininess: 1.0,
+    strength: 0.7
+)
+let spotLight: (ambient: [Float], color: [Float], position: [Float], shininess: Float, strength: Float, coneDirection: [Float], cosCutOff: Float, exponent: Float) = (
+    ambient: [0.0, 0.5, 0.7],
+    color: [0.0, 0.5, 1.0],
+    position: [-1, 0.85, 1.0],
+    shininess: 1.0,
+    strength: 0.1,
+    coneDirection: [1, -0.85, -1.0],
+    cosCutOff: 0.9,
+    exponent: 0.9
+)
+let hemisphereLight: (position: [Float], skyColor: [Float], groundColor: [Float]) = (
+    position: [1.0, 1.0, 1.0],
+    skyColor: [0.98, 0.95, 1.0],
+    groundColor: [0.0, 0.0, 0.0]
 )
 
+//  MARK:  ERROR Messages
 func glLogCall(file: String, line: Int) -> Bool {
     var error = GLenum(GL_NO_ERROR)
     
@@ -347,6 +393,7 @@ func glCall<T>(_ function: @autoclosure () -> T, file: String = #file, line: Int
     return result
 }
 
+//  MARK: ViewOrganizer
 struct ViewOrganizer {
     struct GridSize: Equatable {
         var width: Int = 0
@@ -373,6 +420,8 @@ struct ViewOrganizer {
     private var nextUnusedSpace = LocationOnGrid()
     
     func printGrid() {
+        print("View size:", viewSize)
+        print("Number of spaces:", numberOfSpaces)
         for row in layout {
             for space in row {
                 print("|", space.x, space.y, space.width, space.height, "|")
@@ -411,9 +460,9 @@ struct ViewOrganizer {
     mutating func layoutSpaces(withSize spaceSize: GridSize, forGrid grid: GridSize) {
         var layout: [[Space]] = [[Space]].init()
         
-        for column in 0..<Int(grid.width) {
+        for column in 0..<grid.width {
             layout.append([])
-            for row in 0..<Int(grid.height) {
+            for row in 0..<grid.height {
                 let space: Space!
                 if layout[0].first == nil {
                     space = Space(x: 0,
@@ -473,6 +522,7 @@ extension ViewOrganizer: CustomStringConvertible {
     }
 }
 
+//  MARK:  GraphicView
 class GraphicView: NSOpenGLView {
     ///  ViewOrganizer was created for this demo to tile multiple glDraw* calls
     ///  into one OpenGL view.  By tiling individual draw calls, or sets of
@@ -495,6 +545,9 @@ class GraphicView: NSOpenGLView {
     var litCubeVBOIndex: GLuint = 0
     var litCubeVBOVertex: GLuint = 0
     var litCubeVAO: GLuint = 0
+    var litTextureCubeVBOIndex: GLuint = 0
+    var litTextureCubeVBOVertex: GLuint = 0
+    var litTextureCubeVAO: GLuint = 0
     var checkerTextureTBO: GLuint = 0
     var sphereVBOIndex: GLuint = 0
     var sphereVBOVertex: GLuint = 0
@@ -505,7 +558,10 @@ class GraphicView: NSOpenGLView {
     var textureProgram:  GLuint = 0
     var threeDimensionalProgram: GLuint = 0
     var threeDimensionalWithViewerProgram: GLuint = 0
-    var phongProgram: GLuint = 0
+    var directionLightProgram: GLuint = 0
+    var pointLightProgram: GLuint = 0
+    var spotLightProgram: GLuint = 0
+    var hemisphereLightProgram: GLuint = 0
     var textureInverseBilinearInterpolationID: GLuint = 0
     var fbo: GLuint = 0
     var colorRBO: GLuint = 0
@@ -542,8 +598,7 @@ class GraphicView: NSOpenGLView {
     required init?(coder decoder: NSCoder) {
         super.init(coder: decoder)
         
-        viewSize = self.bounds
-        organizer = ViewOrganizer(viewSize: ViewOrganizer.GridSize(width: Int(self.bounds.width), height: Int(self.bounds.height)))
+        viewSize = bounds
         
         let attributes = [
             NSOpenGLPixelFormatAttribute(NSOpenGLPFAAllRenderers),
@@ -662,7 +717,8 @@ class GraphicView: NSOpenGLView {
                                    bytesPerRow: width * componentsPerPoint,
                                    space: CGColorSpace(name: CGColorSpace.sRGB)!,
                                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) {
-            
+    
+    //  MARK: CoreGraphics Texture
             /// 1. Write a call callback
             /// 2. Set up colored pattern color space
             /// 3. Set up anatomy of colored pattern
@@ -1111,6 +1167,27 @@ class GraphicView: NSOpenGLView {
         glCall(glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<(Float3, Float3, Float4)>.stride), UnsafeRawPointer(bitPattern: 0)))
         glCall(glVertexAttribPointer(1, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<(Float3, Float3, Float4)>.stride), UnsafeRawPointer(bitPattern: 12)))
         glCall(glVertexAttribPointer(2, 4, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<(Float3, Float3, Float4)>.stride), UnsafeRawPointer(bitPattern: 24)))
+        //  //  //  //  //  //  //  //  //  //  //  //  //  //  //
+        //                                                      //
+        //    Load lit textured cube data into OpenGL Object    //
+        //                                                      //
+        //  //  //  //  //  //  //  //  //  //  //  //  //  //  //
+        glCall(glGenVertexArrays(1, &litTextureCubeVAO))
+        glCall(glBindVertexArray(litTextureCubeVAO))
+        
+        glCall(glGenBuffers(1, &litTextureCubeVBOIndex))
+        glCall(glGenBuffers(1, &litTextureCubeVBOVertex))
+        glCall(glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), litTextureCubeVBOIndex))
+        glCall(glBindBuffer(GLenum(GL_ARRAY_BUFFER), litTextureCubeVBOVertex))
+        glCall(glBufferData(GLenum(GL_ELEMENT_ARRAY_BUFFER), MemoryLayout<GLuint>.stride * litTextureCube.indices.count, litTextureCube.indices, GLenum(GL_STATIC_DRAW)))
+        glCall(glBufferData(GLenum(GL_ARRAY_BUFFER), MemoryLayout<(Float3, Float3, Float2)>.stride * litTextureCube.vertices.count, litTextureCube.vertices, GLenum(GL_STATIC_DRAW)))
+        /// Setup the VAO to assign segments of the buffer as inputs for a shader.
+        glCall(glEnableVertexAttribArray(0))
+        glCall(glEnableVertexAttribArray(1))
+        glCall(glEnableVertexAttribArray(2))
+        glCall(glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<(Float3, Float3, Float2)>.stride), UnsafeRawPointer(bitPattern: 0)))
+        glCall(glVertexAttribPointer(1, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<(Float3, Float3, Float2)>.stride), UnsafeRawPointer(bitPattern: 12)))
+        glCall(glVertexAttribPointer(2, 2, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<(Float3, Float3, Float2)>.stride), UnsafeRawPointer(bitPattern: 24)))
         //  //  //  //  //  //  //  //  //  //  //  //
         //                                          //
         //   Load sphere data into OpenGL Object    //
@@ -1696,33 +1773,30 @@ class GraphicView: NSOpenGLView {
         glCall(glDeleteShader(vs))
         glCall(glDeleteShader(fs))
         
-        //  MARK: phongProgram
-        /// phongProgram
-        ///   - draws a three dimensional shape with a light source
-        phongProgram = glCall(glCreateProgram())
-        /// Phong Vertex Shader ///
+        //  MARK: directionLightProgram
+        /// Phong Shading:  direction light
+        ///   - draws a three dimensional shape with a light source that shines equally in all directions
+        directionLightProgram = glCall(glCreateProgram())
+        /// Direction Light Vertex Shader ///
         vs = glCall(glCreateShader(GLenum(GL_VERTEX_SHADER)))
         source = """
         #version 330 core
         
-        layout (location = 0) in vec3 position;
-        layout (location = 1) in vec3 normal;
-        layout (location = 2) in vec4 color;
+        layout (location = 0) in vec3 vPosition;
+        layout (location = 1) in vec3 vNormal;
+        layout (location = 2) in vec4 vColor;
         
         uniform mat4 projection;
         uniform mat4 view;
+        uniform mat4 normalMatrix;
         
-        out vec3 passPosition;
-        out vec3 passNormal;
-        out vec4 passColor;
-        out vec3 passCameraPosition;
-        
+        out vec3 normal;
+        out vec4 color;
+
         void main() {
-            gl_Position = projection * view * vec4(position, 1.0);
-            passPosition = position;
-            passNormal = normalize(normal);
-            passColor = color;
-            passCameraPosition = view[3].xyz;
+            gl_Position = projection * view * vec4(vPosition, 1.0);
+            normal = normalize(normalMatrix * vec4(vNormal, 0.0)).xyz;
+            color = vColor;
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
@@ -1744,35 +1818,42 @@ class GraphicView: NSOpenGLView {
                 free(cLog)
             }
         }
-        /// Phong Fragment Shader ///
+        /// Direction Light  Fragment Shader ///
         fs = glCall(glCreateShader(GLenum(GL_FRAGMENT_SHADER)))
         source = """
         #version 330 core
         
         uniform struct Light {
+           vec3 ambient;
            vec3 color;
-           vec3 position;
-           float ambient;
-           float specStrength;
-           float specHardness;
+           vec3 direction;
+           vec3 halfVector;
+           float shininess;
+           float strength;
         } light;
         
-        in vec3 passPosition;
-        in vec3 passNormal;
-        in vec4 passColor;
-        in vec3 passCameraPosition;
+        in vec3 normal;
+        in vec4 color;
         
         out vec4 outColor;
         
         void main() {
-            vec3 normal = passNormal;
-            vec3 lightRay = normalize(light.position - passPosition);
-            float intensity = clamp(dot(normal, lightRay), 0, 1);
-            vec3 viewer = normalize(passCameraPosition - passPosition);
-            vec3 reflection = reflect(lightRay, normal);
-            float specular = pow(max(dot(viewer, reflection), 0.0), light.specHardness);
-            outColor.rgb = passColor.rgb + light.ambient + light.color * intensity + light.specStrength * specular;
-            outColor.a = passColor.a;
+            //  Compute the cosine to use for calculating reflections
+            float diffuse = max(0.0, dot(normal, light.direction));
+            float specular = max(0.0, dot(normal, light.halfVector));
+
+            //  Show surfaces facing away from the light in shadow
+            if (diffuse <= 0.0) {
+                specular = 0.0;
+            } else {
+                specular = pow(specular, light.shininess);    //  Sharpens light
+            }
+
+            vec3 scatteredLight = light.ambient + light.color * diffuse;
+            vec3 reflectedLight = light.color * specular * light.strength;
+
+            vec3 rgb = min(color.rgb * scatteredLight + reflectedLight, vec3(1.0));
+            outColor = vec4(rgb, color.a);
         }
         """
         sourcePtr = source.cString(using: String.Encoding.ascii)
@@ -1795,19 +1876,435 @@ class GraphicView: NSOpenGLView {
             }
         }
         /// Attach and link shaders to program
-        glCall(glAttachShader(phongProgram, vs))
-        glCall(glAttachShader(phongProgram, fs))
-        glCall(glLinkProgram(phongProgram))
+        glCall(glAttachShader(directionLightProgram, vs))
+        glCall(glAttachShader(directionLightProgram, fs))
+        glCall(glLinkProgram(directionLightProgram))
         linked = 0
-        glCall(glGetProgramiv(phongProgram, UInt32(GL_LINK_STATUS), &linked))
+        glCall(glGetProgramiv(directionLightProgram, UInt32(GL_LINK_STATUS), &linked))
         if linked <= 0 {
             print("Could not link, getting log")
             var logLength: GLint = 0
-            glCall(glGetProgramiv(phongProgram, UInt32(GL_INFO_LOG_LENGTH), &logLength))
+            glCall(glGetProgramiv(directionLightProgram, UInt32(GL_INFO_LOG_LENGTH), &logLength))
             print(" logLength = \(logLength)")
             if logLength > 0 {
                 let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
-                glCall(glGetProgramInfoLog(phongProgram, GLsizei(logLength), &logLength, cLog))
+                glCall(glGetProgramInfoLog(directionLightProgram, GLsizei(logLength), &logLength, cLog))
+                print("log: \(String.init(cString:cLog))")
+                free(cLog)
+            }
+        }
+        /// Mark shaders for deletion
+        glCall(glDeleteShader(vs))
+        glCall(glDeleteShader(fs))
+        
+        //  MARK:  pointLightProgram
+        /// Phong Shading:  point light
+        ///   - draws a three dimensional shape with a light source that shines equally in all directions,
+        ///     but unlike direction lights the diffuse portion fades as a surface faces away from the source
+        pointLightProgram = glCall(glCreateProgram())
+        /// Point Light Vertex Shader ///
+        vs = glCall(glCreateShader(GLenum(GL_VERTEX_SHADER)))
+        source = """
+        #version 330 core
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 normalMatrix;
+
+        layout (location = 0) in vec3 vPosition;
+        layout (location = 1) in vec3 vNormal;
+        layout (location = 2) in vec4 vColor;
+
+        out vec3 viewerPosition;
+        out vec3 position;
+        out vec3 normal;
+        out vec4 color;
+
+        void main() {
+            viewerPosition = view[3].xyz;
+            gl_Position = projection * view * vec4(vPosition, 1.0);
+            position = (view * vec4(vPosition, 1.0)).xyz;
+            normal = normalize(normalMatrix * vec4(vNormal, 1.0)).xyz;
+            color = vColor;
+        }
+        """
+        sourcePtr = source.cString(using: String.Encoding.ascii)
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(vs, 1, sourcePtrPtr, nil))
+        }
+        glCall(glCompileShader(vs))
+        compiled = 0
+        glCall(glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled))
+        if compiled <= 0 {
+            print("Could not compile vertex, getting log")
+            var logLength: GLint = 0
+            glCall(glGetShaderiv(vs, GLenum(GL_INFO_LOG_LENGTH), &logLength))
+            print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
+                glCall(glGetShaderInfoLog(vs, GLsizei(logLength), &logLength, cLog))
+                print(" log = \n\t\(String.init(cString: cLog))")
+                free(cLog)
+            }
+        }
+        /// Point Light  Fragment Shader ///
+        fs = glCall(glCreateShader(GLenum(GL_FRAGMENT_SHADER)))
+        source = """
+        #version 330 core
+        
+        uniform struct Light {
+           vec3 ambient;
+           vec3 color;
+           vec3 position;
+           float shininess;
+           float strength;
+        } light;
+        
+        uniform float constantAttenuation;
+        uniform float linearAttenuation;
+        uniform float quadraticAttenuation;
+
+        in vec3 viewerPosition;
+        in vec3 position;
+        in vec3 normal;
+        in vec4 color;
+        
+        out vec4 outColor;
+        
+        void main() {
+            //  Find direction and distance to light from this fragment
+            vec3 lightDirection = light.position - position;
+            float lightDistance = length(lightDirection);
+
+            //  Normalize the light direction vector in order to calculate cosine
+            lightDirection = lightDirection / lightDistance;
+
+            //  Find the amount of light available for this fragment
+            float attenuation = 1.0 / (constantAttenuation + linearAttenuation * lightDistance + quadraticAttenuation * lightDistance * lightDistance);
+
+            //  Find intensity of highlight at this fragment
+            vec3 halfVector = normalize(lightDirection + viewerPosition);
+
+            float diffuse = max(0.0, dot(normal, lightDirection));
+            float specular = max(0.0, dot(normal, halfVector));
+
+            if (diffuse <= 0.0) {
+                specular = 0.0;
+            } else {
+                specular = pow(specular, light.shininess) * light.strength;
+            }
+
+            vec3 scatteredLight = light.ambient + light.color * diffuse * attenuation;
+            vec3 reflectedLight = light.color * specular * attenuation;
+            vec3 rgb = min(color.rgb * scatteredLight + reflectedLight, vec3(1.0));
+
+            outColor = vec4(rgb, color.a);
+        }
+        """
+        sourcePtr = source.cString(using: String.Encoding.ascii)
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(fs, 1, sourcePtrPtr, nil))
+        }
+        glCall(glCompileShader(fs))
+        compiled = 0
+        glCall(glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled))
+        if compiled <= 0 {
+            print("Could not compile fragement, getting log")
+            var logLength: GLint = 0
+            glCall(glGetShaderiv(fs, GLbitfield(GL_INFO_LOG_LENGTH), &logLength))
+            print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
+                glCall(glGetShaderInfoLog(fs, GLsizei(logLength), &logLength, cLog))
+                print(" log = \n\t\(String.init(cString: cLog))")
+                free(cLog)
+            }
+        }
+        /// Attach and link shaders to program
+        glCall(glAttachShader(pointLightProgram, vs))
+        glCall(glAttachShader(pointLightProgram, fs))
+        glCall(glLinkProgram(pointLightProgram))
+        linked = 0
+        glCall(glGetProgramiv(pointLightProgram, UInt32(GL_LINK_STATUS), &linked))
+        if linked <= 0 {
+            print("Could not link, getting log")
+            var logLength: GLint = 0
+            glCall(glGetProgramiv(pointLightProgram, UInt32(GL_INFO_LOG_LENGTH), &logLength))
+            print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
+                glCall(glGetProgramInfoLog(pointLightProgram, GLsizei(logLength), &logLength, cLog))
+                print("log: \(String.init(cString:cLog))")
+                free(cLog)
+            }
+        }
+        /// Mark shaders for deletion
+        glCall(glDeleteShader(vs))
+        glCall(glDeleteShader(fs))
+        
+        //  MARK:  spotLightProgram
+        /// Phong Shading:  spot light
+        ///   - draws a three dimensional shape with a light source that shines a focused
+        ///     beam of light in a given direction
+        spotLightProgram = glCall(glCreateProgram())
+        /// Spot Light Vertex Shader ///
+        vs = glCall(glCreateShader(GLenum(GL_VERTEX_SHADER)))
+        source = """
+        #version 330 core
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 normalMatrix;
+
+        layout (location = 0) in vec3 vPosition;
+        layout (location = 1) in vec3 vNormal;
+        layout (location = 2) in vec4 vColor;
+
+        out vec3 viewerPosition;
+        out vec3 position;
+        out vec3 normal;
+        out vec4 color;
+
+        void main() {
+            viewerPosition = view[3].xyz;
+            gl_Position = projection * view * vec4(vPosition, 1.0);
+            position = (view * vec4(vPosition, 1.0)).xyz;
+            normal = normalize(normalMatrix * vec4(vNormal, 1.0)).xyz;
+            color = vColor;
+        }
+        """
+        sourcePtr = source.cString(using: String.Encoding.ascii)
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(vs, 1, sourcePtrPtr, nil))
+        }
+        glCall(glCompileShader(vs))
+        compiled = 0
+        glCall(glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled))
+        if compiled <= 0 {
+            print("Could not compile vertex, getting log")
+            var logLength: GLint = 0
+            glCall(glGetShaderiv(vs, GLenum(GL_INFO_LOG_LENGTH), &logLength))
+            print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
+                glCall(glGetShaderInfoLog(vs, GLsizei(logLength), &logLength, cLog))
+                print(" log = \n\t\(String.init(cString: cLog))")
+                free(cLog)
+            }
+        }
+        /// Spot Light  Fragment Shader ///
+        fs = glCall(glCreateShader(GLenum(GL_FRAGMENT_SHADER)))
+        source = """
+        #version 330 core
+        
+        uniform struct Light {
+            vec3 ambient;
+            vec3 color;
+            vec3 position;
+            float shininess;
+            float strength;
+            vec3 coneDirection;
+            float cosCutOff;
+            float exponent;
+        } light;
+        
+        uniform float constantAttenuation;
+        uniform float linearAttenuation;
+        uniform float quadraticAttenuation;
+
+        in vec3 viewerPosition;
+        in vec3 position;
+        in vec3 normal;
+        in vec4 color;
+        
+        out vec4 outColor;
+        
+        void main() {
+            //  Find direction and distance to light from this fragment
+            vec3 lightDirection = light.position - position;
+            float lightDistance = length(lightDirection);
+
+            //  Normalize the light direction vector in order to calculate cosine
+            lightDirection = lightDirection / lightDistance;
+
+            //  Find the amount of light available for this fragment
+            float attenuation = 1.0 / (constantAttenuation + linearAttenuation * lightDistance + quadraticAttenuation * lightDistance * lightDistance);
+
+            //  Find proximity to the spot
+            float spotCos = dot(lightDirection, -light.coneDirection);
+
+            if (spotCos < light.cosCutOff)
+                attenuation = 0.0;
+            else
+                attenuation *= pow(spotCos, light.exponent);
+
+            //  Find intensity of highlight at this fragment
+            vec3 halfVector = normalize(lightDirection + viewerPosition);
+
+            float diffuse = max(0.0, dot(normal, lightDirection));
+            float specular = max(0.0, dot(normal, halfVector));
+
+            if (diffuse <= 0.0)
+                specular = 0.0;
+            else
+                specular = pow(specular, light.shininess) * light.strength;
+
+            vec3 scatteredLight = light.ambient + light.color * diffuse * attenuation;
+            vec3 reflectedLight = light.color * specular * attenuation;
+            vec3 rgb = min(color.rgb * scatteredLight + reflectedLight, vec3(1.0));
+
+            outColor = vec4(rgb, color.a);
+        }
+        """
+        sourcePtr = source.cString(using: String.Encoding.ascii)
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(fs, 1, sourcePtrPtr, nil))
+        }
+        glCall(glCompileShader(fs))
+        compiled = 0
+        glCall(glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled))
+        if compiled <= 0 {
+            print("Could not compile fragement, getting log")
+            var logLength: GLint = 0
+            glCall(glGetShaderiv(fs, GLbitfield(GL_INFO_LOG_LENGTH), &logLength))
+            print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
+                glCall(glGetShaderInfoLog(fs, GLsizei(logLength), &logLength, cLog))
+                print(" log = \n\t\(String.init(cString: cLog))")
+                free(cLog)
+            }
+        }
+        /// Attach and link shaders to program
+        glCall(glAttachShader(spotLightProgram, vs))
+        glCall(glAttachShader(spotLightProgram, fs))
+        glCall(glLinkProgram(spotLightProgram))
+        linked = 0
+        glCall(glGetProgramiv(spotLightProgram, UInt32(GL_LINK_STATUS), &linked))
+        if linked <= 0 {
+            print("Could not link, getting log")
+            var logLength: GLint = 0
+            glCall(glGetProgramiv(spotLightProgram, UInt32(GL_INFO_LOG_LENGTH), &logLength))
+            print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
+                glCall(glGetProgramInfoLog(spotLightProgram, GLsizei(logLength), &logLength, cLog))
+                print("log: \(String.init(cString:cLog))")
+                free(cLog)
+            }
+        }
+        /// Mark shaders for deletion
+        glCall(glDeleteShader(vs))
+        glCall(glDeleteShader(fs))
+        
+        //  MARK:  hemisphereLightProgram
+        /// Phong Shading:  hemisphere light
+        ///   - draws a three dimensional shape with a sky and ground lighting model
+        hemisphereLightProgram = glCall(glCreateProgram())
+        /// Hemisphere Light Vertex Shader ///
+        vs = glCall(glCreateShader(GLenum(GL_VERTEX_SHADER)))
+        source = """
+        #version 330 core
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 normalMatrix;
+
+        layout (location = 0) in vec3 vPosition;
+        layout (location = 1) in vec3 vNormal;
+        layout (location = 2) in vec2 vUV;
+
+        out vec3 position;
+        out vec3 normal;
+        out vec2 uv;
+
+        void main() {
+            gl_Position = projection * view * vec4(vPosition, 1.0);
+            position = (view * vec4(vPosition, 1.0)).xyz;
+            normal = normalize(normalMatrix * vec4(vNormal, 1.0)).xyz;
+            uv = vUV;
+        }
+        """
+        sourcePtr = source.cString(using: String.Encoding.ascii)
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(vs, 1, sourcePtrPtr, nil))
+        }
+        glCall(glCompileShader(vs))
+        compiled = 0
+        glCall(glGetShaderiv(vs, GLbitfield(GL_COMPILE_STATUS), &compiled))
+        if compiled <= 0 {
+            print("Could not compile vertex, getting log")
+            var logLength: GLint = 0
+            glCall(glGetShaderiv(vs, GLenum(GL_INFO_LOG_LENGTH), &logLength))
+            print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
+                glCall(glGetShaderInfoLog(vs, GLsizei(logLength), &logLength, cLog))
+                print(" log = \n\t\(String.init(cString: cLog))")
+                free(cLog)
+            }
+        }
+        /// Hemisphere Light  Fragment Shader ///
+        fs = glCall(glCreateShader(GLenum(GL_FRAGMENT_SHADER)))
+        source = """
+        #version 330 core
+        
+        uniform sampler2D sample;
+
+        uniform struct Light {
+            vec3 position;
+            vec3 skyColor;
+            vec3 groundColor;
+        } light;
+
+        in vec3 position;
+        in vec3 normal;
+        in vec2 uv;
+        
+        out vec4 outColor;
+        
+        void main() {
+            vec3 lightVector = normalize(light.position - position);
+            float cosTheta = dot(normal, lightVector);
+            float a = cosTheta * 0.5 + 0.5;
+            vec4 textureColor =  texture(sample, uv);
+            vec3 environmentColor = mix(light.groundColor, light.skyColor, a);
+            outColor = vec4(environmentColor * textureColor.rgb, textureColor.a);
+        }
+        """
+        sourcePtr = source.cString(using: String.Encoding.ascii)
+        withUnsafePointer(to: sourcePtr) { (sourcePtrPtr: UnsafePointer<UnsafePointer<CChar>?>) in
+            glCall(glShaderSource(fs, 1, sourcePtrPtr, nil))
+        }
+        glCall(glCompileShader(fs))
+        compiled = 0
+        glCall(glGetShaderiv(fs, GLbitfield(GL_COMPILE_STATUS), &compiled))
+        if compiled <= 0 {
+            print("Could not compile fragement, getting log")
+            var logLength: GLint = 0
+            glCall(glGetShaderiv(fs, GLbitfield(GL_INFO_LOG_LENGTH), &logLength))
+            print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
+                glCall(glGetShaderInfoLog(fs, GLsizei(logLength), &logLength, cLog))
+                print(" log = \n\t\(String.init(cString: cLog))")
+                free(cLog)
+            }
+        }
+        /// Attach and link shaders to program
+        glCall(glAttachShader(hemisphereLightProgram, vs))
+        glCall(glAttachShader(hemisphereLightProgram, fs))
+        glCall(glLinkProgram(hemisphereLightProgram))
+        linked = 0
+        glCall(glGetProgramiv(hemisphereLightProgram, UInt32(GL_LINK_STATUS), &linked))
+        if linked <= 0 {
+            print("Could not link, getting log")
+            var logLength: GLint = 0
+            glCall(glGetProgramiv(hemisphereLightProgram, UInt32(GL_INFO_LOG_LENGTH), &logLength))
+            print(" logLength = \(logLength)")
+            if logLength > 0 {
+                let cLog = UnsafeMutablePointer<CChar>.allocate(capacity: Int(logLength))
+                glCall(glGetProgramInfoLog(hemisphereLightProgram, GLsizei(logLength), &logLength, cLog))
                 print("log: \(String.init(cString:cLog))")
                 free(cLog)
             }
@@ -2076,25 +2573,36 @@ class GraphicView: NSOpenGLView {
         CVDisplayLinkSetOutputCallback(displayLink!, displayLinkOutputCallback, UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()))
         CVDisplayLinkStart(displayLink!)
         
-        //  Set up the View Organizer to display the current set of OpenGL
-        //  concepts being discussed
-        //
-        //  view 0:  cleared context
+    //  MARK: Set up Organizer
+        /// Set up the View Organizer to display the current set of OpenGL
+        /// The orgainizer's viewSize is multiplied by 2 to accomodate for the increased resolution  on some high resolution displays.
+        /// The OS stores view sizes as "pointer" and not "pixels".  Older displays use a 1:1 display, while newer displayers have twice
+        /// or three times the number of pixels per point.
+        organizer = ViewOrganizer(viewSize: ViewOrganizer.GridSize(width: Int(viewSize.width) * 2, height: Int(viewSize.height) * 2))
+        /// concepts being discussed
+        ///
+        /// view 0:  cleared context
         organizer.addASpace()
-        //  view 1:  point in 2D space
+        /// view 1:  point in 2D space
         organizer.addASpace()
-        //  view 2:  colored triangle
+        /// view 2:  colored triangle
         organizer.addASpace()
-        //  view 3:  textured triangle
+        /// view 3:  textured triangle
         organizer.addASpace()
-        //  view 4:  textured cube in 3D space
+        /// view 4:  textured cube in 3D space
         organizer.addASpace()
-        //  view 5:  textured cube with view projection matrix
+        /// view 5:  textured cube with view projection matrix
         organizer.addASpace()
-        //  view 6:  lit cube (Phong)
+        /// view 6:  lit cube (direction light)
         organizer.addASpace()
-        //
-        //  generate the view spaces for the current collection of views
+        /// view 7:  lit cube (point light)
+        organizer.addASpace()
+        /// view 8:  lit cube (spot light)
+        organizer.addASpace()
+        /// view 8:  lit cube (hemisphere light)
+        organizer.addASpace()
+        ///
+        /// generate the view spaces for the current collection of views
         let grid = organizer.generateGrid()
         let spaceSize = organizer.calculateSpaceSize(forGrid: grid)
         organizer.layoutSpaces(withSize: spaceSize, forGrid: grid)
@@ -2109,7 +2617,7 @@ class GraphicView: NSOpenGLView {
             glCall(glClearColor(1.0, 1.0, 1.0, 1.0))
             glCall(glClear(GLbitfield(GL_COLOR_BUFFER_BIT) | GLbitfield(GL_DEPTH_BUFFER_BIT)))
             
-            //  View Space 0
+            //  View Space 0 - display a cleared context
             //  Set current draw space using the organizer
             //  Set background to a random color for now
             var currentDrawSpace = organizer.getNextSpace()
@@ -2121,7 +2629,7 @@ class GraphicView: NSOpenGLView {
             //  Draw a cleared view
             //  No draw calls
 
-            //  View Space 1
+            //  View Space 1 - draw a point in 2D space
             currentDrawSpace = organizer.getNextSpace()
             glCall(glClearColor(0.0, 0.0, 0.0, 1.0))
             glCall(glScissor(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
@@ -2134,7 +2642,7 @@ class GraphicView: NSOpenGLView {
             glCall(glPointSize(10))
             glCall(glDrawArrays(GLenum(GL_POINTS), 0, 1))
 
-            //  View Space 2
+            //  View Space 2 - draw a colored triangle
             currentDrawSpace = organizer.getNextSpace()
             glCall(glClearColor(currentDrawSpace.backgroundColor.x, currentDrawSpace.backgroundColor.y, currentDrawSpace.backgroundColor.z, 1.0))
             glCall(glScissor(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
@@ -2146,7 +2654,7 @@ class GraphicView: NSOpenGLView {
 
             glCall(glDrawArrays(GLenum(GL_TRIANGLES), 0, Int32(coloredTriangle.count)))
 
-            //  View Space 3
+            //  View Space 3 - draw a textured triangle
             currentDrawSpace = organizer.getNextSpace()
             glCall(glClearColor(currentDrawSpace.backgroundColor.x, currentDrawSpace.backgroundColor.y, currentDrawSpace.backgroundColor.z, 1.0))
             glCall(glScissor(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
@@ -2159,7 +2667,7 @@ class GraphicView: NSOpenGLView {
             
             glCall(glDrawArrays(GLenum(GL_TRIANGLES), 0, Int32(texturedTriangle.count)))
             
-            //  View Space 4
+            //  View Space 4 - draw a cube in 3D space
             currentDrawSpace = organizer.getNextSpace()
             glCall(glClearColor(currentDrawSpace.backgroundColor.x, currentDrawSpace.backgroundColor.y, currentDrawSpace.backgroundColor.z, 1.0))
             glCall(glScissor(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
@@ -2172,7 +2680,7 @@ class GraphicView: NSOpenGLView {
 
             glCall(glDrawElements(GLenum(GL_TRIANGLES), Int32(numberOfTrianglesToDraw) * 3, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: startTriangle * 12)))
             
-            //  View Space 5
+            //  View Space 5 - draw a cube in 3D space with user defined viewing position
             currentDrawSpace = organizer.getNextSpace()
             glCall(glClearColor(currentDrawSpace.backgroundColor.x, currentDrawSpace.backgroundColor.y, currentDrawSpace.backgroundColor.z, 1.0))
             glCall(glScissor(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
@@ -2182,52 +2690,107 @@ class GraphicView: NSOpenGLView {
             glCall(glUseProgram(threeDimensionalWithViewerProgram))
             glCall(glBindVertexArray(texturedCubeVAO))
             glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(threeDimensionalWithViewerProgram, "projection")), 1, GLboolean(GL_FALSE), simd_float4x4().orthographic(width: Float(currentDrawSpace.width), height: Float(currentDrawSpace.height), nearZ: -Float(currentDrawSpace.width) * 2, farZ: Float(currentDrawSpace.width) * 2).scale(x: Float(currentDrawSpace.height) * 0.45, y: Float(currentDrawSpace.height) * 0.45, z: Float(currentDrawSpace.height) * 0.45).columnMajorArray()))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(threeDimensionalWithViewerProgram, "view")), 1, GLboolean(GL_FALSE), simd_float4x4(columns: (simd_float4(1.0, 0.0, 0.0, 0.0), simd_float4(x: 0.0, y: 1.0, z: 0.0, w: 0.0), simd_float4(x: 0.0, y: 0.0, z: 1.0, w: 0.0), simd_float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0))).translate(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z).rotateAroundX(cameraRotation.x).rotateAroundY(cameraRotation.y).rotateAroundZ(cameraRotation.z).columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(threeDimensionalWithViewerProgram, "view")), 1, GLboolean(GL_FALSE), simd_float4x4.identity().translate(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z).rotateAroundX(cameraRotation.x).rotateAroundY(cameraRotation.y).rotateAroundZ(cameraRotation.z).columnMajorArray()))
 
             glCall(glDrawElements(GLenum(GL_TRIANGLES), Int32(numberOfTrianglesToDraw) * 3, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: startTriangle * 12)))
             
-            //  View Space 6
+            //  View Space 6 - draw cube lit with a direction light
             currentDrawSpace = organizer.getNextSpace()
             glCall(glClearColor(currentDrawSpace.backgroundColor.x, currentDrawSpace.backgroundColor.y, currentDrawSpace.backgroundColor.z, 1.0))
             glCall(glScissor(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
             glCall(glClear(GLbitfield(GL_COLOR_BUFFER_BIT)))
             glCall(glViewport(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
-            //  Draw textured Cube
-            glCall(glUseProgram(phongProgram))
+            //  Draw lit cube
+            glCall(glUseProgram(directionLightProgram))
             glCall(glBindVertexArray(litCubeVAO))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongProgram, "projection")), 1, GLboolean(GL_FALSE), simd_float4x4().orthographic(width: Float(currentDrawSpace.width), height: Float(currentDrawSpace.height), nearZ: -Float(currentDrawSpace.width) * 2, farZ: Float(currentDrawSpace.width) * 2).scale(x: Float(currentDrawSpace.height) * 0.45, y: Float(currentDrawSpace.height) * 0.45, z: Float(currentDrawSpace.height) * 0.45).columnMajorArray()))
-            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(phongProgram, "view")), 1, GLboolean(GL_FALSE), simd_float4x4(columns: (simd_float4(1.0, 0.0, 0.0, 0.0), simd_float4(x: 0.0, y: 1.0, z: 0.0, w: 0.0), simd_float4(x: 0.0, y: 0.0, z: 1.0, w: 0.0), simd_float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0))).translate(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z).rotateAroundX(cameraRotation.x).rotateAroundY(cameraRotation.y).rotateAroundZ(cameraRotation.z).columnMajorArray()))
-            glCall(glUniform3fv(glCall(glGetUniformLocation(phongProgram, "light.color")), 1, light.color))
-            glCall(glUniform3fv(glCall(glGetUniformLocation(phongProgram, "light.position")), 1, light.position))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongProgram, "light.ambient")), light.ambient))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongProgram, "light.specStrength")), light.specStrength))
-            glCall(glUniform1f(glCall(glGetUniformLocation(phongProgram, "light.specHardness")), light.specHardness))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(directionLightProgram, "projection")), 1, GLboolean(GL_FALSE), simd_float4x4().orthographic(width: Float(currentDrawSpace.width), height: Float(currentDrawSpace.height), nearZ: -Float(currentDrawSpace.width) * 2, farZ: Float(currentDrawSpace.width) * 2).scale(x: Float(currentDrawSpace.height) * 0.45, y: Float(currentDrawSpace.height) * 0.45, z: Float(currentDrawSpace.height) * 0.45).columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(directionLightProgram, "view")), 1, GLboolean(GL_FALSE), simd_float4x4.identity().translate(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z).rotateAroundX(cameraRotation.x).rotateAroundY(cameraRotation.y).rotateAroundZ(cameraRotation.z).columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(directionLightProgram, "normalMatrix")), 1, GLboolean(GL_FALSE), simd_float4x4.identity().translate(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z).rotateAroundX(cameraRotation.x).rotateAroundY(cameraRotation.y).rotateAroundZ(cameraRotation.z).columnMajorArray()))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(directionLightProgram, "light.ambient")), 1, directionLight.ambient))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(directionLightProgram, "light.color")), 1, directionLight.color))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(directionLightProgram, "light.direction")), 1, directionLight.direction))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(directionLightProgram, "light.halfVector")), 1, directionLight.halfVector))
+            glCall(glUniform1f(glCall(glGetUniformLocation(directionLightProgram, "light.shininess")), directionLight.shininess))
+            glCall(glUniform1f(glCall(glGetUniformLocation(directionLightProgram, "light.strength")), directionLight.strength))
 
-            glCall(glDisable(GLenum(GL_CULL_FACE)))
             glCall(glDrawElements(GLenum(GL_TRIANGLES), Int32(numberOfTrianglesToDraw) * 3, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: startTriangle * 12)))
-            glCall(glEnable(GLenum(GL_CULL_FACE)))
-
-            glCall(glBindVertexArray(0))
-            glCall(glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), 0))
-            glCall(glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0))
-
-//            glCall(glUseProgram(threeDimensionalWithViewerProgram))
-//            glCall(glVertexAttrib3fv(0, light.position))
-//            glCall(glVertexAttrib4fv(1, light.color))
-//            glCall(glVertexAttrib2f(2, 0.0, 0.0))
-//            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(threeDimensionalWithViewerProgram, "projection")), 1, GLboolean(GL_FALSE), simd_float4x4().orthographic(width: Float(currentDrawSpace.width), height: Float(currentDrawSpace.height), nearZ: -Float(currentDrawSpace.width) * 2, farZ: Float(currentDrawSpace.width) * 2).scale(x: Float(currentDrawSpace.height) * 0.45, y: Float(currentDrawSpace.height) * 0.45, z: Float(currentDrawSpace.height) * 0.45).columnMajorArray()))
-//            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(threeDimensionalWithViewerProgram, "view")), 1, GLboolean(GL_FALSE), simd_float4x4(columns: (simd_float4(1.0, 0.0, 0.0, 0.0), simd_float4(x: 0.0, y: 1.0, z: 0.0, w: 0.0), simd_float4(x: 0.0, y: 0.0, z: 1.0, w: 0.0), simd_float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0))).translate(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z).rotateAroundX(cameraRotation.x).rotateAroundY(cameraRotation.y).rotateAroundZ(cameraRotation.z).columnMajorArray()))
-//
-//            glDrawArrays(GLenum(GL_POINTS), 0, GLsizei(1))
             
-            organizer.resetNextSpace()
+            //  View Space 7 - draw cube lit with a point light
+            currentDrawSpace = organizer.getNextSpace()
+            glCall(glClearColor(currentDrawSpace.backgroundColor.x, currentDrawSpace.backgroundColor.y, currentDrawSpace.backgroundColor.z, 1.0))
+            glCall(glScissor(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
+            glCall(glClear(GLbitfield(GL_COLOR_BUFFER_BIT)))
+            glCall(glViewport(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
+            //  Draw lit cube
+            glCall(glUseProgram(pointLightProgram))
+            glCall(glBindVertexArray(litCubeVAO))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(pointLightProgram, "projection")), 1, GLboolean(GL_FALSE), simd_float4x4().orthographic(width: Float(currentDrawSpace.width), height: Float(currentDrawSpace.height), nearZ: -Float(currentDrawSpace.width) * 2, farZ: Float(currentDrawSpace.width) * 2).scale(x: Float(currentDrawSpace.height) * 0.45, y: Float(currentDrawSpace.height) * 0.45, z: Float(currentDrawSpace.height) * 0.45).columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(pointLightProgram, "view")), 1, GLboolean(GL_FALSE), simd_float4x4.identity().translate(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z).rotateAroundX(cameraRotation.x).rotateAroundY(cameraRotation.y).rotateAroundZ(cameraRotation.z).columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(pointLightProgram, "normalMatrix")), 1, GLboolean(GL_FALSE), simd_float4x4.identity().translate(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z).rotateAroundX(cameraRotation.x).rotateAroundY(cameraRotation.y).rotateAroundZ(cameraRotation.z).columnMajorArray()))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(pointLightProgram, "light.ambient")), 1, pointLight.ambient))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(pointLightProgram, "light.color")), 1, pointLight.color))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(pointLightProgram, "light.position")), 1, pointLight.position))
+            glCall(glUniform1f(glCall(glGetUniformLocation(pointLightProgram, "light.shininess")), pointLight.shininess))
+            glCall(glUniform1f(glCall(glGetUniformLocation(pointLightProgram, "light.strength")), pointLight.strength))
+            glCall(glUniform1f(glCall(glGetUniformLocation(pointLightProgram, "constantAttenuation")), 0.5))
+            glCall(glUniform1f(glCall(glGetUniformLocation(pointLightProgram, "linearAttenuation")), 0.5))
+            glCall(glUniform1f(glCall(glGetUniformLocation(pointLightProgram, "quadraticAttenuation")), 0.5))
 
-            glCall(glUseProgram(0))
+            glCall(glDrawElements(GLenum(GL_TRIANGLES), Int32(numberOfTrianglesToDraw) * 3, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: startTriangle * 12)))
+            
+            //  View Space 8 - draw cube lit with a spot light
+            currentDrawSpace = organizer.getNextSpace()
+            glCall(glClearColor(currentDrawSpace.backgroundColor.x, currentDrawSpace.backgroundColor.y, currentDrawSpace.backgroundColor.z, 1.0))
+            glCall(glScissor(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
+            glCall(glClear(GLbitfield(GL_COLOR_BUFFER_BIT)))
+            glCall(glViewport(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
+            //  Draw lit cube
+            glCall(glUseProgram(spotLightProgram))
+            glCall(glBindVertexArray(litCubeVAO))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(spotLightProgram, "projection")), 1, GLboolean(GL_FALSE), simd_float4x4().orthographic(width: Float(currentDrawSpace.width), height: Float(currentDrawSpace.height), nearZ: -Float(currentDrawSpace.width) * 2, farZ: Float(currentDrawSpace.width) * 2).scale(x: Float(currentDrawSpace.height) * 0.45, y: Float(currentDrawSpace.height) * 0.45, z: Float(currentDrawSpace.height) * 0.45).columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(spotLightProgram, "view")), 1, GLboolean(GL_FALSE), simd_float4x4.identity().translate(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z).rotateAroundX(cameraRotation.x).rotateAroundY(cameraRotation.y).rotateAroundZ(cameraRotation.z).columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(spotLightProgram, "normalMatrix")), 1, GLboolean(GL_FALSE), simd_float4x4.identity().translate(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z).rotateAroundX(cameraRotation.x).rotateAroundY(cameraRotation.y).rotateAroundZ(cameraRotation.z).columnMajorArray()))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(spotLightProgram, "light.ambient")), 1, spotLight.ambient))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(spotLightProgram, "light.color")), 1, spotLight.color))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(spotLightProgram, "light.position")), 1, spotLight.position))
+            glCall(glUniform1f(glCall(glGetUniformLocation(spotLightProgram, "light.shininess")), spotLight.shininess))
+            glCall(glUniform1f(glCall(glGetUniformLocation(spotLightProgram, "light.strength")), spotLight.strength))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(spotLightProgram, "light.coneDirection")), 1, spotLight.coneDirection))
+            glCall(glUniform1f(glCall(glGetUniformLocation(spotLightProgram, "light.cosCutOff")), spotLight.cosCutOff))
+            glCall(glUniform1f(glCall(glGetUniformLocation(spotLightProgram, "light.exponent")), spotLight.exponent))
+            glCall(glUniform1f(glCall(glGetUniformLocation(spotLightProgram, "constantAttenuation")), 0.5))
+            glCall(glUniform1f(glCall(glGetUniformLocation(spotLightProgram, "linearAttenuation")), 0.5))
+            glCall(glUniform1f(glCall(glGetUniformLocation(spotLightProgram, "quadraticAttenuation")), 0.5))
+
+            glCall(glDrawElements(GLenum(GL_TRIANGLES), Int32(numberOfTrianglesToDraw) * 3, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: startTriangle * 12)))
+
+            //  View Space 9 - draw cube lit with a spot light
+            currentDrawSpace = organizer.getNextSpace()
+            glCall(glClearColor(currentDrawSpace.backgroundColor.x, currentDrawSpace.backgroundColor.y, currentDrawSpace.backgroundColor.z, 1.0))
+            glCall(glScissor(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
+            glCall(glClear(GLbitfield(GL_COLOR_BUFFER_BIT)))
+            glCall(glViewport(GLint(currentDrawSpace.x), GLint(currentDrawSpace.y), GLsizei(currentDrawSpace.width), GLsizei(currentDrawSpace.height)))
+            //  Draw lit cube
+            glCall(glUseProgram(hemisphereLightProgram))
+            glCall(glBindVertexArray(litTextureCubeVAO))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(hemisphereLightProgram, "projection")), 1, GLboolean(GL_FALSE), simd_float4x4().orthographic(width: Float(currentDrawSpace.width), height: Float(currentDrawSpace.height), nearZ: -Float(currentDrawSpace.width) * 2, farZ: Float(currentDrawSpace.width) * 2).scale(x: Float(currentDrawSpace.height) * 0.45, y: Float(currentDrawSpace.height) * 0.45, z: Float(currentDrawSpace.height) * 0.45).columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(hemisphereLightProgram, "view")), 1, GLboolean(GL_FALSE), simd_float4x4.identity().translate(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z).rotateAroundX(cameraRotation.x).rotateAroundY(cameraRotation.y).rotateAroundZ(cameraRotation.z).columnMajorArray()))
+            glCall(glUniformMatrix4fv(glCall(glGetUniformLocation(hemisphereLightProgram, "normalMatrix")), 1, GLboolean(GL_FALSE), simd_float4x4.identity().translate(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z).rotateAroundX(cameraRotation.x).rotateAroundY(cameraRotation.y).rotateAroundZ(cameraRotation.z).columnMajorArray()))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(hemisphereLightProgram, "light.position")), 1, hemisphereLight.position))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(hemisphereLightProgram, "light.skyColor")), 1, hemisphereLight.skyColor))
+            glCall(glUniform3fv(glCall(glGetUniformLocation(hemisphereLightProgram, "light.groundColor")), 1, hemisphereLight.groundColor))
+
+            glCall(glDrawElements(GLenum(GL_TRIANGLES), Int32(numberOfTrianglesToDraw) * 3, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: startTriangle * 12)))
+            
+            /// Reset Organizer queque so that we start from the first space at the next draw call
+            organizer.resetNextSpace()
+            
+            /// Unbind OpenGL Objects now that drawing is complete
+            /// This will avoid making unintended changes to the last bound VAO
             glCall(glBindVertexArray(0))
             glCall(glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), 0))
             glCall(glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0))
             glCall(glDisable(GLenum(GL_SCISSOR_TEST)))
-            glCall(glBindVertexArray(0))
             glCall(glUseProgram(0))
             
             context.flushBuffer()
@@ -2258,6 +2821,9 @@ class GraphicView: NSOpenGLView {
             glCall(glDeleteBuffers(1, &litCubeVBOIndex))
             glCall(glDeleteBuffers(1, &litCubeVBOVertex))
             glCall(glDeleteVertexArrays(1, &litCubeVAO))
+            glCall(glDeleteBuffers(1, &litTextureCubeVBOIndex))
+            glCall(glDeleteBuffers(1, &litTextureCubeVBOVertex))
+            glCall(glDeleteVertexArrays(1, &litTextureCubeVAO))
             glCall(glDeleteTextures(1, &checkerTextureTBO))
             glCall(glDeleteBuffers(1, &sphereVBOIndex))
             glCall(glDeleteBuffers(1, &sphereVBOVertex))
@@ -2268,7 +2834,10 @@ class GraphicView: NSOpenGLView {
             glCall(glDeleteProgram(textureProgram))
             glCall(glDeleteProgram(threeDimensionalProgram))
             glCall(glDeleteProgram(threeDimensionalWithViewerProgram))
-            glCall(glDeleteProgram(phongProgram))
+            glCall(glDeleteProgram(directionLightProgram))
+            glCall(glDeleteProgram(pointLightProgram))
+            glCall(glDeleteProgram(spotLightProgram))
+            glCall(glDeleteProgram(hemisphereLightProgram))
             glCall(glDeleteProgram(textureInverseBilinearInterpolationID))
             glCall(glDeleteRenderbuffers(1, &colorRBO))
             glCall(glDeleteRenderbuffers(1, &depthRBO))
