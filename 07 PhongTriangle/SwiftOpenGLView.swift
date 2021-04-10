@@ -59,7 +59,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         let dataProvider = CGDataProvider(url: fileURL! as CFURL)
         let image = CGImage(pngDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: false, intent: CGColorRenderingIntent.defaultIntent)
         
-        let textureData = UnsafeMutableRawPointer.allocate(bytes: 256 * 4 * 256, alignedTo: MemoryLayout<GLint>.alignment)
+        let textureData = UnsafeMutableRawPointer.allocate(byteCount: 256 * 4 * 256, alignment: MemoryLayout<GLint>.alignment)
         
         let context = CGContext(data: textureData, width: 256, height: 256, bitsPerComponent: 8, bytesPerRow: 4 * 256, space: CGColorSpace(name: CGColorSpace.genericRGBLinear)!,  bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
         

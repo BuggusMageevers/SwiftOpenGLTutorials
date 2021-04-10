@@ -1,8 +1,8 @@
 //
-//  SwiftOpenGLObjects.swift
-//  OpenGLMVCPt1
+//  OpenGLObjects.swift
+//  UserInteraction
 //
-//  Created by Myles Schultz on 1/27/18.
+//  Created by Myles Schultz on 1/28/18.
 //  Copyright © 2018 MyKo. All rights reserved.
 //
 
@@ -11,11 +11,14 @@ import Quartz
 
 
 protocol OpenGLObject {
-    var id: GLuint { get set }
+    var id: GLuint { get }
     
     func bind()
     func unbind()
     mutating func delete()
+}
+protocol ShaderInput {
+    var shaderInputLocation: Int32 { get set }
 }
 
 struct Vertex {
@@ -25,38 +28,45 @@ struct Vertex {
     var color: Float3
 }
 struct VertexBufferObject: OpenGLObject {
-    var id: GLuint = 0
-    let type: GLenum = GLenum(GL_ARRAY_BUFFER)
+    let id: GLuint
     var vertexCount: Int32 {
         return Int32(data.count)
     }
     var data: [Vertex] = []
     
+    init() {
+        var tempID: GLuint = 0
+        glGenBuffers(1, &tempID)
+        self.id = tempID
+    }
     mutating func load(_ data: [Vertex]) {
         self.data = data
-        
-        glGenBuffers(1, &id)
         bind()
         glBufferData(GLenum(GL_ARRAY_BUFFER), data.count * MemoryLayout<Vertex>.size, data, GLenum(GL_STATIC_DRAW))
     }
     
     func bind() {
-        glBindBuffer(type, id)
+        glBindBuffer(GLenum(GL_ARRAY_BUFFER), id)
     }
     
     func unbind() {
-        glBindBuffer(type, id)
+        glBindBuffer(GLenum(GL_ARRAY_BUFFER), id)
     }
     
     mutating func delete() {
-        glDeleteBuffers(1, &id)
+        glDeleteBuffers(1, [id])
     }
 }
 struct VertexArrayObject: OpenGLObject {
-    var id: GLuint = 0
+    let id: GLuint
+    
+    init() {
+        var tempID: GLuint = 0
+        glGenVertexArrays(1, &tempID)
+        self.id = tempID
+    }
     
     mutating func layoutVertexPattern() {
-        glGenVertexArrays(1, &id)
         bind()
         
         /* Position */
@@ -84,29 +94,35 @@ struct VertexArrayObject: OpenGLObject {
     }
     
     mutating func delete() {
-        glDeleteVertexArrays(1, &id)
+        glDeleteVertexArrays(1, [id])
     }
 }
 enum TextureSlot: GLint {
-    case texture1 = 33984
+    case texture0 = 33984   /* GL_TEXTURE0 */
 }
 struct TextureBufferObject: OpenGLObject {
-    var id: GLuint = 0
-    var textureSlot: GLint = TextureSlot.texture1.rawValue
+    let id: GLuint
+    var textureSlot: GLint = TextureSlot.texture0.rawValue
+    
+    init() {
+        var tempID: GLuint = 0
+        glGenTextures(1, &tempID)
+        self.id = tempID
+    }
     
     mutating func loadTexture(named name: String) {
         guard let textureData = NSImage(named: NSImage.Name(rawValue: name))?.tiffRepresentation else {
-            Swift.print("Image name not located in Image Asset Catalog")
+            print("Image name not located in Image Asset Catalog")
             return
         }
         
-        glGenTextures(1, &id)
         bind()
         
         glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_LINEAR)
         glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_LINEAR)
         glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GL_REPEAT)
         glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GL_REPEAT)
+        
         glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_RGBA, 256, 256, 0, GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE), (textureData as NSData).bytes)
     }
     
@@ -118,19 +134,21 @@ struct TextureBufferObject: OpenGLObject {
     }
     
     mutating func delete() {
-        glDeleteTextures(1, &id)
+        glDeleteTextures(1, [id])
     }
 }
-enum ShaderType: UInt32 {
+enum ShaderType: GLenum {
     case vertex = 35633     /* GL_VERTEX_SHADER */
     case fragment = 35632   /* GL_FRAGMENT_SHADER */
 }
 struct Shader: OpenGLObject {
-    var id: GLuint = 0
+    let id: GLuint
     
-    mutating func create(withVertex vertexSource: String, andFragment fragmentSource: String) {
-        id = glCreateProgram()
-        
+    init() {
+        self.id = glCreateProgram()
+    }
+    
+    mutating func connect(vertexShaderSource vertexSource: String, andFragmentShaderSource fragmentSource: String) {
         let vertex = compile(shaderType: .vertex, withSource: vertexSource)
         let fragment = compile(shaderType: .fragment, withSource: fragmentSource)
         
@@ -183,20 +201,17 @@ struct Shader: OpenGLObject {
         glDeleteShader(fragment)
     }
     
-    func setInitialUniforms() {
-        let location = glGetUniformLocation(id, "sample")
-        glUniform1i(location, GLint(GL_TEXTURE0))
-        
-        bind()
-        glUniform3fv(glGetUniformLocation(id, "light.color"), 1, [1.0, 1.0, 1.0])
-        glUniform3fv(glGetUniformLocation(id, "light.position"), 1, [0.0, 2.0, 2.0])
-        glUniform1f(glGetUniformLocation(id, "light.ambient"), 0.25)
-        glUniform1f(glGetUniformLocation(id, "light.specStrength"), 3.0)
-        glUniform1f(glGetUniformLocation(id, "light.specHardness"), 32)
-    }
-    func update(view: FloatMatrix4, projection: FloatMatrix4) {
-        glUniformMatrix4fv(glGetUniformLocation(id, "view"), 1, GLboolean(GL_FALSE), view.columnMajorArray())
-        glUniformMatrix4fv(glGetUniformLocation(id, "projection"), 1, GLboolean(GL_FALSE), projection.columnMajorArray())
+    func setInitialUniforms(for scene: inout Scene) {
+//        let location = glCall(glGetUniformLocation(id, "sample"))
+//        glCall(glUniform1i(location, scene.tbo.textureSlot))
+//
+//        bind()
+//
+//        scene.light.attach(toShader: self)
+//        scene.light.updateParameters(for: self)
+//
+//        scene.camera.attach(toShader: self)
+//        scene.camera.updateParameters(for: self)
     }
     
     func bind() {
@@ -208,5 +223,92 @@ struct Shader: OpenGLObject {
     
     func delete() {
         glDeleteProgram(id)
+    }
+}
+
+struct Light {
+    private enum Parameter: String {
+        case color = "light.color"
+        case position = "light.position"
+        case ambientStrength = "light.ambient"
+        case specularStrength = "light.specStrength"
+        case specularHardness = "light.specHardness"
+    }
+    
+    var name: String = ""
+    var color: [GLfloat] = [1.0, 1.0, 1.0] {
+        didSet {
+            parametersToUpdate.append(.color)
+        }
+    }
+    var offset = Float3() // FIXME: Unused
+    var position: [GLfloat] = [0.0, 1.0, 0.5] {
+        didSet {
+            parametersToUpdate.append(.position)
+        }
+    }
+    var ambietStrength: GLfloat = 0.25 {
+        didSet {
+            parametersToUpdate.append(.ambientStrength)
+        }
+    }
+    var specularStrength: GLfloat = 3.0 {
+        didSet {
+            parametersToUpdate.append(.specularStrength)
+        }
+    }
+    var specularHardness: GLfloat = 32 {
+        didSet {
+            parametersToUpdate.append(.specularHardness)
+        }
+    }
+    private var shaderParameterLocations = [GLuint : [Parameter : Int32]]()
+    private var parametersToUpdate: [Parameter] = [.color, .position, .ambientStrength, .specularStrength, .specularHardness]
+    
+    private init() {}
+    init(named name: String) {
+        self.name = name
+    }
+    
+    mutating func attach(toShader shader: Shader) {
+        let shader = shader.id
+        var parameterLocations = [Parameter : Int32]()
+        
+        parameterLocations[.color] = glGetUniformLocation(shader, Parameter.color.rawValue)
+        parameterLocations[.position] = glGetUniformLocation(shader, Parameter.position.rawValue)
+        parameterLocations[.ambientStrength] = glGetUniformLocation(shader, Parameter.ambientStrength.rawValue)
+        parameterLocations[.specularStrength] = glGetUniformLocation(shader, Parameter.specularStrength.rawValue)
+        parameterLocations[.specularHardness] = glGetUniformLocation(shader, Parameter.specularHardness.rawValue)
+        
+        shaderParameterLocations[shader] = parameterLocations
+    }
+    mutating func updateParameters(for shader: Shader) {
+        if let parameterLocations = shaderParameterLocations[shader.id] {
+            for parameter in parametersToUpdate {
+                switch parameter {
+                case .color:
+                    if let location = parameterLocations[parameter] {
+                        glUniform3fv(location, 1, color)
+                    }
+                case .position:
+                    if let location = parameterLocations[parameter] {
+                        glUniform3fv(location, 1, position)
+                    }
+                case .ambientStrength:
+                    if let location = parameterLocations[parameter] {
+                        glUniform1f(location, ambietStrength)
+                    }
+                case .specularStrength:
+                    if let location = parameterLocations[parameter] {
+                        glUniform1f(location, specularStrength)
+                    }
+                case .specularHardness:
+                    if let location = parameterLocations[parameter] {
+                        glUniform1f(location, specularHardness)
+                    }
+                }
+            }
+            parametersToUpdate.removeAll()
+        }
     }
 }

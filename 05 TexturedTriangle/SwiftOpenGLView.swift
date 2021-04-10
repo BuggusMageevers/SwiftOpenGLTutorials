@@ -80,7 +80,7 @@ final class SwiftOpenGLView: NSOpenGLView {
         //  The space in memory must be allocated before we send it into our context
         //  we use malloc to reserve a space of memory 256 * 4 bytes wide (4 bytes, 8 bits
         //  each for r, g, b, and a for 256 pixels), and a height of 256
-        let textureData = UnsafeMutableRawPointer.allocate(bytes: 256 * 4 * 256, alignedTo: MemoryLayout<GLint>.alignment)
+        let textureData = UnsafeMutableRawPointer.allocate(byteCount: 256 * 4 * 256, alignment: MemoryLayout<GLint>.alignment)
         
         //  create a context and pass in the textureData UnsafeMutablePointer as the storage location
         //  for the image data

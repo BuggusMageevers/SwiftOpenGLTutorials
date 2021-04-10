@@ -344,11 +344,11 @@ final class SwiftOpenGLView: NSOpenGLView {
         //  We'll use double buffering this time (one buffer is displayed while the other is
         //  calculated, then we swap them.
         let attrs: [NSOpenGLPixelFormatAttribute] = [
-            UInt32(NSOpenGLPFAAccelerated),
-            UInt32(NSOpenGLPFADoubleBuffer),
-            UInt32(NSOpenGLPFAColorSize), UInt32(32),
-            UInt32(NSOpenGLPFAOpenGLProfile), UInt32(NSOpenGLProfileVersion3_2Core),
-            UInt32(0)
+            NSOpenGLPixelFormatAttribute(NSOpenGLPFAAccelerated),
+            NSOpenGLPixelFormatAttribute(NSOpenGLPFADoubleBuffer),
+            NSOpenGLPixelFormatAttribute(NSOpenGLPFAColorSize), 32,
+            NSOpenGLPixelFormatAttribute(NSOpenGLPFAOpenGLProfile), NSOpenGLPixelFormatAttribute(NSOpenGLProfileVersion3_2Core),
+            0
         ]
         guard let pixelFormat = NSOpenGLPixelFormat(attributes: attrs) else {
             Swift.print("pixelFormat could not be constructed")
@@ -375,9 +375,9 @@ final class SwiftOpenGLView: NSOpenGLView {
         programID = glCreateProgram()
         
         //format: x,    y,    r,   g,   b,    s,   t,    nx,   ny,   nz
-        data = [-1.0, -1.0,  1.0, 0.0, 1.0,  0.0, 2.0,  -1.0, -1.0, 0.0001,
-                 0.0,  1.0,  0.0, 1.0, 0.0,  1.0, 0.0,   0.0,  1.0, 0.0001,
-                 1.0, -1.0,  0.0, 0.0, 1.0,  2.0, 2.0,   1.0, -1.0, 0.0001]
+        data = [-1.0, -1.0,  1.0, 0.0, 1.0,  0.0, 1.0,  -1.0, -1.0, 0.0001,
+                 0.0,  1.0,  0.0, 1.0, 0.0,  0.5, 0.0,   0.0,  1.0, 0.0001,
+                 1.0, -1.0,  0.0, 0.0, 1.0,  1.0, 1.0,   1.0, -1.0, 0.0001]
         
         /*  Since we're starting a new target, not just a duplicate, we'll adjust the OpenGL
             texture to take input from the image assests catalog.  We can access these images

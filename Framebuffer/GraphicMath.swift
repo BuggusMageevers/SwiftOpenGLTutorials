@@ -1,11 +1,10 @@
 //
 //  GraphicMath.swift
-//  SwiftOpenGL
+//  SwiftOpenGLRefactor
 //
-//  Created by Myles Schultz on 1/30/16.
-//  Copyright © 2016 MyKo. All rights reserved.
+//  Created by Myles Schultz on 1/17/18.
+//  Copyright © 2018 MyKo. All rights reserved.
 //
-
 
 import Foundation
 
@@ -110,11 +109,8 @@ struct Float3: Hashable, Equatable {
     }
 }
 extension Float3 {
-    mutating func move(_ direction: Float3, over time: Float, at speed: Float) {
-        self = self + (direction * time * speed)
-    }
-    func formTranlation() -> FloatMatrix4 {
-        return FloatMatrix4().translate(x: self.x, y: self.y, z: self.z)
+    func move(_ direction: Float3, over time: Float) -> Float3 {
+        return self + (direction * time)
     }
 }
 
@@ -403,14 +399,14 @@ struct FloatMatrix4: Hashable, Equatable {
                 vector1.w, vector2.w, vector3.w, vector4.w]
     }
     
-    static func projection(angeOfView theta: Float = 35, aspect: Float, distanceToNearClippingPlane nearZ: Float = 0.1, distanceToFarClippingPlane farZ: Float = 1000) -> FloatMatrix4 {
+    func projection(angeOfView theta: Float = 35, aspect: Float, distanceToNearClippingPlane nearZ: Float = 0.1, distanceToFarClippingPlane farZ: Float = 1000) -> FloatMatrix4 {
         let scale = 1 / tanf(theta * 0.5 * Float.pi / 180)
         return FloatMatrix4(vector1: Float4(x: scale / aspect, y: 0.0, z: 0.0, w: 0.0),
                             vector2: Float4(x: 0.0, y: scale, z: 0.0, w: 0.0),
                             vector3: Float4(x: 0.0, y: 0.0, z: (farZ + nearZ) / (nearZ - farZ), w: (2 * farZ * nearZ) / (nearZ - farZ)),
                             vector4: Float4(x: 0.0, y: 0.0, z: -1.0, w: 0.0))
     }
-    static func orthographic(width: Float, height: Float, nearZ: Float = 0.001, farZ: Float = 1000) -> FloatMatrix4 {
+    func orthographic(width: Float, height: Float, nearZ: Float = 0.001, farZ: Float = 1000) -> FloatMatrix4 {
         let right = width * 0.5
         let left = -right
         let top = height * 0.5
@@ -426,12 +422,6 @@ struct FloatMatrix4: Hashable, Equatable {
                                    vector2: Float4(x: 0.0, y: 1.0, z: 0.0, w: y),
                                    vector3: Float4(x: 0.0, y: 0.0, z: 1.0, w: z),
                                    vector4: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0))
-    }
-    static func translate(to position: Float3) -> FloatMatrix4 {
-        return FloatMatrix4(vector1: Float4(x: 1.0, y: 0.0, z: 0.0, w: position.x),
-                            vector2: Float4(x: 0.0, y: 1.0, z: 0.0, w: position.y),
-                            vector3: Float4(x: 0.0, y: 0.0, z: 1.0, w: position.z),
-                            vector4: Float4(x: 0.0, y: 0.0, z: 0.0, w: 1.0))
     }
     
     func rotateXAxis(_ radians: Float) -> FloatMatrix4 {

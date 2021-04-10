@@ -8,7 +8,7 @@
 
 import Cocoa
 
-final class ViewController: NSViewController, RenderDelegate {
+final class GraphicViewController: NSViewController, RenderDelegate {
     @IBOutlet weak var graphicView: GraphicView!
     var scene = Scene()
     var scenes = [String : Scene]()
